@@ -1,0 +1,19 @@
+{
+  "name": "atlanta-garden-farms-and-orchards---cs-4400",
+  "version": "1.0.0",
+  "description": "CS4400 Final Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400/issues"
+  },
+  "homepage": "https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400#readme"
+}
