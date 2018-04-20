@@ -77,7 +77,7 @@ app.get('/', function(request, response) {
     });
 });*/
 
-app.get('/newOwnerRegistration', function(request, response) {
+/*app.get('/newOwnerRegistration', function(request, response) {
     response.render('newOwnerRegistration');
     var username = request.body.inputEmail;
     var email = request.body.inputEmail;
@@ -105,7 +105,7 @@ app.get('/newOwnerRegistration', function(request, response) {
             console.log("New visitor added.");
         };
     });
-});
+});*/
 
 app.get('/otherProperties', function(request, response) {
 
@@ -116,7 +116,16 @@ app.get('/otherProperties', function(request, response) {
                 allProperty: allPropertyInfo
             });
     }
-})
+});
+
+app.post('/viewPropertyDetails', function(request, response) {
+    response.render('propertyDetails');
+    //console.log("Running");
+    //console.log(request.body);
+    var idSelection = request.body.idSelection;
+    console.log(idSelection);
+});
+
 
 app.get('/ownerProperties', function(request, response) {
 
