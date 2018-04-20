@@ -10,6 +10,11 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 
 <html>
@@ -24,7 +29,7 @@
       <!-- INSERT TABLE -->
 
 
-      <table class="table table-bordered table-hover">
+      <table  id="infoTable" class="table table-bordered table-hover">
           <thead class="thead-light">
               <tr>
                 <th scope="col">Name</th>
@@ -41,35 +46,23 @@
                 <th scope="col">Avg. Rating</th>
               </tr>
           </thead>
-          <tr>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-          </tr>
-          <tr>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-            <td scope="col">mock</td>
-          </tr>
 
+          {{#each personalProperty}}
+            <tr>
+            <td scope="col"> {{this.Name}} </td>
+            <td scope="col"> {{this.Street}} </td>
+            <td scope="col"> {{this.City}} </td>
+            <td scope="col"> {{this.Zip}} </td>
+            <td scope="col"> {{this.Size}} </td>
+            <td scope="col"> {{this.PropertyType}} </td>
+            <td scope="col"> {{this.isPublic}} </td>
+            <td scope="col"> {{this.isCommercial}} </td>
+            <td scope="col"> {{this.ID}} </td>
+            <td scope="col"> PENDING </td>
+            <td scope="col"> PENDING </td>
+            <td scope="col"> PENDING </td>
+            </tr>
+          {{/each}}
       </table>
 
       <div>
@@ -112,10 +105,10 @@
             <button type="button" class="btn ">Search Properties</button>
           </th>
           <th>
-            <button type="button" class="btn">View Other Properties</button>
+            <a type="button" class="btn" href = "/otherProperties">View Other Properties</a>
           </th>
           <th>
-            <button type="button" class="btn ">Log Out</button>
+            <a type="button" class="btn" href = "/">Log Out</a>
           </th>
         </tr>
 
@@ -179,6 +172,17 @@
       justify-content: center;
     }
 
+    .table tbody tr.highlight td {
+      background-color: #ddd;
+    }
+
+
   </style>
 
 </html>
+
+<script>
+  $('#infoTable').on('click', 'tbody tr', function(event) {
+    $(this).addClass('highlight').siblings().removeClass('highlight');
+  });
+</script>

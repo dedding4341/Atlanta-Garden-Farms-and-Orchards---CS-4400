@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -110,9 +109,22 @@
           <label class="form-control-plaintext"> Chicken </label>
         </div>
       </div>
-      <div class="btn-container">
-        <button type="button" class="btn ">Back</button>
-      </div>
+        <div class="row-fluid center-h-container row-center" style="margin-bottom: 10px;">   
+          <h6 style="margin-right: 10px;"> Rate Your Visit: </h6>
+          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-3" role="group" aria-label="Rating Group">
+              <button type="button" class="btn btn-secondary">1</button>
+              <button type="button" class="btn btn-secondary">2</button>
+              <button type="button" class="btn btn-secondary">3</button>
+              <button type="button" class="btn btn-secondary">4</button>
+              <button type="button" class="btn btn-secondary">5</button>
+            </div>
+          </div>
+        </div>
+        <div class="vertical-container">
+          <button id="log" type="button" class="btn" style="margin-bottom: 5px;">Log Visit</button>
+          <button id="back" type="button" class="btn ">Back</button>
+        </div>
 
     </form>
 
@@ -127,7 +139,7 @@
         display: none
       }
 
-      .btn {
+      #log, #back {
         width: 200px;
         background-color: #007bff;
         color: #ffffff;

@@ -2,8 +2,12 @@ var mysql = require('mysql');
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-var handlebars = require('handlebars');
+var handlebars = require('express-handlebars');
 var md5 = require('md5');
+var userInfo;
+var myPropertyInfo;
+var allPropertyInfo;
+var signedIn = false;
 
 
 // var creds = require('credentials.js');
@@ -28,16 +32,23 @@ var app = express();
 //Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', handlebars({defaultLayout: 'login'}));
+app.set('view engine', 'handlebars');
 
 //Set Static Path
 //app.use(express.static(__dirname + '/pages'));
 
 app.get('/', function(request, response) {
-    response.sendFile(__dirname + '/pages/login.handlebars');
+    response.render('login');
+    signedIn = false;
+    userInfo = null;
 });
 
-app.get('/newVisitorRegistration', function(request, response) {
-    response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+
+
+/*app.get('/newVisitorRegistration', function(request, response) {
+    response.render('newVisitorRegistration');
     var username = request.body.inputEmail;
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword1);
@@ -64,11 +75,34 @@ app.get('/newVisitorRegistration', function(request, response) {
             console.log("New visitor added.");
         };
     });
-});
+});*/
 
 app.get('/newOwnerRegistration', function(request, response) {
-    response.sendFile(__dirname + '/pages/newOwnerRegistration.html');
+    response.render('newOwnerRegistration');
 });
+
+app.get('/otherProperties', function(request, response) {
+
+    if (signedIn) {
+        response.render('otherProperties', {
+                username: userInfo.Username,
+                personalProperty: myPropertyInfo,
+                allProperty: allPropertyInfo
+            });
+    }
+})
+
+app.get('/ownerProperties', function(request, response) {
+
+    if (signedIn) {
+        response.render('ownerProperties', {
+                username: userInfo.Username,
+                personalProperty: myPropertyInfo,
+                allProperty: allPropertyInfo
+            });
+    }
+
+})
 
 app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
@@ -80,17 +114,34 @@ app.post('/login', function(request, response) {
             return;
         };
 
-        if (typeof page_name == 'undefined') {
+        if (result[0] == '') {
             console.log("Invalid Login");
-            response.sendFile(__dirname + '/pages/badLogin.html');
+            response.render('badLogin');
         } else {
             if (result[0].Password === password) {
                 console.log("Valid Login from " + email);
-                response.render('ownerProperties', {
-                    username: result[0].Username
+                userInfo = result[0];
+                signedIn = true;
+
+
+                var sql = "SELECT * FROM Property WHERE Owner = ?";
+                connection.query(sql, [userInfo.Username], function(err, result, fields) {
+                    myPropertyInfo = result;
+
+                    var sql = "SELECT * FROM Property";
+                    connection.query(sql, function(err, result, fields) {
+                        allPropertyInfo = result;
+                        response.render('ownerProperties', {
+                            username: userInfo.Username,
+                            personalProperty: myPropertyInfo,
+                            allProperty: allPropertyInfo
+                        });
+
+                    });
                 });
             } else {
                 console.log("Invalid Login.");
+                response.render('badLogin');
             }
         }
 
@@ -98,8 +149,10 @@ app.post('/login', function(request, response) {
 
 
     });
+
     //response.sendFile(__dirname + '/pages/login.html');
 });
+
 
 app.listen(3000, function() {
     console.log('Server Started on Port 3000...');
