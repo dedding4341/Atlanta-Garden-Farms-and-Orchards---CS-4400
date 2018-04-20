@@ -12,8 +12,10 @@ var connection = mysql.createConnection({
   password: "FSuJjLjh",
   database: "cs4400_team_27"
 });
-connection.connect();
-
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
 
 var app = express();
 
@@ -50,4 +52,3 @@ app.post('/login', function(request, response) {
 app.listen(3000, function() {
     console.log('Server Started on Port 3000...');
 })
-
