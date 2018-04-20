@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="../../../../favicon.ico">
+    <!-- <link rel="icon" href="../../../../favicon.ico"> -->
 
     <title>Atlanta Gardens, Farms, Orchards</title>
 
@@ -27,7 +27,7 @@
         }
 
         body {
-          display: -ms-flexbox;
+          /*display: -ms-flexbox;
           display: -webkit-box;
           display: flex;
           -ms-flex-align: center;
@@ -37,8 +37,14 @@
           -webkit-box-pack: center;
           justify-content: center;
           padding-top: 40px;
-          padding-bottom: 40px;
+          padding-bottom: 40px;*/
           background-color: #f5f5f5;
+          overflow:auto;
+
+        }
+
+        footer{
+          position:static;
         }
 
         .form-signup {
@@ -102,6 +108,10 @@
           border-top-right-radius: 0;
         }
 
+        .hidden {
+          display: none;
+        }
+
 
     </style>
 
@@ -136,32 +146,63 @@
             <label for="inputAcres" class="sr-only">Acres</label>
             <input type="acres" id="inputAcres" class="form-control" placeholder="Acres" required>
 
-            <div class="form-group">
-              <label for = "propertyType">Property Type</label>
+
+
+              <div class = "property">
+              <label for = "propertyType">Property Type:</label>
               <select id="propertyType">
                 <option>Farm</option>
                 <option>Garden</option>
                 <option>Orchards</option>
               </select>
+              </div>
 
-              <br>
 
-              <label for = "propertyType">Property Type</label>
-              <select id="propertyType">
-                <option>Farm</option>
-                <option>Garden</option>
-                <option>Orchards</option>
+
+              <div class = "animal filterItem hidden">
+              <label for = "animalType">Animal:</label>
+              <select id="animalType">
+                <option>Animal 1</option>
+                <option>Animal 2</option>
+                <option>Animal 3</option>
               </select>
-
-
-            </div>
-
+              </div>
 
 
 
+              <div class = "crop">
+              <label for = "cropType">Crop:</label>
+              <select id="cropType">
+                <option>Crop 1</option>
+                <option>Crop 2</option>
+                <option>Crop 3</option>
+              </select>
+              </div>
 
-            <br>
-            <br>
+
+
+              <div class = "public">
+              <label for = "publicType">Public:</label>
+              <select id="publicType">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+              </div>
+
+
+
+              <div class = "commercial">
+              <label for = "commercialType">Commercial:</label>
+              <select id="commercialType">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+              </div>
+
+
+
+
+
 
             <button class="btn btn-lg btn-primary btn-block" type = "submit">Register Owner</button>
             <a class="btn btn-lg btn-info btn-block" href = "./login.html">Cancel</a>
@@ -171,4 +212,30 @@
 
     </body>
 </html>
+
+<script>
+
+  $(document).ready(function () {
+
+    var currentSelected = $('#propertyType').find(":selected").text();
+      //console.log(currentSelected);
+      if (currentSelected == "Farm") {
+        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      }
+
+    $(document).change(function () {
+
+      var currentSelected = $('#propertyType').find(":selected").text();
+      //console.log(currentSelected);
+      if (currentSelected == "Farm") {
+        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      } else {
+        document.getElementsByClassName("filterItem")[0].classList.add("hidden")
+      }
+
+
+    });
+  });
+
+</script>
 
