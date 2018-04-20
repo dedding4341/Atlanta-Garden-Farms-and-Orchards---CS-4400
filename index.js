@@ -122,6 +122,14 @@ app.post('/login', function(request, response) {
                 signedIn = true;
 
 
+                var sql = "SELECT * FROM Property WHERE Owner = ?";
+                connection.query(sql, userInfo.Username, function(err, result, fields) {
+                    myPropertyInfo = result;
+                });
+
+                console.log(myPropertyInfo);
+
+
 
 
                 response.render('ownerProperties', {
