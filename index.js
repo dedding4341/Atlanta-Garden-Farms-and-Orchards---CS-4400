@@ -65,7 +65,7 @@ app.post('/login', function(request, response) {
         } else {
             if (result[0].Password === password && result[0].UserType === "OWNER") {
                 console.log("Valid Login from " + email);
-                response.render(__dirname + '/pages/ownerProperties.handlebars', {
+                response.render('ownerProperties', {
                     username: result[0].Username
                 });
             } else {
