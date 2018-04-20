@@ -18,10 +18,10 @@
 </head>
 
 <html>
-  <body>
-    <form class="otherProperties">
+  <body class = "otherProperties">
 
       <h1 class="h3 mb-3 font-weight-normal">All Other Valid Properties: </h1>
+
 
       <!-- INSERT TABLE -->
 
@@ -52,8 +52,8 @@
             <td scope="col"> {{this.Zip}} </td>
             <td scope="col"> {{this.Size}} </td>
             <td scope="col"> {{this.PropertyType}} </td>
-            <td scope="col"> {{this.isPublic}} </td>
-            <td scope="col"> {{this.isCommercial}} </td>
+            <td scope="col"> {{this.IsPublic}} </td>
+            <td scope="col"> {{this.IsCommercial}} </td>
             <td scope="col"> {{this.ID}} </td>
             <td scope="col"> PENDING </td>
             <td scope="col"> PENDING </td>
@@ -87,11 +87,14 @@
           <td>
             <div class="center-h-container">
               <label for="searchTerm" class="sr-only">Search Term</label>
-              <input type="email" id="searchTerm" class="form-control not-btn-input" placeholder="Search Term" required autofocus>
+              <input type="email" id="searchTerm" class="form-control not-btn-input" placeholder="Search Term">
             </div>
           </td>
           <td>
-            <button type="button" class="btn ">View Property Details</button>
+            <form method = "POST" action = "/viewPropertyDetails">
+            <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
+            <button class="btn" type="submit"  >View Property Details</button>
+            </form>
           </td>
         </tr>
         <tr>
@@ -108,7 +111,7 @@
         </tr>
 
       </table>
-    </form>
+
   </body>
 
 
@@ -119,6 +122,7 @@
       display: -ms-flexbox;
       display: -webkit-box;
       display: flex;
+      flex-direction: column;
       -ms-flex-align: center;
       -ms-flex-pack: center;
       -webkit-box-align: center;
@@ -169,6 +173,10 @@
       background-color: #ddd;
     }
 
+    .hiddenField {
+      display: none;
+    }
+
   </style>
 
 </html>
@@ -196,8 +204,9 @@
     					return;
     				}
     				var cells = this.cells; //cells collection
-    				var id = cells[8];
-            console.log(id);
+    				var id = cells[8].innerHTML;
+            $('#idSelector').val(id);
+            //console.log(id);
 
     			};
     		}
