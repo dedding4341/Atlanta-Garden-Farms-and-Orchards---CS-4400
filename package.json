@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400/issues"
   },
-  "homepage": "https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400#readme"
+  "homepage": "https://github.com/dedding4341/Atlanta-Garden-Farms-and-Orchards---CS-4400#readme",
+  "dependencies": {
+    "mysql": "^2.15.0"
+  }
 }
