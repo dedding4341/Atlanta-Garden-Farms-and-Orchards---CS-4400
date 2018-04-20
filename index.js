@@ -86,6 +86,12 @@ app.post('/login', function(request, response) {
         } else {
             if (result[0].Password === password) {
                 console.log("Valid Login from " + email);
+<<<<<<< HEAD
+=======
+                response.render('ownerProperties', {
+                    username: result[0].Username
+                });
+>>>>>>> 94fe7c4e0c1148a4808827ef74e5e090597339fa
             } else {
                 console.log("Invalid Login.");
             }
