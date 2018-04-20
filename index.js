@@ -82,21 +82,23 @@ app.get('/newOwnerRegistration', function(request, response) {
 });
 
 app.get('/otherProperties', function(request, response) {
-    console.log(userInfo);
-    console.log(signedIn);
+
     if (signedIn) {
         response.render('otherProperties', {
-                username: userInfo.Username
+                username: userInfo.Username,
+                personalProperty: myPropertyInfo,
+                allProperty: allPropertyInfo
             });
     }
 })
 
 app.get('/ownerProperties', function(request, response) {
-    console.log(userInfo);
-    console.log(signedIn);
+
     if (signedIn) {
         response.render('ownerProperties', {
-                username: userInfo.Username
+                username: userInfo.Username,
+                personalProperty: myPropertyInfo,
+                allProperty: allPropertyInfo
             });
     }
 
@@ -123,19 +125,20 @@ app.post('/login', function(request, response) {
 
 
                 var sql = "SELECT * FROM Property WHERE Owner = ?";
-                connection.query(sql, userInfo.Username, function(err, result, fields) {
+                connection.query(sql, [userInfo.Username], function(err, result, fields) {
                     myPropertyInfo = result;
+
+                    var sql = "SELECT * FROM Property";
+                    connection.query(sql, function(err, result, fields) {
+                        allPropertyInfo = result;
+                        response.render('ownerProperties', {
+                            username: userInfo.Username,
+                            personalProperty: myPropertyInfo,
+                            allProperty: allPropertyInfo
+                        });
+
+                    });
                 });
-
-                console.log(myPropertyInfo);
-
-
-
-
-                response.render('ownerProperties', {
-                    username: result[0].Username
-                });
-                console.log("render");
             } else {
                 console.log("Invalid Login.");
                 response.render('badLogin');
@@ -146,6 +149,7 @@ app.post('/login', function(request, response) {
 
 
     });
+
     //response.sendFile(__dirname + '/pages/login.html');
 });
 
