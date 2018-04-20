@@ -4,6 +4,10 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var handlebars = require('express-handlebars');
 var md5 = require('md5');
+var userInfo;
+var myPropertyInfo;
+var allPropertyInfo;
+var signedIn = false;
 
 
 // var creds = require('credentials.js');
@@ -37,9 +41,13 @@ app.set('view engine', 'handlebars');
 
 app.get('/', function(request, response) {
     response.render('login');
+    signedIn = false;
+    userInfo = null;
 });
 
-app.get('/newVisitorRegistration', function(request, response) {
+
+
+/*app.get('/newVisitorRegistration', function(request, response) {
     response.render('newVisitorRegistration');
     var username = request.body.inputEmail;
     var email = request.body.inputEmail;
@@ -67,11 +75,32 @@ app.get('/newVisitorRegistration', function(request, response) {
             console.log("New visitor added.");
         };
     });
-});
+});*/
 
 app.get('/newOwnerRegistration', function(request, response) {
     response.render('newOwnerRegistration');
 });
+
+app.get('/otherProperties', function(request, response) {
+    console.log(userInfo);
+    console.log(signedIn);
+    if (signedIn) {
+        response.render('otherProperties', {
+                username: userInfo.Username
+            });
+    }
+})
+
+app.get('/ownerProperties', function(request, response) {
+    console.log(userInfo);
+    console.log(signedIn);
+    if (signedIn) {
+        response.render('ownerProperties', {
+                username: userInfo.Username
+            });
+    }
+
+})
 
 app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
@@ -89,6 +118,12 @@ app.post('/login', function(request, response) {
         } else {
             if (result[0].Password === password) {
                 console.log("Valid Login from " + email);
+                userInfo = result[0];
+                signedIn = true;
+
+
+
+
                 response.render('ownerProperties', {
                     username: result[0].Username
                 });
@@ -105,6 +140,7 @@ app.post('/login', function(request, response) {
     });
     //response.sendFile(__dirname + '/pages/login.html');
 });
+
 
 app.listen(3000, function() {
     console.log('Server Started on Port 3000...');
