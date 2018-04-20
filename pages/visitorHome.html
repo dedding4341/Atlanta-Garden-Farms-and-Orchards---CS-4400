@@ -61,6 +61,15 @@
     		margin-top: -25px;
     	}
 
+    	th>.dropdown-toggle {
+    		background-color: transparent;
+    	}
+
+    	th>.dropdown-toggle:focus,th>.dropdown-toggle:active {
+    	   outline: none !important;
+    	   box-shadow: none;
+    	}
+
 /*    	.dropdown-toggle {
     		align-self: left;
     	}*/
@@ -76,22 +85,23 @@
 	    	<table class="table table-bordered table-hover">
 	            <thead class="thead-light">
 	                <tr>
-	                  <th scope="col">Name <button class="btn dropdown-toggle float-right" type="button"></button></th>
+	                	<!-- onclick="sort(document.getElementById('sortName').value) -->
+	                  <th scope="col">Name<button id="sortName" class="btn dropdown-toggle float-right" type="button" ></button></th>
 	                  <th scope="col">Address</th>
-	                  <th scope="col">City <button class="btn dropdown-toggle float-right" type="button"></button></th>
+	                  <th scope="col">City<button id="sortCity" class="btn dropdown-toggle float-right" type="button"></button></th>
 	                  <th scope="col">Zip</th>
 	                  <th scope="col">Size</th>
-	                  <th scope="col">Type <button class="btn dropdown-toggle float-right" type="button"></button></th>
+	                  <th scope="col">Type<button id="sortType" class="btn dropdown-toggle float-right" type="button"></button></th>
 	                  <th scope="col">Public</th>
 	                  <th scope="col">Commercial</th>
 	                  <th scope="col">ID</th>
-	                  <th scope="col">Visits <button class="btn dropdown-toggle float-right" type="button"></button></th>
-	                  <th scope="col">Avg. Rating <button class="btn dropdown-toggle float-right" type="button"></button></th>
+	                  <th scope="col">Visits<button id="sortVisits" class="btn dropdown-toggle float-right" type="button"></button></th>
+	                  <th scope="col">Avg. Rating<button id="sortAvgRating" class="btn dropdown-toggle float-right" type="button"></button></th>
 	                </tr>
 	            </thead>
-	            <tbody>
+	            <tbody id="rows">
 	              <tr>
-	                <td scope="row">Omar</td>
+	                <td scope="row">Georgia Tech Garden</td>
 	                <td>Spring Street SW</td>
 	                <td>Atlanta</td>
 	                <td>30308</td>
@@ -104,30 +114,43 @@
 	                <td>3.6</td>
 	              </tr>
 	              <tr>
-	                <td scope="row">Dennis</td>
-	                <td>Spring Street SW</td>
-	                <td>Atlanta</td>
-	                <td>30308</td>
-	                <td>0.5</td>
+	                <td scope="row">Cooper Middle School</td>
+	                <td>4605 Ewing Rd</td>
+	                <td>Austell</td>
+	                <td>30106</td>
+	                <td>1</td>
 	                <td>Garden</td>
 	                <td>True</td>
 	                <td>False</td>
-	                <td>00320</td>
-	                <td>20</td>
-	                <td>3.6</td>
+	                <td>12000</td>
+	                <td>2</td>
+	                <td>5.0</td>
 	              </tr>
 	              <tr>
-	                <td scope="row">Prabhath</td>
-	                <td>Spring Street SW</td>
-	                <td>Atlanta</td>
-	                <td>30308</td>
-	                <td>0.5</td>
+	                <td scope="row">Kenari Company Farm</td>
+	                <td>Hightower Road</td>
+	                <td>Roswell</td>
+	                <td>30076</td>
+	                <td>10</td>
+	                <td>Farm</td>
+	                <td>True</td>
+	                <td>True</td>
+	                <td>00237</td>
+	                <td>5</td>
+	                <td>2.7</td>
+	              </tr>
+	              <tr>
+	                <td scope="row">Woodstock Community Garden</td>
+	                <td>Dobbs Rd.</td>
+	                <td>Woodstock</td>
+	                <td>30188</td>
+	                <td>3</td>
 	                <td>Garden</td>
 	                <td>True</td>
 	                <td>False</td>
-	                <td>00320</td>
-	                <td>20</td>
-	                <td>3.6</td>
+	                <td>00293</td>
+	                <td>1</td>
+	                <td>4.0</td>
 	              </tr>
 	            </tbody>
 	        </table>
@@ -166,4 +189,34 @@
 	$('.dropdown-item').click(function() {
 		$('#dropdownMenuButton').text('Search by: ' + $(this).text());
 	});
+
+	$('th>.dropdown-toggle').on('click', click);
+
+	function click(e) {
+		var th = $(e.target).parent();
+		var col = th.text();
+		var table = $(th).parents('table').eq(0);
+    	var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+    	this.asc = !this.asc;
+		if (!this.asc) {
+			rows = rows.reverse();
+		}
+    	for (var i = 0; i < rows.length; i++) {
+    		table.append(rows[i]);
+    	}
+	}
+
+	function compare(index) {
+	    return function(a, b) {
+	        var valA = getCellValue(a, index); 
+	        var valB = getCellValue(b, index);
+	        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+	    }
+	}
+
+	function getCellValue(row, index){ 
+		return $(row).children('td').eq(index).text(); 
+	}
+
+
 </script>
