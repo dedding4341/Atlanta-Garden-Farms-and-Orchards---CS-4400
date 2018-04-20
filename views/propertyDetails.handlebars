@@ -18,94 +18,94 @@
 
     <form>
       <div class="center-h-container">
-        <h1 class="font-weight-normal"> <u> <b>Kenari Company Farm Details </b></u></h1>
+        <h1 class="font-weight-normal"> <u> <b>{{propertyInfo.Name}} Details </b></u></h1>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Name:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> Kenari Company Farms </label>
+          <label class="form-control-plaintext"> {{propertyInfo.Name}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Owner:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> ALFI </label>
+          <label class="form-control-plaintext"> {{propertyInfo.Owner}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"> <b>Email:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">alfi@gmail.com </label>
+          <label class="form-control-plaintext">{{personalInfo.Email}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Visits:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> 5 </label>
+          <label class="form-control-plaintext"> PENDING </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Address:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">Hightower Road </label>
+          <label class="form-control-plaintext">{{propertyInfo.Street}}</label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>City:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">Roswell</label>
+          <label class="form-control-plaintext">{{propertyInfo.City}}</label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Zip:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> 30076 </label>
+          <label class="form-control-plaintext"> {{propertyInfo.Zip}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Size(acres):</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> 10 </label>
+          <label class="form-control-plaintext"> {{propertyInfo.Size}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Type:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> Farm </label>
+          <label class="form-control-plaintext"> {{propertyInfo.PropertyType}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Public:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> True </label>
+          <label class="form-control-plaintext"> {{propertyInfo.IsPublic}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Commercial:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> True </label>
+          <label class="form-control-plaintext"> {{propertyInfo.IsCommercial}} </label>
         </div>
       </div>
       <div class="form-group row last">
         <label class="row-label col-sm-2 col-form-label"><b>ID: </b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> 12345 </label>
+          <label class="form-control-plaintext"> {{propertyInfo.ID}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Crops:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> Corn, Celery </label>
+          <label class="form-control-plaintext"> PENDING </label>
         </div>
       </div>
       <div class="form-group row last">
         <label class="row-label col-sm-2 col-form-label"><b>Animals:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> Chicken </label>
+          <label class="form-control-plaintext"> PENDING </label>
         </div>
       </div>
       <div class="btn-container">
-        <button type="button" class="btn ">Back</button>
+        <a type="button" class="btn" href = "/otherProperties">Back</a>
       </div>
 
     </form>
@@ -199,3 +199,4 @@
   </style>
 
 </html>
+

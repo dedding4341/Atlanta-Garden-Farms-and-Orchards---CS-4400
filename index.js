@@ -108,6 +108,7 @@ app.get('/', function(request, response) {
 });*/
 
 app.get('/otherProperties', function(request, response) {
+    console.log(signedIn);
 
     if (signedIn) {
         response.render('otherProperties', {
@@ -119,11 +120,35 @@ app.get('/otherProperties', function(request, response) {
 });
 
 app.post('/viewPropertyDetails', function(request, response) {
-    response.render('propertyDetails');
     //console.log("Running");
     //console.log(request.body);
     var idSelection = request.body.idSelection;
-    console.log(idSelection);
+    var sql = "SELECT * FROM Property WHERE ID = ?";
+    connection.query(sql, [idSelection], function(err, result, fields) {
+        if (err) {
+            return;
+        }
+
+        if (result == '') {
+
+        } else {
+
+            var resultPropInfo = result;
+            var sql = "SELECT * FROM User WHERE Username = ?";
+            console.log(resultPropInfo[0].Owner);
+            connection.query(sql, [resultPropInfo[0].Owner], function(err, result, fields) {
+                //console.log(result);
+                response.render('propertyDetails', {
+                    propertyInfo: resultPropInfo[0],
+                    personalInfo: result[0]
+                });
+                //console.log(resultPropInfo);
+
+            })
+
+        }
+    })
+
 });
 
 
