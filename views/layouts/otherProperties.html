@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Atlanta Gardens, Farms, Orchards</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<html>
+  <body>
+    <form class="otherProperties">
+
+      <h1 class="h3 mb-3 font-weight-normal">All Other Valid Properties: </h1>
+
+      <!-- INSERT TABLE -->
+
+
+      <table class="table table-bordered table-hover">
+          <thead class="thead-light">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">City</th>
+                <th scope="col">Zip</th>
+                <th scope="col">Size</th>
+                <th scope="col">Type</th>
+                <th scope="col">Public</th>
+                <th scope="col">Commercial</th>
+                <th scope="col">ID</th>
+                <th scope="col">isValid</th>
+                <th scope="col">Visits</th>
+                <th scope="col">Avg. Rating</th>
+              </tr>
+          </thead>
+              <tr>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+              </tr>
+              <tr>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+                <td scope="col">mock</td>
+              </tr>
+
+      </table>
+
+
+
+
+      <table class="selection-table">
+        <tr>
+          <td>
+            <div class="center-h-container">
+              <div class="not-btn-input">
+                <select class="form-control "  id="searchBy">
+                  <option>Search by...</option>
+                  <option>Name</option>
+                  <option>City</option>
+                  <option>Type</option>
+                  <option>Visits</option>
+                  <option>Avg. Rating</option>
+                </select>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="center-h-container">
+              <label for="searchTerm" class="sr-only">Search Term</label>
+              <input type="email" id="searchTerm" class="form-control not-btn-input" placeholder="Search Term" required autofocus>
+            </div>
+          </td>
+          <td>
+            <button type="button" class="btn ">View Property Details</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type="button" class="btn ">Search Properties</button>
+          </td>
+          <td>
+            <button type="button" class="btn">Back</button>
+          </td>
+          <td>
+            <div class="empty">
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </form>
+  </body>
+
+
+
+  <style>
+
+    body {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      background-color: #f5f5f5;
+    }
+    .otherProperties {
+      width: 100%;
+      padding: 50px;
+      margin: 0 auto;
+    }
+    .empty {
+      width: 300px;
+    }
+    .not-btn-input{
+      width: 300px;
+    }
+
+    .btn {
+      width: 300px;
+      background-color: #007bff;
+      color: #ffffff;
+    }
+    td {
+      text-align: center;
+    }
+    .selection-table {
+      width: 100%;
+    }
+
+    .center-h-container{
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+    }
+
+  </style>
+
+</html>

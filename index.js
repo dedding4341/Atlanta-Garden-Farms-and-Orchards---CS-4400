@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-var handlebars = require('handlebars');
+var handlebars = require('express-handlebars');
 var md5 = require('md5');
 
 
@@ -28,12 +28,15 @@ var app = express();
 //Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.set('pages', path.join(__dirname, 'pages'));
+app.engine('handlebars', handlebars({defaultLayout: 'login'}));
+app.set('view engine', 'handlebars')
 
 //Set Static Path
 //app.use(express.static(__dirname + '/pages'));
 
 app.get('/', function(request, response) {
-    response.sendFile(__dirname + '/pages/login.html');
+    response.render(__dirname + '/pages/login.handlebars');
 });
 
 app.get('/newVisitorRegistration', function(request, response) {
@@ -54,14 +57,20 @@ app.post('/login', function(request, response) {
             return;
         };
 
-        if (typeof page_name == 'undefined') {
+        //console.log(result)
+
+        if (result == '') {
             console.log("Invalid Login");
             response.sendFile(__dirname + '/pages/badLogin.html');
         } else {
-            if (result[0].Password === password) {
+            if (result[0].Password === password && result[0].UserType === "OWNER") {
                 console.log("Valid Login from " + email);
+                response.render(__dirname + '/pages/ownerProperties.handlebars', {
+                    username: result[0].Username
+                });
             } else {
                 console.log("Invalid Login.");
+                response.sendFile(__dirname + '/pages/badLogin.html');
             }
         }
 

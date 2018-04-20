@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- <link rel="icon" href="../../../../favicon.ico"> -->
+
+    <title>Atlanta Gardens, Farms, Orchards</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+
+
+<html>
+    <style>
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+          /*display: -ms-flexbox;
+          display: -webkit-box;
+          display: flex;
+          -ms-flex-align: center;
+          -ms-flex-pack: center;
+          -webkit-box-align: center;
+          align-items: center;
+          -webkit-box-pack: center;
+          justify-content: center;
+          padding-top: 40px;
+          padding-bottom: 40px;*/
+          background-color: #f5f5f5;
+          overflow:auto;
+
+        }
+
+        footer{
+          position:static;
+        }
+
+        .form-signup {
+          width: 100%;
+          max-width: 330px;
+          padding: 15px;
+          margin: 0 auto;
+        }
+        .form-signup .checkbox {
+          font-weight: 400;
+        }
+        .form-signup .form-control {
+          position: relative;
+          box-sizing: border-box;
+          height: auto;
+          padding: 10px;
+          font-size: 16px;
+        }
+        .form-signup .form-control:focus {
+          z-index: 2;
+        }
+        .form-signup input[type="email"] {
+          margin-bottom: -1px;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+        .form-signup input[type="password"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+
+        .form-signup input[type="property"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .form-signup input[type="streetAddress"] {
+          margin-bottom: -1px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .form-signup input[type="city"] {
+          margin-bottom: -1px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .form-signup input[type="zip"] {
+          margin-bottom: -1px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .form-signup input[type="acres"] {
+          margin-bottom: 10px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+
+        .hidden {
+          display: none;
+        }
+
+
+    </style>
+
+    <body class = "text-center">
+        <form class = "form-signup">
+            <h1 class="h4 mb-3 font-weight-normal">New Owner Registration</h1>
+
+            <label for="inputEmail" class="sr-only">Email address</label>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+
+            <label for = "inputUsername" class = "sr-only">Username</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required>
+
+            <label for="inputPassword1" class="sr-only">Password</label>
+            <input type="password" id="inputPassword1" class="form-control" placeholder="Password" required>
+
+            <label for="inputPassword2" class="sr-only">ConfirmPassword</label>
+            <input type="password" id="inputPassword2" class="form-control" placeholder="Confirm password" required>
+
+            <label for="inputProperty" class="sr-only">Property</label>
+            <input type="property" id="inputProperty" class="form-control" placeholder="Property name" required>
+
+            <label for="inputStreetAddress" class="sr-only">StreetAddress</label>
+            <input type="streetAddress" id="inputStreetAddress" class="form-control" placeholder="Street address" required>
+
+            <label for="inputCity" class="sr-only">City</label>
+            <input type="city" id="inputCity" class="form-control" placeholder="City" required>
+
+            <label for="inputZip" class="sr-only">Zip</label>
+            <input type="zip" id="inputZip" class="form-control" placeholder="Zip" required>
+
+            <label for="inputAcres" class="sr-only">Acres</label>
+            <input type="acres" id="inputAcres" class="form-control" placeholder="Acres" required>
+
+
+
+              <div class = "property">
+              <label for = "propertyType">Property Type:</label>
+              <select id="propertyType">
+                <option>Farm</option>
+                <option>Garden</option>
+                <option>Orchards</option>
+              </select>
+              </div>
+
+
+
+              <div class = "animal filterItem hidden">
+              <label for = "animalType">Animal:</label>
+              <select id="animalType">
+                <option>Animal 1</option>
+                <option>Animal 2</option>
+                <option>Animal 3</option>
+              </select>
+              </div>
+
+
+
+              <div class = "crop">
+              <label for = "cropType">Crop:</label>
+              <select id="cropType">
+                <option>Crop 1</option>
+                <option>Crop 2</option>
+                <option>Crop 3</option>
+              </select>
+              </div>
+
+
+
+              <div class = "public">
+              <label for = "publicType">Public:</label>
+              <select id="publicType">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+              </div>
+
+
+
+              <div class = "commercial">
+              <label for = "commercialType">Commercial:</label>
+              <select id="commercialType">
+                <option>Yes</option>
+                <option>No</option>
+              </select>
+              </div>
+
+
+
+
+
+
+            <button class="btn btn-lg btn-primary btn-block" type = "submit">Register Owner</button>
+            <a class="btn btn-lg btn-info btn-block" href = "/">Cancel</a>
+            <!-- <p class="mt-5 mb-3 text-muted">&copy; 2018</p> -->
+        </form>
+
+
+    </body>
+</html>
+
+<script>
+
+  $(document).ready(function () {
+
+    var currentSelected = $('#propertyType').find(":selected").text();
+      //console.log(currentSelected);
+      if (currentSelected == "Farm") {
+        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      }
+
+    $(document).change(function () {
+
+      var currentSelected = $('#propertyType').find(":selected").text();
+      //console.log(currentSelected);
+      if (currentSelected == "Farm") {
+        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      } else {
+        document.getElementsByClassName("filterItem")[0].classList.add("hidden")
+      }
+
+
+    });
+  });
+
+</script>
+
