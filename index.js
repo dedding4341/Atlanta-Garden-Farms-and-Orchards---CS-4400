@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-var handlebars = require('handlebars');
+var handlebars = require('express-handlebars');
 var md5 = require('md5');
 
 
@@ -28,16 +28,19 @@ var app = express();
 //Body Parser Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', handlebars({defaultLayout: 'login'}));
+app.set('view engine', 'handlebars');
 
 //Set Static Path
 //app.use(express.static(__dirname + '/pages'));
 
 app.get('/', function(request, response) {
-    response.sendFile(__dirname + '/pages/login.handlebars');
+    response.render('login');
 });
 
 app.get('/newVisitorRegistration', function(request, response) {
-    response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+    response.render('newVisitorRegistration');
     var username = request.body.inputEmail;
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword1);
@@ -67,7 +70,7 @@ app.get('/newVisitorRegistration', function(request, response) {
 });
 
 app.get('/newOwnerRegistration', function(request, response) {
-    response.sendFile(__dirname + '/pages/newOwnerRegistration.html');
+    response.render('newOwnerRegistration');
 });
 
 app.post('/login', function(request, response) {
@@ -80,17 +83,19 @@ app.post('/login', function(request, response) {
             return;
         };
 
-        if (typeof page_name == 'undefined') {
+        if (result[0] == '') {
             console.log("Invalid Login");
-            response.sendFile(__dirname + '/pages/badLogin.html');
+            response.render('badLogin');
         } else {
             if (result[0].Password === password) {
                 console.log("Valid Login from " + email);
                 response.render('ownerProperties', {
                     username: result[0].Username
                 });
+                console.log("render");
             } else {
                 console.log("Invalid Login.");
+                response.render('badLogin');
             }
         }
 
