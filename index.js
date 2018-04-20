@@ -3,6 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 var handlebars = require('handlebars');
+var md5 = require('md5');
 
 
 // var creds = require('credentials.js');
@@ -45,8 +46,30 @@ app.get('/newOwnerRegistration', function(request, response) {
 
 app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
-    console.log("Login attempt detected from " + email);
-    response.sendFile(__dirname + '/pages/login.html');
+    var password = md5(request.body.inputPassword);
+
+    var sql = "SELECT * FROM User WHERE Email = ?";
+    connection.query(sql, [email], function(err, result, fields) {
+        if (err) {
+            return;
+        };
+
+        if (typeof page_name == 'undefined') {
+            console.log("Invalid Login");
+            response.sendFile(__dirname + '/pages/badLogin.html');
+        } else {
+            if (result[0].Password === password) {
+                console.log("Valid Login from " + email);
+            } else {
+                console.log("Invalid Login.");
+            }
+        }
+
+        //console.log(result[0].Username);
+
+
+    });
+    //response.sendFile(__dirname + '/pages/login.html');
 })
 
 app.listen(3000, function() {
