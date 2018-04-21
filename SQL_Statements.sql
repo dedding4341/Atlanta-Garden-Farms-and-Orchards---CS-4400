@@ -41,15 +41,141 @@ VALUES ($propertyid, $itemName);
 --default view of owners properties
 SELECT 
 	Name,
-	Street as Address,
-	City,
-	Zip,
-	Size,
-	PropertyType as Type,
-	(CASE WHEN IsPublic = 1 THEN 'True' ELSE 'False') as Public,
-	(CASE WHEN IsCommercial = 1 THEN 'True' ELSE 'False') as Commercial,
-	ID,
-	(CASE WHEN ApprovedBy = NULL THEN 'False' ELSE 'True') as isValid,
-	COUNT(Visit.*),
-FROM 
+	Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
 
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, (
+
+CASE WHEN ApprovedBy = NULL
+THEN 'False'
+ELSE 'True'
+END
+) AS isValid, COUNT( * ) , AVG( Rating )
+FROM Property, Visit
+WHERE Owner = $owner
+GROUP BY ID;
+--search by term filter
+SELECT 
+	Name,
+	Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, (
+
+CASE WHEN ApprovedBy = NULL
+THEN 'False'
+ELSE 'True'
+END
+) AS isValid, COUNT( * ) , AVG( Rating )
+FROM Property, Visit
+WHERE $searchby = $search
+GROUP BY ID;
+
+/* View other owner's properties */
+--get all other valid properties (not including current logged in owner)
+SELECT Name, 
+Street AS Address, 
+City, 
+Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, (
+
+CASE WHEN ApprovedBy = NULL
+THEN 'False'
+ELSE 'True'
+END
+) AS isValid, COUNT( * ) , AVG( Rating )
+FROM Property, Visit
+WHERE Owner != $owner
+GROUP BY ID
+ORDER BY $order 
+--search by term filter
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, (
+
+CASE WHEN ApprovedBy = NULL
+THEN 'False'
+ELSE 'True'
+END
+) AS isValid, COUNT( * ) , AVG( Rating )
+FROM Property, Visit
+WHERE Owner != $owner and $searchby = $search
+GROUP BY ID
+ORDER BY $order 
+--view property details
+ SELECT P . * , SUM(
+CASE WHEN FarmItem.Type = 'ANIMAL'
+THEN 0
+ELSE 1
+END ) AS Crops, SUM(
+CASE WHEN FarmItem.Type = 'ANIMAL'
+THEN 1
+ELSE 0
+END ) AS Animals
+FROM (
+
+SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, Property.ID AS ID
+FROM Property
+JOIN User ON Property.Owner = User.Username
+JOIN Has ON Property.ID = Has.PropertyID
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.ID =0
+) AS P
+JOIN Has ON Has.PropertyID = P.ID
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
