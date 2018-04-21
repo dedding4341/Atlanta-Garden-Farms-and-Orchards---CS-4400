@@ -260,7 +260,7 @@ HAVING AVG(Rating) BETWEEN $min AND $max
 SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
-SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, AVG(Rating) as Avg.Rating, Size AS 'Size (acres)', PropertyType AS
+SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, AVG(Rating) as 'Avg.Rating', Size AS 'Size (acres)', PropertyType AS
 TYPE , COUNT(* ) as Visits, (
 
 CASE WHEN IsPublic =1
