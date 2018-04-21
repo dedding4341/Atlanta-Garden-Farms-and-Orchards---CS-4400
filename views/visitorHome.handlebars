@@ -11,79 +11,77 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 <html>
-<style media="screen">
-html,
-body {
-    height: 100%;
-}
+    <style media="screen">
+        html,
+        body {
+            height: 100%;
+        }
 
-body {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #f5f5f5;
-}
+        body {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
 
-.form-unconfirmed {
-    width: 100%;
-    padding: 50px;
-    margin: 0 auto;
-}
+        .form-unconfirmed {
+            width: 100%;
+            padding: 50px;
+            margin: 0 auto;
+        }
 
-.form-unconfirmed .checkbox {
-    font-weight: 400;
-}
+        .form-unconfirmed .checkbox {
+            font-weight: 400;
+        }
 
-.form-unconfirmed .form-control {
-    position: relative;
-    box-sizing: border-box;
-    height: auto;
-    padding: 10px;
-    font-size: 16px;
-}
+        .form-unconfirmed .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
 
-.form-signin .form-control:focus {
-    z-index: 2;
-}
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
 
+        #title {
+            margin-top: -50px;
+        }
 
-/*      #subtitle {
-            margin-left: 100px;
-            margin-top: 50px;
-        }*/
+        #dropdownMenuButton {
+            margin-top: -25px;
+        }
 
-#title {
-    margin-top: -50px;
-}
+        th>.dropdown-toggle {
+            background-color: transparent;
+        }
 
-#dropdownMenuButton {
-    margin-top: -25px;
-}
+        th>.dropdown-toggle:focus,
+        th>.dropdown-toggle:active {
+            outline: none !important;
+            box-shadow: none;
+        }
 
-th>.dropdown-toggle {
-    background-color: transparent;
-}
+        .table tbody tr.highlight td {
+            background-color: #ddd;
+        }
 
-th>.dropdown-toggle:focus,
-th>.dropdown-toggle:active {
-    outline: none !important;
-    box-shadow: none;
-}
+        .hiddenField {
+            display: none;
+        }
 
-.table tbody tr.highlight td {
-    background-color: #ddd;
-}
-
-.hiddenField {
-    display: none;
-}
-</style>
+        .not-btn-input {
+            width: 300px;
+        }
+    </style>
 
 <body>
     <div class="form-unconfirmed">
-        <h1 id="title" class="h3 mb-3 font-weight-normal text-center">Welcome <b>Visitor5</b></h1>
+        <h1 id="title" class="h3 mb-3 font-weight-normal text-center">Welcome <b>{{username}}</b></h1>
         <h3 id="subtitle" class="h4 mb-2 font-weight-normal">All public, validated properties:</b></h1>
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
@@ -103,78 +101,57 @@ th>.dropdown-toggle:active {
                     </tr>
                 </thead>
                 <tbody id="rows">
+
+                {{#each rows}}
                   <tr>
-                    <td scope="row">Georgia Tech Garden</td>
-                    <td>Spring Street SW</td>
-                    <td>Atlanta</td>
-                    <td>30308</td>
-                    <td>0.5</td>
-                    <td>Garden</td>
-                    <td>True</td>
-                    <td>False</td>
-                    <td>00320</td>
-                    <td>20</td>
-                    <td>3.6</td>
+                    <td scope="row">{{this.Name}}</td>
+                    <td>{{this.Address}}</td>
+                    <td>{{this.City}}</td>
+                    <td>{{this.Zip}}</td>
+                    <td>{{this.Size}}</td>
+                    <td>{{this.TYPE}}</td>
+                    <td>{{this.Public}}</td>
+                    <td>{{this.Commercial}}</td>
+                    <td>{{this.ID}}</td>
+                    <td>{{this.Visits}}</td>
+                    <td>{{{[Avg. Rating]}}}</td>
                   </tr>
-                  <tr>
-                    <td scope="row">Cooper Middle School</td>
-                    <td>4605 Ewing Rd</td>
-                    <td>Austell</td>
-                    <td>30106</td>
-                    <td>1</td>
-                    <td>Garden</td>
-                    <td>True</td>
-                    <td>False</td>
-                    <td>12000</td>
-                    <td>2</td>
-                    <td>5.0</td>
-                  </tr>
-                  <tr>
-                    <td scope="row">Kenari Company Farm</td>
-                    <td>Hightower Road</td>
-                    <td>Roswell</td>
-                    <td>30076</td>
-                    <td>10</td>
-                    <td>Farm</td>
-                    <td>True</td>
-                    <td>True</td>
-                    <td>00237</td>
-                    <td>5</td>
-                    <td>2.7</td>
-                  </tr>
-                  <tr>
-                    <td scope="row">Woodstock Community Garden</td>
-                    <td>Dobbs Rd.</td>
-                    <td>Woodstock</td>
-                    <td>30188</td>
-                    <td>3</td>
-                    <td>Garden</td>
-                    <td>True</td>
-                    <td>False</td>
-                    <td>00293</td>
-                    <td>1</td>
-                    <td>4.0</td>
-                  </tr>
+                {{/each}}
                 </tbody>
             </table>
 
             <br>
-            <div class="dropdown">
-              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 200px; height: 35px;">
-                Search by...
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <button id="name" class="dropdown-item" type="button">Name</button>
-                <button id="city" class="dropdown-item" type="button">City</button>
-                <button id="type" class="dropdown-item" type="button">Type</button>
-                <button id="visits" class="dropdown-item" type="button">Visits</button>
-                <button id="avgRating" class="dropdown-item" type="button">Average Rating</button>
-              </div>
-            </div>
             <div class="d-flex justify-content-between">
                 <div class="d-flex justify-content-between flex-direction: flex-column">
-                    <input type="text" class="form-control" id="searchText" placeholder="Search Term" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
-                    <input id="searchProperties" class="btn btn-primary" type="submit" value="Search Properties" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+                    <form method = "POST" action = "/visitorHome">
+                        <!-- <div class="dropdown">
+                          <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 200px; height: 35px;" required>
+                            Search by...
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button id="name" class="dropdown-item" type="button">Name</button>
+                            <button id="city" class="dropdown-item" type="button">City</button>
+                            <button id="type" class="dropdown-item" type="button">Type</button>
+                            <button id="visits" class="dropdown-item" type="button">Visits</button>
+                            <button id="avgRating" class="dropdown-item" type="button">Average Rating</button>
+                          </div>
+                        </div> -->
+
+                        <div class="not-btn-input">
+                          <select class="form-control" id="searchBy" name="column" required>
+                            <option value="">Search by...</option>
+                            <option>Name</option>
+                            <option>City</option>
+                            <option>Type</option>
+                            <option>Visits</option>
+                            <option>Avg. Rating</option>
+                          </select>
+                        </div>
+                        <input type="text" class="form-control" id="searchText" placeholder="Search Term" name="search" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;" required>
+                        <button id="searchProperties" class="btn btn-primary" type="submit" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+                            Search Properties
+                        </button>
+                    </form>
                 </div>
                 <div class="d-flex justify-content-between flex-direction: flex-column-reverse">
                     <form method = "POST" action = "/visitorDetails">
