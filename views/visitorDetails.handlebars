@@ -244,9 +244,16 @@ $(document).ready(function() {
 
     $('<input>').attr({
         type: 'hidden',
-        id: 'visitDate',
-        name: 'visitDate',
-        value: '2/23/1997'
+        id: 'logged',
+        name: 'logged',
+        value: false
+    }).appendTo('form')
+
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'username',
+        name: 'username',
+        value: 'greenguy'
     }).appendTo('form')
 
     $('<input>').attr({

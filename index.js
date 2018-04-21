@@ -242,11 +242,77 @@ app.post('/visitorHome', function(request, response) {
 
 // visitor property details
 app.post('/visitorDetails', function(request, response) {
-    //console.log("Running");
-    //console.log(request.body);
-    var idSelection = request.body.idSelection;
-    var body = request.body;
-    console.log(body);
+    console.log(request.body);
+    var id = request.body.idSelection;
+    var username = request.body.username;
+    var logged = request.body.logged;
+    var rating = request.body.rating;
+
+    // console.log(id);
+    // console.log(username);
+    // console.log(logged);
+    // console.log(rating);
+    var sqlInit = `
+    SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+    FROM (
+
+    SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
+    TYPE , (
+
+    CASE WHEN IsPublic =1
+    THEN 'True'
+    ELSE 'False'
+    END
+    ) AS Public, (
+
+    CASE WHEN IsCommercial =1
+    THEN 'True'
+    ELSE 'False'
+    END
+    ) AS Commercial, Property.ID AS ID
+    FROM Property
+    JOIN User ON Property.Owner = User.Username
+    JOIN Has ON Property.ID = Has.PropertyID
+    JOIN FarmItem ON FarmItem.Name = Has.ItemName
+    JOIN Visit ON Visit.PropertyID = Property.ID
+    WHERE Property.ID =$id
+    ) AS P
+    JOIN Has ON Has.PropertyID = P.ID
+    JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
+
+    var sqlLog = 'INSERT INTO Visit VALUES ($username, $propertyid, CURRENT_TIMESTAMP, $rating);';
+    var sqlUnlog = 'DELETE FROM Visit WHERE Username = $username AND PropertyID = $id';
+
+    if (request.body.logged === false) {
+        connection.query(sqlLog, [username, id, rating], function(err, result, fields) {
+            console.log(result);
+            response.render('visitorDetails', {
+                // propertyInfo: resultPropInfo[0],
+                // personalInfo: result[0]
+            });
+            //console.log(resultPropInfo);
+
+        });
+    } else if (request.body.logged === true) {
+        connection.query(sqlUnlog, [username, id], function(err, result, fields) {
+            console.log(result);
+            response.render('visitorDetails', {
+                // propertyInfo: resultPropInfo[0],
+                // personalInfo: result[0]
+            });
+            //console.log(resultPropInfo);
+        });
+    } else {
+        connection.query(sqlInit, [id], function(err, result, fields) {
+            console.log(result);
+            response.render('visitorDetails', {
+                // propertyInfo: resultPropInfo[0],
+                // personalInfo: result[0]
+            });
+            //console.log(resultPropInfo);
+        });
+    }
+
 
     // var sql = "SELECT * FROM Property WHERE ID = ?";
     // connection.query(sql, [idSelection], function(err, result, fields) {
@@ -269,15 +335,28 @@ app.post('/visitorDetails', function(request, response) {
     //         })
     //     }
     // })
-
-    response.render('visitorDetails');
 });
 
 // visitor history
 app.get('/visitorHistory', function(request, response) {
 
+    var username = request.body.username;
     if (signedIn) {
-        response.render('visitorHistory');
+        var sql = `
+        SELECT Property.Name, Visit.VisitDate, Visit.Rating, Property.ID
+        FROM Visit JOIN Property ON Property.ID = Visit.Property
+        WHERE Visit.Username = $username`;
+
+        connection.query(sql, [username], function(err, result, fields) {
+            console.log(result);
+            response.render('visitorDetails', {
+                name: result[0],
+                visitDate: result[1],
+                rating: result[2],
+                id: result[3]
+            });
+
+        });
     }
 
 })
