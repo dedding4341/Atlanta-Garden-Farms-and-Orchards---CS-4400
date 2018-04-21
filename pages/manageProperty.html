@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Atlanta Gardens, Farms, Orchards</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</head>
+
+<html>
+  <body>
+    <form>
+        <div >
+            <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> Manage Atwood Street Garden</b></u></h1>
+        </div>
+        <div class="hor-container container-margin">
+            <div class=" vertical-container left">
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Property Name: </label>
+                  <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" required autofocus>
+                </div>
+                <div class="space smaller-hor-container">
+                  <label class="left-label">Address: </label>
+                  <input id="address" class="form-control not-btn-input" placeholder="Address" required autofocus>
+                </div>
+                <div class="space smaller-hor-container">
+                  <label class="left-label">City: </label>
+                  <input id="city" class="form-control not-btn-input" placeholder="City" required autofocus>
+                </div>
+                <div class="space smaller-hor-container">
+                  <label class="left-label">Zip: </label>
+                  <input id="zip" class="form-control not-btn-input" placeholder="Zip" required autofocus>
+                </div>
+                <div class="space smaller-hor-container">
+                  <label class="left-label">Size(acres): </label>
+                  <input id="size" class="form-control not-btn-input" placeholder="Size" required autofocus>
+                </div>
+            </div>
+            <div class=" vertical-container">
+                <div class="space smaller-hor-container">
+                  <label class="left-label">Type: </label>
+                  <input id="type" class="form-control not-btn-input" placeholder="Type" required autofocus>
+                </div>
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Public: </label>
+                  <div class="smaller-hor-container">
+                    <div class="form-control-plaintext">
+                      <select class="form-control "  id="searchBy">
+                        <option>True</option>
+                        <option>False</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Commercial: </label>
+                  <div class="smaller-hor-container">
+                    <div class="form-control-plaintext">
+                      <select class="form-control "  id="searchBy">
+                        <option>True</option>
+                        <option>False</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space left-container hor-container">
+                  <label class="left-label">ID: </label>
+                  <label id="city" > 00237 </label>
+                </div>
+            </div>
+        </div>
+        <div class="hor-container container-margin">
+            <div class=" vertical-container left">
+              <div class="space smaller-hor-container" >
+                <label class="left-label">Add new crop: </label>
+                <div class="smaller-hor-container">
+                  <div class="form-control-plaintext">
+                    <select class="form-control "  id="searchBy">
+                      <option>A</option>
+                      <option>B</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class=" vertical-container">
+                <!-- <div class="space left-container">
+                  <label class="left-label left-containe">Crops: </label>
+                </div> -->
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Crops: </label>
+                  <div class="smaller-hor-container">
+                    <div class="form-control-plaintext">
+                      <select class="form-control "  id="searchBy">
+                        <option>True</option>
+                        <option>False</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="button" class="btn ">Remove</button>
+                </div>
+            </div>
+
+        </div>
+        <div class=" container-margin hor-container">
+          <div class="space smaller-hor-container" >
+            <label class="lower-left-label">Request crop approval: </label>
+            <div class="space smaller-hor-container">
+              <input id="newname" class="form-control not-btn-input" placeholder="new crop name" required autofocus>
+            </div>
+            <div class="smaller-hor-container">
+              <div class="form-control-plaintext">
+                <select class="form-control "  id="searchBy">
+                  <option>Crop Type...</option>
+                  <option>False</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn ">Submit Request</button>
+          </div>
+        </div>
+        <div class="smaller-hor-container">
+            <div>
+                <button type="button" class="left btn bottom-btn ">Delete Property</button>
+            </div>
+            <div>
+                <button type="button" class="btn left  bottom-btn ">Save Changes</button>
+            </div>
+            <div>
+                <button type="button" class="btn bottom-btn ">Back</button>
+            </div>
+        </div>
+      </form>
+
+  </body>
+
+
+
+  <style>
+    .lower-left-label{
+      width: 300px;
+    }
+    .right-container{
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: row;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: flex-end;
+      -webkit-box-pack: center;
+       justify-content: flex-end;
+       width: 100%;
+    }
+    .left-container {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: row;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: flex-start;
+      -webkit-box-pack: center;
+       justify-content: flex-start;
+    }
+    .left {
+      margin-right: 40px;
+    }
+    .left-label {
+      width: 170px;
+      margin-bottom: 0px;
+    }
+    .space {
+      margin: 5px;
+      width: 300px;
+    }
+
+    .container-margin{
+      margin-bottom: 40px;
+    }
+
+    .vertical-container{
+      width: 100%;
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: column;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: flex-start;
+      -webkit-box-pack: center;
+      justify-content: flex-start;
+    }
+    .smaller-hor-container{
+      width: 100%;
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: row;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+    }
+    .hor-container{
+      width: 100%;
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: row;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: flex-start;
+      -webkit-box-pack: center;
+      justify-content: flex-start;
+    }
+    /* .horizontal-container{
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+    } */
+    body {
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      flex-direction: column;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      background-color: #f5f5f5;
+    }
+    .btn {
+      margin-left: 5px;
+    }
+    .bottom-btn{
+      width: 200px;
+      background-color: #007bff;
+      color: #ffffff;
+    }
+  </style>
+</html>
+
+<script>
+
+
+</script>
