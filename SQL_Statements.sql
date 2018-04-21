@@ -288,7 +288,7 @@ INSERT INTO Visit VALUES ($username, $propertyid, CURRENT_TIMESTAMP, $rating);
 --unlog a visit
 DELETE FROM Visit WHERE Username = $username AND PropertyID = $id
 --visitors visit history
-SELECT Property.Name, Visit.VisitDate, Visit.Rating
+SELECT Property.Name, Visit.VisitDate, Visit.Rating, Property.ID
 FROM Visit JOIN Property ON Property.ID = Visit.Property
 WHERE Visit.Username = $username
 
