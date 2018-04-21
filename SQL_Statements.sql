@@ -195,7 +195,7 @@ CASE WHEN IsCommercial =1
 THEN 'True'
 ELSE 'False'
 END
-) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'AvgRating'
 FROM Property
 JOIN Visit ON Visit.PropertyID = Property.ID
 WHERE Property.IsPublic = 1
@@ -215,10 +215,12 @@ CASE WHEN IsCommercial =1
 THEN 'True'
 ELSE 'False'
 END
-) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'AvgRating'
 FROM Property
 JOIN Visit ON Visit.PropertyID = Property.ID
 WHERE Property.IsPublic = 1
 AND Property.ApprovedBy IS NOT NULL
 AND $searchby = $search
 GROUP BY Property.ID
+
+/* Manage properties for owners */
