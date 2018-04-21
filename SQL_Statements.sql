@@ -145,15 +145,7 @@ WHERE Owner != $owner and $searchby = $search
 GROUP BY ID
 ORDER BY $order 
 --view property details
- SELECT P . * , SUM(
-CASE WHEN FarmItem.Type = 'ANIMAL'
-THEN 0
-ELSE 1
-END ) AS Crops, SUM(
-CASE WHEN FarmItem.Type = 'ANIMAL'
-THEN 1
-ELSE 0
-END ) AS Animals
+ SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
 SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
@@ -222,5 +214,88 @@ WHERE Property.IsPublic = 1
 AND Property.ApprovedBy IS NOT NULL
 AND $searchby = $search
 GROUP BY Property.ID
+--visited details: where visitors can log their visit and rating
+SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+FROM (
+
+SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, Property.ID AS ID
+FROM Property
+JOIN User ON Property.Owner = User.Username
+JOIN Has ON Property.ID = Has.PropertyID
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.ID =$id
+) AS P
+JOIN Has ON Has.PropertyID = P.ID
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
+--log new rating with logged date
+INSERT INTO Visit VALUES ($username, $propertyid, CURRENT_TIMESTAMP, $rating);
+--unlog a visit
+DELETE FROM Visit WHERE Username = $username AND PropertyID = $id
 
 /* Manage properties for owners */
+--initial data population of screen
+SELECT
+Name, 
+Street as Address,
+City,
+Zip,
+Size,
+PropertyType as Type,
+(CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public, 
+(CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial, 
+ID
+FROM Property
+WHERE Property.Owner = $owner
+--check if new property name doesnt exist yet
+SELECT *
+FROM Property
+WHERE ID != $id AND Name = $name
+--get list of crops that this property grows
+SELECT ItemName
+FROM Has
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
+WHERE Has.PropertyID = $id AND FarmItem.Type != 'ANIMAL'
+--get list of animals that this farm raises
+SELECT ItemName
+FROM Has
+JOIN FarmItem ON FarmItem.Name = Has.ItemName
+WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL'
+--get list of new crops that can be added to the property
+SELECt Name
+From FarmItem
+WHERE FarmItem.Type != 'ANIMAL' AND NOT EXISTS(
+	SELECT ItemName
+	FROM Has
+	JOIN FarmItem ON FarmItem.Name = Has.ItemName
+	WHERE Has.PropertyID = $id AND FarmItem.Type != 'ANIMAL')
+--get list of new animals that can be added to the property
+SELECt Name
+From FarmItem
+WHERE FarmItem.Type  'ANIMAL' AND NOT EXISTS(
+	SELECT ItemName
+	FROM Has
+	JOIN FarmItem ON FarmItem.Name = Has.ItemName
+	WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL')
+--get list of previous crops to check if it already exists
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Name = $name
+--add new crop/animal to farmitem to be reviewed
+INSERT INTO FarmItem VALUES ($name, False, $type);
+--delete Property
+DELETE FROM Property
+WHERE ID = $id
