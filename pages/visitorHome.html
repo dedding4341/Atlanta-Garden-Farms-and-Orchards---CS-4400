@@ -2,86 +2,89 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="../../../../favicon.ico">
-
     <title>Atlanta Gardens, Farms, Orchards</title>
-
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
-
 <html>
-    <style media="screen">
-    	html, 
-    	body {
-          height: 100%;
-        }
+<style media="screen">
+html,
+body {
+    height: 100%;
+}
 
-        body {
-          display: -ms-flexbox;
-          display: -webkit-box;
-          display: flex;
-          padding-top: 40px;
-          padding-bottom: 40px;
-          background-color: #f5f5f5;
-        }
-        .form-unconfirmed {
-          width: 100%;
-          padding: 50px;
-          margin: 0 auto;
-        }
-        .form-unconfirmed .checkbox {
-          font-weight: 400;
-        }
-        .form-unconfirmed .form-control {
-          position: relative;
-          box-sizing: border-box;
-          height: auto;
-          padding: 10px;
-          font-size: 16px;
-        }
-        .form-signin .form-control:focus {
-          z-index: 2;
-        }
+body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+}
+
+.form-unconfirmed {
+    width: 100%;
+    padding: 50px;
+    margin: 0 auto;
+}
+
+.form-unconfirmed .checkbox {
+    font-weight: 400;
+}
+
+.form-unconfirmed .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
 
 /*    	#subtitle {
     		margin-left: 100px;
     		margin-top: 50px;
     	}*/
 
-    	#title {
-    		margin-top: -50px;
-    	}
+#title {
+    margin-top: -50px;
+}
 
-    	#dropdownMenuButton {
-    		margin-top: -25px;
-    	}
+#dropdownMenuButton {
+    margin-top: -25px;
+}
 
-    	th>.dropdown-toggle {
-    		background-color: transparent;
-    	}
+th>.dropdown-toggle {
+    background-color: transparent;
+}
 
-    	th>.dropdown-toggle:focus,th>.dropdown-toggle:active {
-    	   outline: none !important;
-    	   box-shadow: none;
-    	}
+th>.dropdown-toggle:focus,
+th>.dropdown-toggle:active {
+    outline: none !important;
+    box-shadow: none;
+}
 
-/*    	.dropdown-toggle {
-    		align-self: left;
-    	}*/
+.table tbody tr.highlight td {
+    background-color: #ddd;
+}
 
-    	
+.hiddenField {
+    display: none;
+}
+</style>
 
-    </style>
-
-    <body>
-        <form class="form-unconfirmed">
-        	<h1 id="title" class="h3 mb-3 font-weight-normal text-center">Welcome <b>Visitor5</b></h1>
-	    	<h3 id="subtitle" class="h4 mb-2 font-weight-normal">All public, validated properties:</b></h1>
+<body>
+    <div class="form-unconfirmed">
+        <h1 id="title" class="h3 mb-3 font-weight-normal text-center">Welcome <b>Visitor5</b></h1>
+        <h3 id="subtitle" class="h4 mb-2 font-weight-normal">All public, validated properties:</b></h1>
 	    	<table class="table table-bordered table-hover">
 	            <thead class="thead-light">
 	                <tr>
@@ -174,14 +177,19 @@
   		      		<input id="searchProperties" class="btn btn-primary" type="submit" value="Search Properties" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
   		      	</div>
   		      	<div class="d-flex justify-content-between flex-direction: flex-column-reverse">
-  		      		<input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
-  		      		<input id="visitHistory" class="btn btn-primary" type="submit" value="View Visit History" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+  		      		<form method = "POST" action = "/visitorDetails">
+  		      			<input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
+  		      			<input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+  		      		</form>
+  		      		<form method = "POST" action = "/visitorHistory">
+  		      			<input id="visitHistory" class="btn btn-primary" type="submit" value="View Visit History" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+  		      		</form>
   				</div>
   				<div class="d-flex justify-content-between flex-direction: flex-column-reverse">
-  					<input id="logout" class="btn btn-primary" type="submit" value="Logout" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+  					<a id="logout" class="btn btn-info" href = "/"  style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">Logout</a>
   				</div>
 	      	</div>
-        </form>
+        </div>
     </body>
 </html>
 
@@ -190,9 +198,18 @@
 		$('#dropdownMenuButton').text('Search by: ' + $(this).text());
 	});
 
-	$('th>.dropdown-toggle').on('click', click);
+	$('th>.dropdown-toggle').on('click', onClick);
 
-	function click(e) {
+	$("tbody tr").click(function() {
+		$(this).addClass('highlight').siblings().removeClass('highlight');
+		var cells = this.cells; //cells collection
+		var id = cells[8].innerHTML;
+		console.log(id);
+		$('#idSelector').val(id);
+		// $(this).addClass('bg-info').siblings().removeClass('bg-info');
+	});
+
+	function onClick(e) {
 		var th = $(e.target).parent();
 		var col = th.text();
 		var table = $(th).parents('table').eq(0);
@@ -217,6 +234,5 @@
 	function getCellValue(row, index){ 
 		return $(row).children('td').eq(index).text(); 
 	}
-
 
 </script>

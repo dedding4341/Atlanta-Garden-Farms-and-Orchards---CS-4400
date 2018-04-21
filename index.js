@@ -112,10 +112,10 @@ app.get('/otherProperties', function(request, response) {
 
     if (signedIn) {
         response.render('otherProperties', {
-                username: userInfo.Username,
-                personalProperty: myPropertyInfo,
-                allProperty: allPropertyInfo
-            });
+            username: userInfo.Username,
+            personalProperty: myPropertyInfo,
+            allProperty: allPropertyInfo
+        });
     }
 });
 
@@ -156,13 +156,60 @@ app.get('/ownerProperties', function(request, response) {
 
     if (signedIn) {
         response.render('ownerProperties', {
-                username: userInfo.Username,
-                personalProperty: myPropertyInfo,
-                allProperty: allPropertyInfo
-            });
+            username: userInfo.Username,
+            personalProperty: myPropertyInfo,
+            allProperty: allPropertyInfo
+        });
     }
 
 })
+
+app.get('/visitorHome', function(request, response) {
+
+    if (signedIn) {
+        response.render('visitorHome', {
+        });
+    }
+
+})
+
+app.post('/visitorDetails', function(request, response) {
+    //console.log("Running");
+    //console.log(request.body);
+    var idSelection = request.body.idSelection;
+    // var sql = "SELECT * FROM Property WHERE ID = ?";
+    // connection.query(sql, [idSelection], function(err, result, fields) {
+    //     if (err) {
+    //         return;
+    //     } else if (result == '') {
+    //         console.log("Invalid Property");
+    //     } else {
+    //         var resultPropInfo = result;
+    //         var sql = "SELECT * FROM User WHERE Username = ?";
+    //         console.log(resultPropInfo[0].Visitor);
+    //         connection.query(sql, [resultPropInfo[0].Owner], function(err, result, fields) {
+    //             //console.log(result);
+    //             response.render('visitorDetails', {
+    //                 propertyInfo: resultPropInfo[0],
+    //                 personalInfo: result[0]
+    //             });
+    //             //console.log(resultPropInfo);
+
+    //         })
+    //     }
+    // })
+
+    response.render('visitorDetails');
+});
+
+app.get('/visitorHistory', function(request, response) {
+
+    if (signedIn) {
+        response.render('visitorHistory');
+    }
+
+})
+
 
 app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
@@ -183,22 +230,26 @@ app.post('/login', function(request, response) {
                 userInfo = result[0];
                 signedIn = true;
 
-
-                var sql = "SELECT * FROM Property WHERE Owner = ?";
-                connection.query(sql, [userInfo.Username], function(err, result, fields) {
-                    myPropertyInfo = result;
-
-                    var sql = "SELECT * FROM Property";
-                    connection.query(sql, function(err, result, fields) {
-                        allPropertyInfo = result;
-                        response.render('ownerProperties', {
-                            username: userInfo.Username,
-                            personalProperty: myPropertyInfo,
-                            allProperty: allPropertyInfo
+                if (userInfo.UserType === 'OWNER') {
+                    var sql = "SELECT * FROM Property WHERE Owner = ?";
+                    connection.query(sql, [userInfo.Username], function(err, result, fields) {
+                        myPropertyInfo = result;
+                        var sql = "SELECT * FROM Property";
+                        connection.query(sql, function(err, result, fields) {
+                            allPropertyInfo = result;
+                            response.render('ownerProperties', {
+                                username: userInfo.Username,
+                                personalProperty: myPropertyInfo,
+                                allProperty: allPropertyInfo
+                            });
                         });
-
                     });
-                });
+                } else if (userInfo.UserType === 'VISITOR') {
+                    response.render('visitorHome', {
+                        username: userInfo.Username
+                    });
+                }
+
             } else {
                 console.log("Invalid Login.");
                 response.render('badLogin');
