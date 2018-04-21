@@ -245,6 +245,10 @@ JOIN FarmItem ON FarmItem.Name = Has.ItemName
 INSERT INTO Visit VALUES ($username, $propertyid, CURRENT_TIMESTAMP, $rating);
 --unlog a visit
 DELETE FROM Visit WHERE Username = $username AND PropertyID = $id
+--visitors visit history
+SELECT Property.Name, Visit.VisitDate, Visit.Rating
+FROM Visit JOIN Property ON Property.ID = Visit.Property
+WHERE Visit.Username = $username
 
 /* Manage properties for owners */
 --initial data population of screen
