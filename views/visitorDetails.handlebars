@@ -21,92 +21,98 @@
             <h1 class="font-weight-normal"> <u> <b>Kenari Company Farm Details </b></u></h1>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Name:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> Kenari Company Farms </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Name:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> Kenari Company Farm </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Owner:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> ALFI </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Owner:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{owner}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"> <b>Email:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext">alfi@gmail.com </label>
+            <label class="row-label col-sm-4 col-form-label"> <b>Email:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext">{{email}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Visits:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> 5 </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Visits:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{visits}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Address:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext">Hightower Road </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Address:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext">{{address}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>City:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext">Roswell</label>
+            <label class="row-label col-sm-4 col-form-label"><b>City:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext">{{city}}</label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Zip:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> 30076 </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Zip:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{zip}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Size(acres):</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> 10 </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Size(acres):</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{acres}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Type:</b></label>
-            <div class="col-sm-10">
-                <label id='farm' class="form-control-plaintext">Farm</label>
+            <label class="row-label col-sm-4 col-form-label"><b>Avg. Rating:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{avgRating}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Public:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> True </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Type:</b></label>
+            <div class="col-sm-7">
+                <label id='farm' class="form-control-plaintext">{{type}}</label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Commercial:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> True </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Public:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{public}} </label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="row-label col-sm-4 col-form-label"><b>Commercial:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{commercial}} </label>
             </div>
         </div>
         <div class="form-group row last">
-            <label class="row-label col-sm-2 col-form-label"><b>ID: </b></label>
-            <div class="col-sm-10">
-                <label id="id" class="form-control-plaintext"> 12345 </label>
+            <label class="row-label col-sm-4 col-form-label"><b>ID: </b></label>
+            <div class="col-sm-7">
+                <label id="id" class="form-control-plaintext"> {{id}} </label>
             </div>
         </div>
         <div class="form-group row">
-            <label class="row-label col-sm-2 col-form-label"><b>Crops:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> Corn, Celery </label>
+            <label class="row-label col-sm-4 col-form-label"><b>Crops:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{crops}} </label>
             </div>
         </div>
         <div class=" filterItem hidden form-group row last">
-            <label id="animal" class="row-label col-sm-2 col-form-label"><b>Animals:</b></label>
-            <div class="col-sm-10">
-                <label class="form-control-plaintext"> Chicken </label>
+            <label id="animal" class="row-label col-sm-4 col-form-label"><b>Animals:</b></label>
+            <div class="col-sm-7">
+                <label class="form-control-plaintext"> {{animals}} </label>
             </div>
         </div>
         <div class="vertical-container">
             <form method = "POST" action = "/visitorDetails">
-                <div class="row-fluid center-h-container row-center" style="margin-bottom: 10px;">
+                <div class="row-fluid center-h-container row-center" style="margin-bottom: 10px; margin-top: 30px;">
                     <h6 style="margin-right: 10px;"> Rate Your Visit: </h6>
                     <div id="ratingGroup" class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-3" role="group" aria-label="Rating Group">
@@ -231,7 +237,7 @@ $(document).ready(function() {
     var currentSelected = document.getElementById('farm').textContent;
 
     //console.log(currentSelected);
-    if (currentSelected == "Farm") {
+    if (currentSelected == "FARM") {
         document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
     }
 
@@ -246,14 +252,14 @@ $(document).ready(function() {
         type: 'hidden',
         id: 'logged',
         name: 'logged',
-        value: false
+        value: {{logged}}
     }).appendTo('form')
 
     $('<input>').attr({
         type: 'hidden',
         id: 'username',
         name: 'username',
-        value: 'greenguy'
+        value: {{username}}
     }).appendTo('form')
 
     $('<input>').attr({
@@ -266,7 +272,7 @@ $(document).ready(function() {
 
         var currentSelected = document.getElementById('farm').textContent;
         //console.log(currentSelected);
-        if (currentSelected == "Farm") {
+        if (currentSelected == "FARM") {
             document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
         } else {
             console.log('whysadkj')
