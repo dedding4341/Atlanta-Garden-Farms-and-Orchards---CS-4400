@@ -164,6 +164,24 @@ app.get('/ownerProperties', function(request, response) {
 
 })
 
+//add new property
+app.get('/addProperty', function(request, response) {
+
+    if (signedIn) {
+        response.render('addProperty');
+    }
+
+})
+
+//manage selected property screen
+app.get('/manageProperty', function(request, response) {
+
+    if (signedIn) {
+        response.render('manageProperty');
+    }
+
+})
+
 // initial visitor page
 app.get('/visitorHome', function(request, response) {
     if (signedIn) {
