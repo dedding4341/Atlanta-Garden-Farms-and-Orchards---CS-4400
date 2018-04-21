@@ -245,6 +245,9 @@ app.post('/visitorDetails', function(request, response) {
     //console.log("Running");
     //console.log(request.body);
     var idSelection = request.body.idSelection;
+    var body = request.body;
+    console.log(body);
+
     // var sql = "SELECT * FROM Property WHERE ID = ?";
     // connection.query(sql, [idSelection], function(err, result, fields) {
     //     if (err) {

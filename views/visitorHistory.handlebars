@@ -11,60 +11,82 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 <html>
-<style media="screen">
-html,
-body {
-    height: 100%;
-}
+    <style media="screen">
+        html,
+        body {
+            height: 100%;
+        }
 
-body {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: #f5f5f5;
-}
+        body {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
 
-.form-unconfirmed {
-    width: 100%;
-    padding: 50px;
-    margin: 0 auto;
-}
+        .form-unconfirmed {
+            width: 100%;
+            padding: 50px;
+            margin: 0 auto;
+        }
 
-.form-unconfirmed .checkbox {
-    font-weight: 400;
-}
+        .form-unconfirmed .checkbox {
+            font-weight: 400;
+        }
 
-.form-unconfirmed .form-control {
-    position: relative;
-    box-sizing: border-box;
-    height: auto;
-    padding: 10px;
-    font-size: 16px;
-}
+        .form-unconfirmed .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
 
-.form-signin .form-control:focus {
-    z-index: 2;
-}
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
 
-#title {
-    margin-top: -50px;
-}
+        #title {
+            margin-top: -50px;
+        }
 
-.vertical-container {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    -ms-flex-align: center;
-    -ms-flex-pack: center;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    flex-direction: column;
-}
-</style>
+        .vertical-container {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            -ms-flex-align: center;
+            -ms-flex-pack: center;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        th>.dropdown-toggle {
+            background-color: transparent;
+        }
+
+        th>.dropdown-toggle:focus,
+        th>.dropdown-toggle:active {
+            outline: none !important;
+            box-shadow: none;
+        }
+
+        .table tbody tr.highlight td {
+            background-color: #ddd;
+        }
+
+        .hiddenField {
+            display: none;
+        }
+
+        .not-btn-input {
+            width: 300px;
+        }
+    </style>
 
 <body>
     <form class="form-unconfirmed">
@@ -73,13 +95,13 @@ body {
             <thead class="thead-light">
                 <tr class="text-center">
                     <th scope="col">Name
-                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                        <button id="sortName" class="btn dropdown-toggle float-right" type="button"></button>
                     </th>
                     <th scope="col">Date Logged
-                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                        <button id="sortDateLogged" class="btn dropdown-toggle float-right" type="button"></button>
                     </th>
                     <th scope="col">Rating
-                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                        <button id="sortRating" class="btn dropdown-toggle float-right" type="button"></button>
                     </th>
                 </tr>
             </thead>
@@ -99,7 +121,11 @@ body {
         <br>
         <div class="d-flex justify-content-between vertical-container">
             <div class="d-flex justify-content-between flex-direction: flex-column">
-                <input id="searchProperties" class="btn btn-primary" type="submit" value="View Property Details" style="width: 200px; text-align: center; height: 35px;">
+                <form method = "POST" action = "/visitorDetails">
+                    <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
+                    <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+                </form>
+<!--                 <input id="searchProperties" class="btn btn-primary" type="submit" value="View Property Details" style="width: 200px; text-align: center; height: 35px;"> -->
                 <a id="back" class="btn btn-info" href = "/visitorHome">Back</a>
             </div>
         </div>
@@ -108,7 +134,43 @@ body {
 
 </html>
 <script type="text/javascript">
-$('.dropdown-item').click(function() {
-    $('#dropdownMenuButton').text('Search by: ' + $(this).text());
-});
+    $('.dropdown-item').click(function() {
+        $('#dropdownMenuButton').text('Search by: ' + $(this).text());
+    });
+
+    $("tbody tr").click(function() {
+        $(this).addClass('highlight').siblings().removeClass('highlight');
+        var cells = this.cells; //cells collection
+        var id = cells[8].innerHTML;
+        $('#idSelector').val(id);
+        // $(this).addClass('bg-info').siblings().removeClass('bg-info');
+    });
+
+    $('th>.dropdown-toggle').on('click', onClick);
+
+    function onClick(e) {
+        var th = $(e.target).parent();
+        var col = th.text();
+        var table = $(th).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+        this.asc = !this.asc;
+        if (!this.asc) {
+            rows = rows.reverse();
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    }
+
+    function compare(index) {
+        return function(a, b) {
+            var valA = getCellValue(a, index); 
+            var valB = getCellValue(b, index);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        }
+    }
+
+    function getCellValue(row, index){ 
+        return $(row).children('td').eq(index).text(); 
+    }
 </script>
