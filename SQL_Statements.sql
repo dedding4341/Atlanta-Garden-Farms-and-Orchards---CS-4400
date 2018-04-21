@@ -175,7 +175,50 @@ JOIN User ON Property.Owner = User.Username
 JOIN Has ON Property.ID = Has.PropertyID
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
 JOIN Visit ON Visit.PropertyID = Property.ID
-WHERE Property.ID =0
+WHERE Property.ID =$id
 ) AS P
 JOIN Has ON Has.PropertyID = P.ID
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
+
+/* Visitor Functionality */
+--initial public, validated properties table population
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+GROUP BY Property.ID
+--search by term filter
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+AND $searchby = $search
+GROUP BY Property.ID
