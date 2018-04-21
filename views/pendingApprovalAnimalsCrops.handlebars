@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Home</title>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <style media="screen">
+        html,
+        body {
+          height: 100%;
+        }
+
+        body {
+          display: -ms-flexbox;
+          display: -webkit-box;
+          display: flex;
+          /* padding-top: 40px; */
+          padding-bottom: 40px;
+          background-color: #f5f5f5;
+        }
+        .form-unconfirmed {
+          width: 100%;
+          padding: 50px;
+          margin: 0 auto;
+        }
+        .form-unconfirmed .checkbox {
+          font-weight: 400;
+        }
+        .form-unconfirmed .form-control {
+          position: relative;
+          box-sizing: border-box;
+          height: auto;
+          padding: 10px;
+          font-size: 16px;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container-margin {
+          margin-bottom: 40px;
+        }
+
+    </style>
+    <body>
+        <form class="form-unconfirmed">
+            <h1 class="h3 mb-3 font-weight-normal text-center">Pending Approval Animals/Crops</h1>
+            <div class="container">
+                <table class="table table-bordered table-hover container-margin">
+                    <thead class="thead-light">
+                        <tr class="text-center">
+                            <th scope="col">Name
+                                <button class="btn dropdown-toggle float-right" type="button"></button>
+                            </th>
+                            <th scope="col">Type
+                                <button class="btn dropdown-toggle float-right" type="button"></button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row" class="text-center">Apple</td>
+                            <td class="text-center">fruit</td>
+                        </tr>
+                        <tr>
+                            <td scope="row" class="text-center">Antelope</td>
+                            <td class="text-center">Animal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="container">
+                <div class="col">
+                    <button type="button" class="btn" style="height: 50px; margin-bottom: 7px;">Approve Selection</button>
+                    <button type="button" class="btn" style="height: 50px; margin-bottom: 7px;">Delete Selection</button>
+                    <button type="button" class="btn" style="height: 50px; margin-bottom: 7px;">Back</button>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

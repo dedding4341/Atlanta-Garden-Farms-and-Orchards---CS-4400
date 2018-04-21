@@ -512,8 +512,11 @@ app.post('/login', function(request, response) {
                             rows: result
                         });
                     });
+                } else {
+                    response.render('visitorHome', {
+                        username: userInfo.Username,
+                    });
                 }
-
             } else {
                 console.log("Invalid Login.");
                 response.render('badLogin');
