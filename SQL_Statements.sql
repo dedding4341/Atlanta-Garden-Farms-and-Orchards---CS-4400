@@ -114,7 +114,7 @@ CASE WHEN ApprovedBy = NULL
 THEN 'False'
 ELSE 'True'
 END
-) AS isValid, COUNT( * ) , AVG( Rating )
+) AS isValid, COUNT( * ) as Visits , AVG( Rating ) as 'Avg.Rating'
 FROM Property, Visit
 WHERE Owner != $owner
 GROUP BY ID
@@ -257,11 +257,11 @@ AND Property.ApprovedBy IS NOT NULL
 GROUP BY Property.ID
 HAVING AVG(Rating) BETWEEN $min AND $max
 --visited details: where visitors can log their visit and rating
-SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
-SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
-TYPE , (
+SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, AVG(Rating) as Avg.Rating, Size AS 'Size (acres)', PropertyType AS
+TYPE , COUNT(* ) as Visits, (
 
 CASE WHEN IsPublic =1
 THEN 'True'
