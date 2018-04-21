@@ -320,7 +320,6 @@ app.post('/visitorDetails', function(request, response) {
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
 
-
                 response.render('visitorDetails', {
                     logged: true,
                     username: username,
@@ -333,14 +332,13 @@ app.post('/visitorDetails', function(request, response) {
                     zip: result[0].Zip,
                     acres: result[0]['Size (acres)'],
                     avgRating: result[0]['Avg.Rating'],
-                    type: type,
+                    type: result[0].TYPE,
                     public: result[0].Public,
                     commercial: result[0].Commercial,
                     id: result[0].ID,
                     crops: crops,
                     animals: animals
                 });
-                //console.log(resultPropInfo);
             });
 
         });
@@ -365,7 +363,7 @@ app.post('/visitorDetails', function(request, response) {
                 if (animals.length > 0) animals = animals.slice(0, -2);
 
                 response.render('visitorDetails', {
-                    logged: true,
+                    logged: false,
                     username: username,
                     name: result[0].Name,
                     owner: result[0].Owner,
@@ -376,14 +374,13 @@ app.post('/visitorDetails', function(request, response) {
                     zip: result[0].Zip,
                     acres: result[0]['Size (acres)'],
                     avgRating: result[0]['Avg.Rating'],
-                    type: type,
+                    type: result[0].TYPE,
                     public: result[0].Public,
                     commercial: result[0].Commercial,
                     id: result[0].ID,
                     crops: crops,
                     animals: animals
                 });
-                //console.log(resultPropInfo);
             });
         });
     } else {
@@ -423,7 +420,6 @@ app.post('/visitorDetails', function(request, response) {
                 crops: crops,
                 animals: animals
             });
-            //console.log(resultPropInfo);
         });
     }
 });
