@@ -200,13 +200,29 @@ FROM Has
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
 WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL'
 --get list of new crops that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type != 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type != 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of new animals that can be added to the property
-SELECT  DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type = 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type = 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of previous crops to check if it already exists
 SELECT Name
 FROM FarmItem
@@ -223,7 +239,7 @@ WHERE ID = $id
 --update new crop/animal (approved)
 INSERT INTO Has VALUES ($propertyid, $itemname)
 --Delete crop or animal
-DELETE FROM Has WHERE ItemName = $itemname
+DELETE FROM Has WHERE ItemName = $itemname AND PropertyID = $id
 
 /* Add Property- Owner functionality*/
 --check that new property name doesnt already exist
@@ -323,6 +339,48 @@ WHERE Property.IsPublic = 1
 AND Property.ApprovedBy IS NOT NULL
 GROUP BY Property.ID
 HAVING AVG(Rating) BETWEEN $min AND $max
+--search by term filter if user passes in one number for Visits
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+GROUP BY Property.ID
+HAVING COUNT(*) = $search
+--search by term filter if user passes in one number for avg rating
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+GROUP BY Property.ID
+HAVING AVG(Rating) = $search
 --visited details: where visitors can log their visit and rating
 SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
@@ -434,13 +492,29 @@ FROM Has
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
 WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL'
 --get list of new crops that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type != 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type != 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of new animals that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type = 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type = 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of previous crops to check if it already exists
 SELECT Name
 FROM FarmItem
@@ -468,8 +542,8 @@ THEN 'True'
 ELSE 'False'
 END
 ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
-FROM Property
-WHERE ApprovedBy = NULL
+FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE ApprovedBy IS NOT NULL
 GROUP BY Name;
 --search by filter terms
 SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
