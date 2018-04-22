@@ -339,6 +339,48 @@ WHERE Property.IsPublic = 1
 AND Property.ApprovedBy IS NOT NULL
 GROUP BY Property.ID
 HAVING AVG(Rating) BETWEEN $min AND $max
+--search by term filter if user passes in one number for Visits
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+GROUP BY Property.ID
+HAVING COUNT(*) = $search
+--search by term filter if user passes in one number for avg rating
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE Property.IsPublic = 1
+AND Property.ApprovedBy IS NOT NULL
+GROUP BY Property.ID
+HAVING AVG(Rating) = $search
 --visited details: where visitors can log their visit and rating
 SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
