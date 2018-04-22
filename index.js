@@ -367,6 +367,7 @@ app.get('/visitorHome', function(request, response) {
             GROUP BY Property.ID`;
 
         connection.query(sql, function(err, result, fields) {
+            console.log(err);
             console.log(result);
             response.render('visitorHome', {
                 username: userInfo.Username,
@@ -883,7 +884,7 @@ app.post('/login', function(request, response) {
                                 ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                                 FROM Property
                                 JOIN Visit ON Visit.PropertyID = Property.ID
-                                WHERE Property.IsPublic = 0
+                                WHERE Property.IsPublic = 1
                                 AND Property.ApprovedBy IS NOT NULL
                                 GROUP BY Property.ID`;
 
