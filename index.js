@@ -49,25 +49,31 @@ app.get('/', function(request, response) {
 });
 
 
-
-/*app.get('/newVisitorRegistration', function(request, response) {
+app.get('/newVisitorRegistration', function(request, response) {
     response.render('newVisitorRegistration');
-    var username = request.body.inputEmail;
+})
+
+app.post('/newVisitorRegistration', function(request, response) {
+    //response.render('newVisitorRegistration');
+    var username = request.body.inputUsername;
     var email = request.body.inputEmail;
+
     var password = md5(request.body.inputPassword1);
     var confpassword = md5(request.body.inputPassword2);
 
+
     var sql = "SELECT * FROM User WHERE Username = ? OR Email = ?";
-    connection.query(sql, [username, email], function(err, result, fields) {
+    connection.query(sql, [username, email], function(err, results, fields) {
         if (err) {
             return;
         };
-        if (results.length > 0) {
-            console.log("Username or Email invalid.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+        //console.log(results);
+        if (results != '') {
+            console.log("Username or Email exists.");
+            response.render('usernameOrEmailExists');
         } else if (password != confpassword) {
             console.log("Password and confirm password does not match.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+            response.render('passwordNoMatch');
         } else {
             var insertsql = "INSERT INTO User VALUES (?,?,?,'VISITOR')";
             connection.query(insertsql, [username, email, password], function (err2, results2, fields2) {
@@ -76,11 +82,12 @@ app.get('/', function(request, response) {
                 };
             });
             console.log("New visitor added.");
+            response.render('registrationSuccessful');
         };
     });
-});*/
+});
 
-/*app.get('/newOwnerRegistration', function(request, response) {
+app.get('/newOwnerRegistration', function(request, response) {
     response.render('newOwnerRegistration');
     var username = request.body.inputEmail;
     var email = request.body.inputEmail;
@@ -108,7 +115,7 @@ app.get('/', function(request, response) {
             console.log("New visitor added.");
         };
     });
-});*/
+});
 
 app.get('/otherProperties', function(request, response) {
     console.log(signedIn);
@@ -653,7 +660,7 @@ app.post('/visitorHome', function(request, response) {
 
                 connection.query(sqlVisits, [min, max], function(err, result, fields) {
                     console.log(err);
-                    console.log(result);  
+                    console.log(result);
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
@@ -715,7 +722,7 @@ app.post('/visitorHome', function(request, response) {
 
                 connection.query(sqlAvgRating, [min, max], function(err, result, fields) {
                     console.log(err);
-                    console.log(result);  
+                    console.log(result);
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
@@ -744,7 +751,7 @@ app.post('/visitorHome', function(request, response) {
 
                 connection.query(sqlAvgRating, [search], function(err, result, fields) {
                     console.log(err);
-                    console.log(result);                    
+                    console.log(result);
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
