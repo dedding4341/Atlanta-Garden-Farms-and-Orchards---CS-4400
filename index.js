@@ -345,7 +345,7 @@ app.get('/viewConfirmedProperties', function(request, response) {
         WHERE ApprovedBy IS NOT NULL
         GROUP BY Name`;
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
+            console.log("aaa")
             response.render('viewConfirmedProperties', {
                 username: userInfo.Username,
                 rows: result
@@ -382,10 +382,12 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
         END
         ) AS Commercial, ID, Owner
         FROM Property
-        WHERE ApprovedBy = NULL`;
+        WHERE ApprovedBy IS NULL`;
         connection.query(sql, function(err, result, fields) {
             console.log(result);
             response.render('viewUnconfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
             });
         });
     }
