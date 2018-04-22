@@ -19,7 +19,7 @@
 
 <html>
   <body>
-    <form class="ownerProperties">
+    <form method="POST" action="/ownerProperties" class="ownerProperties">
       <div class="center-h-container">
         <h1 class="font-weight-normal"> Welcome, {{username}}</h1>
       </div>
@@ -49,18 +49,18 @@
 
           {{#each personalProperty}}
             <tr>
-            <td scope="col"> {{this.Name}} </td>
-            <td scope="col"> {{this.Street}} </td>
-            <td scope="col"> {{this.City}} </td>
-            <td scope="col"> {{this.Zip}} </td>
-            <td scope="col"> {{this.Size}} </td>
-            <td scope="col"> {{this.PropertyType}} </td>
-            <td scope="col"> {{this.IsPublic}} </td>
-            <td scope="col"> {{this.IsCommercial}} </td>
-            <td scope="col"> {{this.ID}} </td>
-            <td scope="col"> PENDING </td>
-            <td scope="col"> PENDING </td>
-            <td scope="col"> PENDING </td>
+              <td scope="col"> {{this.Name}} </td>
+              <td scope="col"> {{this.Address}} </td>
+              <td scope="col"> {{this.City}} </td>
+              <td scope="col"> {{this.Zip}} </td>
+              <td scope="col"> {{this.Size}} </td>
+              <td scope="col"> {{this.TYPE}} </td>
+              <td scope="col"> {{this.Public}} </td>
+              <td scope="col"> {{this.Commercial}} </td>
+              <td scope="col"> {{this.ID}} </td>
+              <td scope="col"> {{this.isValid}} </td>
+              <td scope="col"> {{this.Count}} </td>
+              <td scope="col"> {{this.Rating}} </td>
             </tr>
           {{/each}}
       </table>
@@ -86,14 +86,15 @@
             </div>
           </th>
           <th>
-            <a type="button" class="btn " href="/manageProperty">Manage Property</a>
+            <button type="submit" class="btn " href="/manageProperty">Manage Property</button>
           </th>
         </tr>
         <tr>
           <th>
             <div class="center-h-container">
               <label for="searchTerm" class="sr-only">Search Term</label>
-              <input id="searchTerm" class="form-control not-btn-input" placeholder="Search Term" required autofocus>
+              <input id="searchTerm" class="form-control not-btn-input" placeholder="Search Term"  autofocus>
+              <input id="idSelector" name="ID" class="form-control hiddenField not-btn-input" placeholder="Search Term"  autofocus>
             </div>
           </th>
           <th>
@@ -119,6 +120,9 @@
 
 
   <style>
+    .hiddenField {
+      display: none;
+    }
     .sort-btn {
       color: black !important;
       width: 30px !important;
