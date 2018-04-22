@@ -200,13 +200,29 @@ FROM Has
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
 WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL'
 --get list of new crops that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type != 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type != 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of new animals that can be added to the property
-SELECT  DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type = 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type = 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of previous crops to check if it already exists
 SELECT Name
 FROM FarmItem
@@ -223,7 +239,7 @@ WHERE ID = $id
 --update new crop/animal (approved)
 INSERT INTO Has VALUES ($propertyid, $itemname)
 --Delete crop or animal
-DELETE FROM Has WHERE ItemName = $itemname
+DELETE FROM Has WHERE ItemName = $itemname AND PropertyID = $id
 
 /* Add Property- Owner functionality*/
 --check that new property name doesnt already exist
@@ -434,13 +450,29 @@ FROM Has
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
 WHERE Has.PropertyID = $id AND FarmItem.Type = 'ANIMAL'
 --get list of new crops that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type != 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type != 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of new animals that can be added to the property
-SELECT DISTINCT Name
-FROM FarmItem LEFT JOIN Has ON FarmItem.Name = Has.ItemName
-WHERE Has.PropertyID != $id AND FarmItem.Type = 'ANIMAL' AND FarmItem.IsApproved = True;
+SELECT Name
+FROM FarmItem
+WHERE FarmItem.Type = 'ANIMAL'
+AND FarmItem.IsApproved = True
+AND NOT
+EXISTS (
+SELECT *
+FROM Has
+WHERE Has.ItemName = FarmItem.Name
+AND Has.PropertyID =$id
+);
 --get list of previous crops to check if it already exists
 SELECT Name
 FROM FarmItem
