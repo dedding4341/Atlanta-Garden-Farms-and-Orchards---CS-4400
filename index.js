@@ -399,7 +399,7 @@ app.post('/visitorHome', function(request, response) {
         if (col == 'Visits') {
             var sqlVisit;
             if (search == '') {
-                sqlVisit = `
+                sqlVisits = `
                     SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                     TYPE , (
 
@@ -420,9 +420,17 @@ app.post('/visitorHome', function(request, response) {
                     AND Property.ApprovedBy IS NOT NULL
                     GROUP BY Property.ID
                     HAVING COUNT(*) BETWEEN ? AND ?`;
+
+                connection.query(sqlVisits, [min, max], function(err, result, fields) {
+                    console.log(result);
+                    response.render('visitorHome', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
             } else {
-                sqlVisit = 
-                    `SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                sqlVisit = `
+                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                     TYPE , (
 
                     CASE WHEN IsPublic =1
@@ -441,16 +449,17 @@ app.post('/visitorHome', function(request, response) {
                     WHERE Property.IsPublic = 1
                     AND Property.ApprovedBy IS NOT NULL
                     GROUP BY Property.ID
-                    HAVING COUNT(*) = $search`;
+                    HAVING COUNT(*) = ?`;
+
+                connection.query(sqlVisits, [search], function(err, result, fields) {
+                    console.log(result);
+                    response.render('visitorHome', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
 
             }
-            connection.query(sqlVisits, [min, max], function(err, result, fields) {
-                console.log(result);
-                response.render('visitorHome', {
-                    username: userInfo.Username,
-                    rows: result
-                });
-            });
         } else if (col == 'Avg. Rating') {
             var sqlAvgRating;
             if (search == '') {
@@ -504,15 +513,16 @@ app.post('/visitorHome', function(request, response) {
                     WHERE Property.IsPublic = 1
                     AND Property.ApprovedBy IS NOT NULL
                     GROUP BY Property.ID
-                    HAVING AVG(Rating) = $search`;
-            }
-            connection.query(sqlAvgRating, [min, max], function(err, result, fields) {
-                console.log(result);
-                response.render('visitorHome', {
-                    username: userInfo.Username,
-                    rows: result
+                    HAVING AVG(Rating) = ?`;
+
+                connection.query(sqlAvgRating, [search], function(err, result, fields) {
+                    console.log(result);
+                    response.render('visitorHome', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
                 });
-            });
+            }
         } else {
             var sql2params = `
                 SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
