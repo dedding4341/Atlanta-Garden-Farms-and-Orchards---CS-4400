@@ -662,7 +662,7 @@ WHERE IsApproved = True AND $searchby = $search
 --pending approval animals/crops list
 SELECT Name, Type
 FROM FarmItem
-WHERE IsApproved = True;
+WHERE IsApproved = False;
 --approve selection
 UPDATE FarmItem
 SET IsApproved = True
