@@ -184,7 +184,7 @@ PropertyType as Type,
 (CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial, 
 ID
 FROM Property
-WHERE Property.Owner = $owner
+WHERE Property.Owner = $owner and Property.ID = $id
 --check if new property name doesnt exist yet
 SELECT *
 FROM Property
