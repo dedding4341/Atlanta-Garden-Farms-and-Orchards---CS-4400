@@ -238,6 +238,7 @@ $(document).ready(function() {
 
     //console.log(currentSelected);
     if (currentSelected == "FARM") {
+        console.log("hello");
         document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
     }
 
@@ -246,27 +247,27 @@ $(document).ready(function() {
         id: 'hiddenPropertyId',
         name: 'idSelection',
         value: $('#id').text()
-    }).appendTo('form')
+    }).appendTo('form');
 
     $('<input>').attr({
         type: 'hidden',
         id: 'logged',
         name: 'logged',
-        value: {{logged}}
-    }).appendTo('form')
+        value: '{{logged}}'
+    }).appendTo('form');
 
     $('<input>').attr({
         type: 'hidden',
         id: 'username',
         name: 'username',
-        value: {{username}}
-    }).appendTo('form')
+        value: '{{username}}'
+    }).appendTo('form');
 
     $('<input>').attr({
         type: 'hidden',
         id: 'hiddenRating',
         name: 'rating'
-    }).appendTo('form')
+    }).appendTo('form');
 
     $(document).change(function() {
 
