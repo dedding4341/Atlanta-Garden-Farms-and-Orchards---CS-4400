@@ -70,14 +70,36 @@
         background-color: #ddd;
     }
 
-    .hiddenField {
-        display: none;
-    }
+        .hiddenField {
+            display: none !important;
+        }
 
-    .not-btn-input {
-        width: 300px;
-    }
+        .not-btn-input {
+            width: 300px;
+        }
+
+        .flex-row {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            /*justify-content: center;*/
+            text-align: center;
+        }
+
+        .flex-row-center {
+            display: -ms-flexbox;
+            display: -webkit-box;
+            display: flex;
+            -ms-flex-align: center;
+            -ms-flex-pack: center;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            text-align: center;
+        }
 </style>
+
 
 <body>
     <div class="form-unconfirmed">
@@ -147,7 +169,19 @@
                             <option>Avg. Rating</option>
                           </select>
                         </div>
-                        <input type="text" class="form-control" id="searchText" placeholder="Search Term" name="search" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;" required>
+                        <div class="d-flex flex-row" style="margin-top: 15px;">
+                            <div class="form-check">
+                              <input type="checkbox" class="form-check-input hiddenField" id="checkbox">
+                              <label id="rangeLabel" class="form-check-label hiddenField" for="checkbox">Specify Range</label>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row">
+                            <input type="text" class="form-control hiddenField" id="searchText" placeholder="Search Term" name="search" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;" required>
+                        </div>
+                        <div class="d-flex flex-row-center">
+                            <input type="text" class="form-control hiddenField" id="searchTextMin" placeholder="Min" name="min" style="width: 147.5px; text-align: center; height: 35px; margin-top: 5px;" required>
+                            <input type="text" class="form-control hiddenField" id="searchTextMax" placeholder="Max" name="max" style="width: 147.5px; text-align: center; height: 35px; margin-top: 5px; margin-left: 5px;" required>
+                        </div>
                         <button id="searchProperties" class="btn btn-primary" type="submit" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
                             Search Properties
                         </button>
@@ -171,9 +205,70 @@
 </html>
 
 <script type="text/javascript">
-    $('.dropdown-item').click(function() {
-        $('#dropdownMenuButton').text('Search by: ' + $(this).text());
+
+    $(document).ready(function() {
+        document.getElementById('searchText').classList.remove("hiddenField");
     });
+
+    $('#searchBy').change(function() {
+        var searchBy = $(this).val();
+        $('#dropdownMenuButton').text('Search by: ' + searchBy);
+        if (searchBy == 'Visits' || searchBy == 'Avg. Rating') {
+            console.log("hey");
+            document.getElementById('searchTextMin').classList.add("hiddenField");
+            document.getElementById('searchTextMax').classList.add("hiddenField");
+            $('#searchTextMin').val('');
+            $('#searchTextMax').val('');
+            $('#checkbox').prop('checked', false);
+            $("#searchTextMin").prop('required',false);
+            $("#searchTextMax").prop('required',false);
+
+            document.getElementById('checkbox').classList.remove("hiddenField");
+            document.getElementById('rangeLabel').classList.remove("hiddenField");
+            document.getElementById('searchText').classList.remove("hiddenField");
+            $("#searchText").prop('required',true);
+
+
+        } else {
+            console.log("hey2");
+            document.getElementById('checkbox').classList.add("hiddenField");
+            document.getElementById('rangeLabel').classList.add("hiddenField");
+            document.getElementById('searchTextMin').classList.add("hiddenField");
+            document.getElementById('searchTextMax').classList.add("hiddenField");
+            $('#searchTextMin').val('');
+            $('#searchTextMax').val('');
+            $("#searchTextMin").prop('required',false);
+            $("#searchTextMax").prop('required',false);
+            document.getElementById('searchText').classList.remove("hiddenField");
+            $("#searchText").prop('required',true);
+
+        }
+
+    });
+
+    $('#checkbox').change(function() {
+        var isChecked = $(this).is(":checked");
+        if (!isChecked) {
+            document.getElementById('searchTextMin').classList.add("hiddenField");
+            document.getElementById('searchTextMax').classList.add("hiddenField");
+            $('#searchTextMin').val('');
+            $('#searchTextMax').val('');
+            $("#searchTextMin").prop('required',false);
+            $("#searchTextMax").prop('required',false);
+            document.getElementById('searchText').classList.remove("hiddenField");
+            $("#searchText").prop('required',true);
+        } else {
+            document.getElementById('searchText').classList.add("hiddenField");
+            $("#searchText").prop('required',false);
+
+            $('#searchText').val('');
+            document.getElementById('searchTextMin').classList.remove("hiddenField");
+            document.getElementById('searchTextMax').classList.remove("hiddenField");
+            $("#searchTextMin").prop('required',true);
+            $("#searchTextMax").prop('required',true);
+        }
+    });
+
 
     $('th>.dropdown-toggle').on('click', onClick);
 
@@ -192,20 +287,6 @@
         }
     });
 
-    function onClick(e) {
-        var th = $(e.target).parent();
-        var col = th.text();
-        var table = $(th).parents('table').eq(0);
-        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
-        this.asc = !this.asc;
-        if (!this.asc) {
-            rows = rows.reverse();
-        }
-        for (var i = 0; i < rows.length; i++) {
-            table.append(rows[i]);
-        }
-    }
-
     $('<input>').attr({
         type: 'hidden',
         id: 'username',
@@ -219,6 +300,20 @@
         name: 'username',
         value: '{{username}}'
     }).appendTo('#details');
+
+    function onClick(e) {
+        var th = $(e.target).parent();
+        var col = th.text();
+        var table = $(th).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+        this.asc = !this.asc;
+        if (!this.asc) {
+            rows = rows.reverse();
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    }
 
     function compare(index) {
         return function(a, b) {
