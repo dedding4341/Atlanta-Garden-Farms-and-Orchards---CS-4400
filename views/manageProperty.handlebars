@@ -19,45 +19,46 @@
 
 <html>
   <body >
-    <form>
+    <form method="POST" action="/manageProperty">
         <div >
-            <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> Manage {{Name}}</b></u></h1>
+            <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> Manage {{name}}</b></u></h1>
         </div>
         <div class="hor-container container-margin">
             <div class=" vertical-container left">
                 <div class="space smaller-hor-container" >
                   <label class="left-label">Property Name: </label>
-                  <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" required autofocus>
+                  <input id="propertyName" name="name" class="form-control not-btn-input" value="{{name}}"  autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Address: </label>
-                  <input id="address" class="form-control not-btn-input" placeholder="Address" required autofocus>
+                  <input id="address" name="address" class="form-control not-btn-input" value="{{address}}"  autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">City: </label>
-                  <input id="city" class="form-control not-btn-input" placeholder="City" required autofocus>
+                  <input id="city" name="city" class="form-control not-btn-input" value="{{city}}"  autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Zip: </label>
-                  <input id="zip" class="form-control not-btn-input" placeholder="Zip" required autofocus>
+                  <input id="zip" name="zip" class="form-control not-btn-input" value="{{zip}}"  autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Size(acres): </label>
-                  <input id="size" class="form-control not-btn-input" placeholder="Size" required autofocus>
+                  <input  id="size" name="size" class="form-control not-btn-input" value="{{size}}"  autofocus>
                 </div>
             </div>
             <div class=" vertical-container">
                 <div class="space smaller-hor-container">
                   <label class="left-label">Type: </label>
-                  <input id="type" class="form-control not-btn-input" placeholder="Type" required autofocus>
+                  <input readonly id="type" class="form-control not-btn-input" value="{{propType}}"  >
                 </div>
                 <div class="space smaller-hor-container" >
                   <label class="left-label">Public: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
-                        <option>True</option>
+                      <select name="isPublic" class="form-control "  id="isPublic">
+                        <option selected disabled hidden >{{isPublic}}</option>
                         <option>False</option>
+                        <option>True</option>
                       </select>
                     </div>
                   </div>
@@ -66,9 +67,10 @@
                   <label class="left-label">Commercial: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
-                        <option>True</option>
+                      <select name="isCommercial" class="form-control "  id="isCommercial">
+                        <option selected disabled hidden>{{isCommercial}}</option>
                         <option>False</option>
+                        <option>True</option>
                       </select>
                     </div>
                   </div>
@@ -76,7 +78,7 @@
 
                 <div class="space left-container hor-container">
                   <label class="left-label">ID: </label>
-                  <label id="city" > 00237 </label>
+                  <label id="propID" > {{propID}} </label>
                 </div>
             </div>
         </div>
@@ -86,12 +88,14 @@
                 <label class="left-label">Add new crop: </label>
                 <div class="smaller-hor-container">
                   <div class="form-control-plaintext">
-                    <select class="form-control "  id="searchBy">
-                      <option>A</option>
-                      <option>B</option>
+                    <select name="newCrop" class="form-control "  id="newCrop" contenteditable="false">
+                      {{#each addCropList}}
+                        <option value="{{this.Name}}"> {{this.Name}}</option>
+                      {{/each}}
                     </select>
                   </div>
                 </div>
+                <button name="addCropBtn" id="addCropBtn" type="submit" class="btn ">Add</button>
               </div>
             </div>
             <div class=" vertical-container">
@@ -102,40 +106,82 @@
                   <label class="left-label">Crops: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
-                        <option>True</option>
-                        <option>False</option>
+                      <select class="form-control " name="removeCrop" id="removeCrop" contenteditable="false">
+                        {{#each cropList}}
+                          <option value="{{this.ItemName}}"> {{this.ItemName}}</option>
+                        {{/each}}
                       </select>
                     </div>
                   </div>
-                  <button type="button" class="btn ">Remove</button>
+                  <button name="removeCropBtn" id="removeCropBtn" type="submit" class="btn ">Remove</button>
                 </div>
             </div>
-
         </div>
+
+        <div class=" filterItem hidden ">
+          <div class="hor-container container-margin">
+              <div class=" vertical-container left">
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Add new animal: </label>
+                  <div class="smaller-hor-container">
+                    <div class="form-control-plaintext">
+                      <select name="newAnimal" class="form-control "  id="newAnimal" contenteditable="false">
+                        {{#each addAnimalList}}
+                          <option value="{{this.Name}}"> {{this.Name}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
+                  </div>
+                  <button name="addAnimalBtn" id="addAnimalBtn" type="submit" class="btn ">Add</button>
+                </div>
+              </div>
+              <div class=" vertical-container">
+
+                  <div class="space smaller-hor-container" >
+                    <label class="left-label">Animals: </label>
+                    <div class="smaller-hor-container">
+                      <div class="form-control-plaintext">
+                        <select class="form-control " name="removeAnimal" id="removeAnimal" contenteditable="false">
+                          {{#each animalList}}
+                            <option value="{{this.ItemName}}"> {{this.ItemName}}</option>
+                          {{/each}}
+                        </select>
+                      </div>
+                    </div>
+                    <button name="removeAnimalBtn" id="removeAnimalBtn" type="submit" class="btn ">Remove</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
         <div class=" container-margin hor-container">
           <div class="space smaller-hor-container" >
-            <label class="lower-left-label">Request crop approval: </label>
+            <label class="lower-left-label">Request crop/animal approval: </label>
             <div class="space smaller-hor-container">
-              <input id="newname" class="form-control not-btn-input" placeholder="new crop name" required autofocus>
+              <input id="newItemName" name="newItemName" class="form-control not-btn-input" placeholder="new item name"  autofocus>
             </div>
             <div class="smaller-hor-container">
               <div class="form-control-plaintext">
-                <select class="form-control "  id="searchBy">
-                  <option>Crop Type...</option>
-                  <option>False</option>
+                <select class="form-control " id="newItemType" name="newItemType" id="searchBy">
+                  <option>Type...</option>
+                  <option>ANIMAL</option>
+                  <option>NUT</option>
+                  <option>FRUIT</option>
+                  <option>VEGETABLE</option>
+                  <option>FLOWER</option>
                 </select>
               </div>
             </div>
-            <button type="button" class="btn ">Submit Request</button>
+            <button type="submit" name="submitRequest" id="submitRequest" class="btn ">Submit Request</button>
           </div>
         </div>
         <div class="smaller-hor-container">
             <div>
-                <button type="button" class="left btn bottom-btn ">Delete Property</button>
+                <button name="deleteProperty" id="deleteProperty" type="submit" class="left btn bottom-btn ">Delete Property</button>
             </div>
             <div>
-                <button type="button" class="btn left  bottom-btn ">Save Changes</button>
+                <button type="submit" class="btn left  bottom-btn " id="saveChanges" name="saveChanges">Save Changes</button>
             </div>
             <div>
                 <a type="button" class="btn bottom-btn " href = "/ownerProperties">Back</a>
@@ -148,6 +194,9 @@
 
 
   <style>
+  .hidden {
+    display: none
+  }
     .manageProperty{
       width: 100%;
       padding: 50px;
@@ -274,6 +323,27 @@
 </html>
 
 <script>
+var currentSelected = document.getElementById('type').value;
+console.log(type);
+if (currentSelected == 'FARM') {
+  document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+}
+
+$(document).change(function () {
+
+    var currentSelected = document.getElementById('type').value;
+    //console.log(currentSelected);
+    if (currentSelected == 'FARM') {
+      document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      console.log('not hidden');
+    } else {
+      document.getElementsByClassName("filterItem")[0].classList.add("hidden");
+      console.log('hidden');
+    }
+
+
+      });
+
 
 
 </script>
