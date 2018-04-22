@@ -389,12 +389,26 @@ app.post('/visitorHome', function(request, response) {
     if (col == 'Address') {
         col = 'Street';
     } else if (col == 'Type') {
-        col = PropertyType;
+        col = 'PropertyType';
     } else if (col == 'Public') {
         col = 'IsPublic';
     } else if (col == 'Commercial') {
         col = 'IsCommercial';
     }
+
+    /*
+
+    Name = Name
+    Address = Street
+    City = City
+    Zip = Zip
+    Size = Size
+    Type = PropertyType
+    Public = IsPublic
+    Commercial = IsCommercial
+    ID = ID
+
+    */
 
     if (signedIn) {
         if (col == 'Visits') {
@@ -412,7 +426,7 @@ app.post('/visitorHome', function(request, response) {
                      THEN 'True'
                      ELSE 'False'
                      END
-                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
                      JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
@@ -421,14 +435,15 @@ app.post('/visitorHome', function(request, response) {
                      HAVING COUNT(*) BETWEEN ? AND ?`;
 
                 connection.query(sqlVisits, [min, max], function(err, result, fields) {
-                    console.log(result);
+                    console.log(err);
+                    console.log(result);  
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
                     });
                 });
             } else {
-                sqlVisit = `
+                sqlVisits = `
                      SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                      TYPE , (
                      CASE WHEN IsPublic =1
@@ -440,7 +455,7 @@ app.post('/visitorHome', function(request, response) {
                      THEN 'True'
                      ELSE 'False'
                      END
-                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
                      JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
@@ -449,6 +464,7 @@ app.post('/visitorHome', function(request, response) {
                      HAVING COUNT(*) = ?`;
 
                 connection.query(sqlVisits, [search], function(err, result, fields) {
+                    console.log(err);
                     console.log(result);
                     response.render('visitorHome', {
                         username: userInfo.Username,
@@ -472,7 +488,7 @@ app.post('/visitorHome', function(request, response) {
                      THEN 'True'
                      ELSE 'False'
                      END
-                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
                      JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
@@ -481,7 +497,8 @@ app.post('/visitorHome', function(request, response) {
                      HAVING AVG(Rating) BETWEEN ? AND ?`; // change isPublic to 1 later
 
                 connection.query(sqlAvgRating, [min, max], function(err, result, fields) {
-                    console.log(result);
+                    console.log(err);
+                    console.log(result);  
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
@@ -500,7 +517,7 @@ app.post('/visitorHome', function(request, response) {
                      THEN 'True'
                      ELSE 'False'
                      END
-                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                     ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
                      JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
@@ -509,7 +526,8 @@ app.post('/visitorHome', function(request, response) {
                      HAVING AVG(Rating) = ?`;
 
                 connection.query(sqlAvgRating, [search], function(err, result, fields) {
-                    console.log(result);
+                    console.log(err);
+                    console.log(result);                    
                     response.render('visitorHome', {
                         username: userInfo.Username,
                         rows: result
@@ -517,6 +535,7 @@ app.post('/visitorHome', function(request, response) {
                 });
             }
         } else {
+            console.log("Hey");
             var sql2params = `
                  SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                  TYPE , (
@@ -534,10 +553,11 @@ app.post('/visitorHome', function(request, response) {
                  JOIN Visit ON Visit.PropertyID = Property.ID
                  WHERE Property.IsPublic = 1
                  AND Property.ApprovedBy IS NOT NULL
-                 AND ? = ?
+                 AND ` + col + ` = ?
                  GROUP BY Property.ID`;
 
-            connection.query(sql2params, [col, search], function(err, result, fields) {
+            connection.query(sql2params, [search], function(err, result, fields) {
+                console.log(err);
                 console.log(result);
                 response.render('visitorHome', {
                     username: userInfo.Username,
