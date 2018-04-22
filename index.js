@@ -345,7 +345,6 @@ app.get('/viewConfirmedProperties', function(request, response) {
         WHERE ApprovedBy IS NOT NULL
         GROUP BY Name`;
         connection.query(sql, function(err, result, fields) {
-            console.log("aaa")
             response.render('viewConfirmedProperties', {
                 username: userInfo.Username,
                 rows: result
@@ -394,10 +393,49 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
 
 })
 
-app.get('/approvedAnimalsCrops', function(request, response) {
-
+app.post('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
-        response.render('approvedAnimalsCrops');
+        var user = request.body.usernameval;
+        console.log(user);
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        //fix soon
+        //routes to manageselectedproperty
+    }
+})
+
+app.post('/approvedAnimalsCrops', function(request, response) {
+    console.log("aaaa");
+    if (signedIn) {
+        var user = request.body.usernameval;
+        console.log("aaaa");
+        console.log(request.body);
+        var sql = `DELETE FROM FarmItem
+        WHERE Name = ?`;
+        connection.query(sql, [user], function(err, result, fields) {
+            var sql2 = `SELECT Name, Type
+            FROM FarmItem
+            WHERE IsApproved = True`
+            connection.query(sql2, function(err, result, fields) {
+                response.render('approvedAnimalsCrops', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
+    }
+})
+
+app.get('/approvedAnimalsCrops', function(request, response) {
+    if (signedIn) {
+        var sql = `SELECT Name, Type
+        FROM FarmItem
+        WHERE IsApproved = True`;
+        connection.query(sql, function(err, result, fields) {
+            response.render('approvedAnimalsCrops', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
 })

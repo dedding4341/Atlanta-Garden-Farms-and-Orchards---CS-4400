@@ -6,6 +6,10 @@
     <title>Home</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 <style media="screen">
     html,
@@ -62,7 +66,7 @@
 </style>
 
 <body>
-    <form class="form-unconfirmed">
+    <div class="form-unconfirmed">
         <h1 class="h3 mb-3 font-weight-normal text-center">Approved Animals/Crops</h1>
         <div class="container">
             <table class="table table-bordered table-hover container-margin">
@@ -76,27 +80,30 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td scope="row" class="text-center">Apple</td>
-                        <td class="text-center">fruit</td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="text-center">Antelope</td>
-                        <td class="text-center">Animal</td>
-                    </tr>
+                <tbody id="rows">
+
+                    {{#each rows}}
+                        <tr class='clickable-row'>
+                            <td scope="row">{{this.Name}}</td>
+                            <td>{{this.Type}}</td>
+                        </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
         <div class="container">
             <div class="col">
                 <div class="form-control-plaintext">
-                    <select class="form-control " id="type" style="height: 50px;">
-                        <option>True</option>
-                        <option>False</option>
-                      </select>
+                    <select class="form-control " id="type" name="column" style="height: 45px;">
+                        <option selected disabled hidden>Type...</option>
+                        <option>Animal</option>
+                        <option>Fruit</option>
+                        <option>Vegetable</option>
+                        <option>Flower</option>
+                        <option>Nut</option>
+                    </select>
                 </div>
-                <input id="zip" class="form-control not-btn-input" placeholder="Enter Name" required autofocus style="margin-bottom: 7px;">
+                <input id="zip" class="form-control not-btn-input" placeholder="Enter Name" style="margin-bottom: 7px;">
                 <button type="button" class="btn" style="height: 50px;margin-bottom: 7px;">Add to Approved List</button>
             </div>
 
@@ -105,57 +112,64 @@
             </div>
             <div class="col">
                 <div class="form-control-plaintext">
-                    <select class="form-control " id="searchBy" style="height: 50px;">
-                        <option>True</option>
-                        <option>False</option>
-                      </select>
+                    <select class="form-control " id="searchBy" name="column" style="height: 45px;">
+                        <option selected disabled hidden>Search by...</option>
+                        <option>Name</option>
+                        <option>Type</option>
+                    </select>
                 </div>
-                <input id="zip" class="form-control not-btn-input" placeholder="Search Term" required autofocus style="margin-bottom: 7px;">
+                <input id="zip" class="form-control not-btn-input" placeholder="Search Term" style="margin-bottom: 7px;">
                 <button type="button" class="btn" style="height: 50px;margin-bottom: 7px;">Search</button>
             </div>
         </div>
         <div class="container">
             <div class="col">
-                <button type="button" class="btn " style="margin-bottom: 7px;height: 50px">Delete Selection</button>
-                <button type="button" class="btn " style="margin-bottom: 7px;height: 50px">Back</button>
+                <form method="POST" action="/approvedAnimalsCrops">
+                    <button type="submit" class="btn" style="margin-bottom: 7px;height: 50px;width: 100%">Delete Selection</button>
+                    <input type="hidden" id="usernameval" name="usernameval" class="hiddenField" placeholder="Username">
+                </form>
+                <form method="GET" action="/adminLandingPage">
+                    <button type="submit" class="btn" style="margin-bottom: 20px;height: 50px; width: 100%;">Back</button>
+                </form>
             </div>
         </div>
-    </form>
+    </div>
 </body>
 
 </html>
 <script type="text/javascript">
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
-        // var cells = this.cells; //cells collection
-        // var id = cells[8].innerHTML;
-        // $('#idSelector').val(id);
-        // $(this).addClass('bg-info').siblings().removeClass('bg-info');
+        var cells = this.cells;
+        var id = cells[0].innerHTML;
+        $('#usernameval').val(id);
+        console.log(id);
     });
+    $('th>.dropdown-toggle').on('click', onClick);
 
-    (function() {
-        if (window.addEventListener) {
-            window.addEventListener('load', run, false);
-        } else if (window.attachEvent) {
-            window.attachEvent('onload', run);
+    function onClick(e) {
+        var th = $(e.target).parent();
+        var col = th.text();
+        var table = $(th).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+        this.asc = !this.asc;
+        if (!this.asc) {
+            rows = rows.reverse();
         }
-
-        function run() {
-            var t = document.getElementById('table');
-            var rows = t.rows;
-            for (var i = 0; i < rows.length; i++) {
-                rows[i].onclick = function(event) {
-                    //event = event || window.event; // for IE8 backward compatibility
-                    //console.log(event, this, this.outerHTML);
-                    if (this.parentNode.nodeName == 'THEAD') {
-                        return;
-                    }
-                    var cells = this.cells; //cells collection
-                    var id = cells[0].innerHTML;
-                    $('#usernameval').val(id + "");
-                };
-            }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
         }
+    }
 
-    })();
+    function compare(index) {
+        return function(a, b) {
+            var valA = getCellValue(a, index);
+            var valB = getCellValue(b, index);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        }
+    }
+
+    function getCellValue(row, index) {
+        return $(row).children('td').eq(index).text();
+    }
 </script>

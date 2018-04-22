@@ -66,17 +66,27 @@
         <table id="table" class="table table-bordered table-hover container-margin">
             <thead class="thead-light">
                 <tr class="text-center">
-                    <th scope="col">Name</th>
+                    <th scope="col">Name
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                     <th scope="col">Address</th>
                     <th scope="col">City</th>
-                    <th scope="col">Zip</th>
+                    <th scope="col">Zip
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                     <th scope="col">Size</th>
-                    <th scope="col">Type</th>
+                    <th scope="col">Type
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                     <th scope="col">Public</th>
                     <th scope="col">Commercial</th>
                     <th scope="col">ID</th>
-                    <th scope="col">VerifiedBy</th>
-                    <th scope="col">AVG. Rating</th>
+                    <th scope="col">VerifiedBy
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
+                    <th scope="col">AVG. Rating
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                 </tr>
             </thead>
             <tbody id="rows">
@@ -137,42 +147,41 @@
 
 </html>
 <script type="text/javascript">
-    console.log("aaaaaa");
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
-        // var cells = this.cells; //cells collection
-        // var id = cells[8].innerHTML;
-        // $('#idSelector').val(id);
-        // $(this).addClass('bg-info').siblings().removeClass('bg-info');
+        var cells = this.cells; //cells collection
+        var id = cells[0].innerHTML;
+        $('#usernameval').val(id);
+        console.log(id);
     });
 
-    (function() {
-        if (window.addEventListener) {
-            window.addEventListener('load', run, false);
-        } else if (window.attachEvent) {
-            window.attachEvent('onload', run);
-        }
-
-        function run() {
-            console.log("aaa");
-            var t = document.getElementById('table');
-            var rows = t.rows;
-            for (var i = 0; i < rows.length; i++) {
-                rows[i].onclick = function(event) {
-                    //event = event || window.event; // for IE8 backward compatibility
-                    //console.log(event, this, this.outerHTML);
-                    if (this.parentNode.nodeName == 'THEAD') {
-                        return;
-                    }
-                    var cells = this.cells; //cells collection
-                    var id = cells[0].innerHTML;
-                    $('#usernameval').val(id + "");
-                    console.log(id);
-                };
-            }
-        }
-
-    })();
+    // (function() {
+    //     if (window.addEventListener) {
+    //         window.addEventListener('load', run, false);
+    //     } else if (window.attachEvent) {
+    //         window.attachEvent('onload', run);
+    //     }
+    //
+    //     function run() {
+    //         console.log("aaa");
+    //         var t = document.getElementById('table');
+    //         var rows = t.rows;
+    //         for (var i = 0; i < rows.length; i++) {
+    //             rows[i].onclick = function(event) {
+    //                 //event = event || window.event; // for IE8 backward compatibility
+    //                 //console.log(event, this, this.outerHTML);
+    //                 if (this.parentNode.nodeName == 'THEAD') {
+    //                     return;
+    //                 }
+    //                 var cells = this.cells; //cells collection
+    //                 var id = cells[0].innerHTML;
+    //                 $('#usernameval').val(id + "");
+    //                 console.log(id);
+    //             };
+    //         }
+    //     }
+    //
+    // })();
     $('th>.dropdown-toggle').on('click', onClick);
 
     function onClick(e) {
