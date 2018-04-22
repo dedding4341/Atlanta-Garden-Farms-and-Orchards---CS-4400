@@ -190,6 +190,67 @@ app.get('/allOwnersInSystem', function(request, response) {
 
 })
 
+app.get('/allVisitorsInSystem', function(request, response) {
+
+    if (signedIn) {
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+        FROM User JOIN Visit ON Visit.Username = User.Username
+        WHERE User.UserType = 'VISITOR'
+        GROUP BY Username`;
+        connection.query(sql, function(err, result, fields) {
+            response.render('allVisitorsInSystem', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    }
+})
+
+app.get('/viewConfirmedProperties', function(request, response) {
+
+    if (signedIn) {
+        response.render('viewConfirmedProperties');
+    }
+
+})
+
+app.get('/adminLandingPage', function(request, response) {
+    if (signedIn) {
+        response.render('adminLandingPage');
+    }
+
+})
+
+app.post('/adminLandingPage', function(request, response) {
+    var user = request.body.column;
+    console.log(user);
+    response.render('adminLandingPage');
+});
+
+app.get('/viewUnconfirmedProperties', function(request, response) {
+
+    if (signedIn) {
+        response.render('viewUnconfirmedProperties');
+    }
+
+})
+
+app.get('/approvedAnimalsCrops', function(request, response) {
+
+    if (signedIn) {
+        response.render('approvedAnimalsCrops');
+    }
+
+})
+
+app.get('/pendingApprovalAnimalsCrops', function(request, response) {
+
+    if (signedIn) {
+        response.render('pendingApprovalAnimalsCrops');
+    }
+
+})
+
 // initial visitor page
 app.get('/visitorHome', function(request, response) {
     if (signedIn) {
@@ -455,6 +516,47 @@ app.get('/visitorHistory', function(request, response) {
         });
     }
 
+})
+
+app.post('/allVisitorsInSystem', function(request, response) {
+    if (request.body.deleteLog == "") {
+        //deleteLog
+        var user = request.body.usernameval;
+        var sql = `DELETE FROM Visit WHERE Username = ?`;
+        console.log(String(user))
+        connection.query(sql, [user], function(err, result, fields) {
+            console.log("deleteLog");
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            FROM User JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                console.log(result);
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
+    } else  {
+        //deleteAcc
+        var user = request.body.usernameval;
+        var sql = `DELETE FROM User WHERE Username = $visitorusername`;
+        var sql = sql.replace("$visitorusername", user)
+        connection.query(sql, function(err, result, fields) {
+            console.log("deleteAcc");
+            // var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            // FROM User JOIN Visit ON Visit.Username = User.Username
+            // WHERE User.UserType = 'VISITOR'
+            // GROUP BY Username`;
+            // connection.query(sql2, function(err, result, fields) {
+            //     response.render('allVisitorsInSystem', {
+            //         username: userInfo.Username,
+            //         rows: result
+            //     });
+            // });
+        });
+    }
 })
 
 

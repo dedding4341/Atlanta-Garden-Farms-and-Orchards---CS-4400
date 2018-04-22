@@ -11,79 +11,79 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </head>
 <html>
-    <style media="screen">
-        html,
-        body {
-            height: 100%;
-        }
+<style media="screen">
+    html,
+    body {
+        height: 100%;
+    }
 
-        body {
-            display: -ms-flexbox;
-            display: -webkit-box;
-            display: flex;
-            padding-top: 40px;
-            padding-bottom: 40px;
-            background-color: #f5f5f5;
-        }
+    body {
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: flex;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+    }
 
-        .form-unconfirmed {
-            width: 100%;
-            padding: 50px;
-            margin: 0 auto;
-        }
+    .form-unconfirmed {
+        width: 100%;
+        padding: 50px;
+        margin: 0 auto;
+    }
 
-        .form-unconfirmed .checkbox {
-            font-weight: 400;
-        }
+    .form-unconfirmed .checkbox {
+        font-weight: 400;
+    }
 
-        .form-unconfirmed .form-control {
-            position: relative;
-            box-sizing: border-box;
-            height: auto;
-            padding: 10px;
-            font-size: 16px;
-        }
+    .form-unconfirmed .form-control {
+        position: relative;
+        box-sizing: border-box;
+        height: auto;
+        padding: 10px;
+        font-size: 16px;
+    }
 
-        .form-signin .form-control:focus {
-            z-index: 2;
-        }
+    .form-signin .form-control:focus {
+        z-index: 2;
+    }
 
-        #title {
-            margin-top: -50px;
-        }
+    #title {
+        margin-top: -50px;
+    }
 
-        #dropdownMenuButton {
-            margin-top: -25px;
-        }
+    #dropdownMenuButton {
+        margin-top: -25px;
+    }
 
-        th>.dropdown-toggle {
-            background-color: transparent;
-        }
+    th>.dropdown-toggle {
+        background-color: transparent;
+    }
 
-        th>.dropdown-toggle:focus,
-        th>.dropdown-toggle:active {
-            outline: none !important;
-            box-shadow: none;
-        }
+    th>.dropdown-toggle:focus,
+    th>.dropdown-toggle:active {
+        outline: none !important;
+        box-shadow: none;
+    }
 
-        .table tbody tr.highlight td {
-            background-color: #ddd;
-        }
+    .table tbody tr.highlight td {
+        background-color: #ddd;
+    }
 
-        .hiddenField {
-            display: none;
-        }
+    .hiddenField {
+        display: none;
+    }
 
-        .not-btn-input {
-            width: 300px;
-        }
-    </style>
+    .not-btn-input {
+        width: 300px;
+    }
+</style>
 
 <body>
     <div class="form-unconfirmed">
         <h1 id="title" class="h3 mb-3 font-weight-normal text-center">Welcome <b>{{username}}</b></h1>
         <h3 id="subtitle" class="h4 mb-2 font-weight-normal">All public, validated properties:</b></h1>
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered selection-table">
                 <thead class="thead-light">
                     <tr>
                         <!-- onclick="sort(document.getElementById('sortName').value) -->
@@ -201,14 +201,22 @@
 
     function compare(index) {
         return function(a, b) {
-            var valA = getCellValue(a, index); 
+            var valA = getCellValue(a, index);
             var valB = getCellValue(b, index);
             return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
         }
     }
 
-    function getCellValue(row, index){ 
-        return $(row).children('td').eq(index).text(); 
+    function getCellValue(row, index){
+        return $(row).children('td').eq(index).text();
     }
+    $(document).ready(function() {
+        $('#table').DataTable( {
+            select: true
+        });
+    });
+    $('#deleteAcc').click( function () {
+       console.log(table.row('.selected'));
+   } );
 
 </script>
