@@ -542,8 +542,8 @@ THEN 'True'
 ELSE 'False'
 END
 ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
-FROM Property
-WHERE ApprovedBy = NULL
+FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE ApprovedBy IS NOT NULL
 GROUP BY Name;
 --search by filter terms
 SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
