@@ -65,46 +65,27 @@
                           <th scope="col">Public</th>
                           <th scope="col">Commercial</th>
                           <th scope="col">ID</th>
-                          <th scope="col">Owner</th>
+                          <th scope="col">VerifiedBy</th>
+                          <th scope="col">AVG. Rating</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>East Lake Urban Farm</td>
-                        <td>2nd Avenue</td>
-                        <td>Atlanta</td>
-                        <td>30317</td>
-                        <td>20</td>
-                        <td>Farm</td>
-                        <td>False</td>
-                        <td>True</td>
-                        <td>12345</td>
-                        <td>Owner1</td>
-                    </tr>
-                    <tr>
-                        <td>East Lake Urban Farm</td>
-                        <td>2nd Avenue</td>
-                        <td>Atlanta</td>
-                        <td>30317</td>
-                        <td>20</td>
-                        <td>Farm</td>
-                        <td>False</td>
-                        <td>True</td>
-                        <td>12345</td>
-                        <td>Owner1</td>
-                    </tr>
-                    <tr>
-                        <td>East Lake Urban Farm</td>
-                        <td>2nd Avenue</td>
-                        <td>Atlanta</td>
-                        <td>30317</td>
-                        <td>20</td>
-                        <td>Farm</td>
-                        <td>False</td>
-                        <td>True</td>
-                        <td>12345</td>
-                        <td>Owner1</td>
-                    </tr>
+                <tbody id="rows">
+
+                    {{#each rows}}
+                        <tr class='clickable-row'>
+                            <td scope="row">{{this.Name}}</td>
+                            <td>{{this.Street}}</td>
+                            <td>{{this.City}}</td>
+                            <td>{{this.Zip}}</td>
+                            <td>{{this.Size}}</td>
+                            <td>{{this.Type}}</td>
+                            <td>{{this.Public}}</td>
+                            <td>{{this.Commercial}}</td>
+                            <td>{{this.ID}}</td>
+                            <td>{{this.VerifiedBy}}</td>
+                            <td>{{{[AVG(Rating)]}}}</td>
+                        </tr>
+                    {{/each}}
                 </tbody>
             </table>
             <div class="btn-container">

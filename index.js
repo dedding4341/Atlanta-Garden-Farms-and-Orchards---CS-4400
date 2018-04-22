@@ -329,7 +329,6 @@ app.post('/allOwnersInSystem', function(request, response) {
 })
 
 app.get('/viewConfirmedProperties', function(request, response) {
-
     if (signedIn) {
         var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
         CASE WHEN IsPublic =1
@@ -342,12 +341,14 @@ app.get('/viewConfirmedProperties', function(request, response) {
         ELSE 'False'
         END
         ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
-        FROM Property
-        WHERE ApprovedBy = NULL
+        FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
+        WHERE ApprovedBy IS NOT NULL
         GROUP BY Name`;
         connection.query(sql, function(err, result, fields) {
             console.log(result);
             response.render('viewConfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
             });
         });
     }
