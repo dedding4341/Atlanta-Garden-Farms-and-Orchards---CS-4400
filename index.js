@@ -182,6 +182,14 @@ app.get('/manageProperty', function(request, response) {
 
 })
 
+app.get('/allOwnersInSystem', function(request, response) {
+
+    if (signedIn) {
+        response.render('allOwnersInSystem');
+    }
+
+})
+
 // initial visitor page
 app.get('/visitorHome', function(request, response) {
     if (signedIn) {
@@ -513,7 +521,7 @@ app.post('/login', function(request, response) {
                         });
                     });
                 } else {
-                    response.render('visitorHome', {
+                    response.render('adminLandingPage', {
                         username: userInfo.Username,
                     });
                 }
