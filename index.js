@@ -284,8 +284,8 @@ app.get('/allOwnersInSystem', function(request, response) {
 app.get('/allVisitorsInSystem', function(request, response) {
 
     if (signedIn) {
-        var sql = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
-        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+        FROM User JOIN Visit ON Visit.Username = User.Username
         WHERE User.UserType = 'VISITOR'
         GROUP BY Username`;
         connection.query(sql, function(err, result, fields) {
@@ -345,30 +345,29 @@ app.get('/pendingApprovalAnimalsCrops', function(request, response) {
 // initial visitor page
 app.get('/visitorHome', function(request, response) {
     if (signedIn) {
-        var sql = 
-            `SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-            TYPE , (
+        var sql = `SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                    TYPE , (
 
-            CASE WHEN IsPublic =1
-            THEN 'True'
-            ELSE 'False'
-            END
-            ) AS Public, (
+                    CASE WHEN IsPublic =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Public, (
 
-            CASE WHEN IsCommercial =1
-            THEN 'True'
-            ELSE 'False'
-            END
-            ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
-            FROM Property
-            JOIN Visit ON Visit.PropertyID = Property.ID
-            WHERE Property.IsPublic = 1
-            AND Property.ApprovedBy IS NOT NULL
-            GROUP BY Property.ID`;
+                    CASE WHEN IsCommercial =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+                    FROM Property
+                    JOIN Visit ON Visit.PropertyID = Property.ID
+                    WHERE Property.IsPublic = 1
+                    AND Property.ApprovedBy IS NOT NULL
+                    GROUP BY Property.ID`;
 
         connection.query(sql, function(err, result, fields) {
-            console.log(err);
-            console.log(result);
+            // console.log(result);
+            // console.log(userInfo.Username);
             response.render('visitorHome', {
                 username: userInfo.Username,
                 rows: result
@@ -382,181 +381,7 @@ app.get('/visitorHome', function(request, response) {
 app.post('/visitorHome', function(request, response) {
     var col = request.body.column;
     var search = request.body.search;
-    var min = request.body.min;
-    var max = request.body.max;
-    console.log(request.body);
-
-    if (col == 'Address') {
-        col = 'Street';
-    } else if (col == 'Type') {
-        col = PropertyType;
-    } else if (col == 'Public') {
-        col = 'IsPublic';
-    } else if (col == 'Commercial') {
-        col = 'IsCommercial';
-    }
-
-    if (signedIn) {
-        if (col == 'Visits') {
-            var sqlVisit;
-            if (search == '') {
-                sqlVisits = `
-                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-                    TYPE , (
-
-                    CASE WHEN IsPublic =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Public, (
-
-                    CASE WHEN IsCommercial =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
-                    FROM Property
-                    JOIN Visit ON Visit.PropertyID = Property.ID
-                    WHERE Property.IsPublic = 1
-                    AND Property.ApprovedBy IS NOT NULL
-                    GROUP BY Property.ID
-                    HAVING COUNT(*) BETWEEN ? AND ?`;
-
-                connection.query(sqlVisits, [min, max], function(err, result, fields) {
-                    console.log(result);
-                    response.render('visitorHome', {
-                        username: userInfo.Username,
-                        rows: result
-                    });
-                });
-            } else {
-                sqlVisit = `
-                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-                    TYPE , (
-
-                    CASE WHEN IsPublic =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Public, (
-
-                    CASE WHEN IsCommercial =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
-                    FROM Property
-                    JOIN Visit ON Visit.PropertyID = Property.ID
-                    WHERE Property.IsPublic = 1
-                    AND Property.ApprovedBy IS NOT NULL
-                    GROUP BY Property.ID
-                    HAVING COUNT(*) = ?`;
-
-                connection.query(sqlVisits, [search], function(err, result, fields) {
-                    console.log(result);
-                    response.render('visitorHome', {
-                        username: userInfo.Username,
-                        rows: result
-                    });
-                });
-
-            }
-        } else if (col == 'Avg. Rating') {
-            var sqlAvgRating;
-            if (search == '') {
-                sqlAvgRating = `
-                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-                    TYPE , (
-
-                    CASE WHEN IsPublic =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Public, (
-
-                    CASE WHEN IsCommercial =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
-                    FROM Property
-                    JOIN Visit ON Visit.PropertyID = Property.ID
-                    WHERE Property.IsPublic = 1
-                    AND Property.ApprovedBy IS NOT NULL
-                    GROUP BY Property.ID
-                    HAVING AVG(Rating) BETWEEN ? AND ?`;    // change isPublic to 1 later
-
-                connection.query(sqlAvgRating, [min, max], function(err, result, fields) {
-                    console.log(result);
-                    response.render('visitorHome', {
-                        username: userInfo.Username,
-                        rows: result
-                    });
-                });
-            } else {
-                sqlAvgRating = `
-                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-                    TYPE , (
-
-                    CASE WHEN IsPublic =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Public, (
-
-                    CASE WHEN IsCommercial =1
-                    THEN 'True'
-                    ELSE 'False'
-                    END
-                    ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
-                    FROM Property
-                    JOIN Visit ON Visit.PropertyID = Property.ID
-                    WHERE Property.IsPublic = 1
-                    AND Property.ApprovedBy IS NOT NULL
-                    GROUP BY Property.ID
-                    HAVING AVG(Rating) = ?`;
-
-                connection.query(sqlAvgRating, [search], function(err, result, fields) {
-                    console.log(result);
-                    response.render('visitorHome', {
-                        username: userInfo.Username,
-                        rows: result
-                    });
-                });
-            }
-        } else {
-            var sql2params = `
-                SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
-                TYPE , (
-
-                CASE WHEN IsPublic =1
-                THEN 'True'
-                ELSE 'False'
-                END
-                ) AS Public, (
-
-                CASE WHEN IsCommercial =1
-                THEN 'True'
-                ELSE 'False'
-                END
-                ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
-                FROM Property
-                JOIN Visit ON Visit.PropertyID = Property.ID
-                WHERE Property.IsPublic = 1
-                AND Property.ApprovedBy IS NOT NULL
-                AND ? = ?
-                GROUP BY Property.ID`;
-
-            connection.query(sql2params, [col, search], function(err, result, fields) {
-                console.log(result);
-                response.render('visitorHome', {
-                    username: userInfo.Username,
-                    rows: result
-                });
-            });
-        }
-    }
-
+    response.render('visitorHome');
     // if (signedIn) {
     //     var sql =  `
 
@@ -800,8 +625,8 @@ app.post('/allVisitorsInSystem', function(request, response) {
         console.log(String(user))
         connection.query(sql, [user], function(err, result, fields) {
             console.log("deleteLog");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
-            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            FROM User JOIN Visit ON Visit.Username = User.Username
             WHERE User.UserType = 'VISITOR'
             GROUP BY Username`;
             connection.query(sql2, function(err, result, fields) {
@@ -815,20 +640,20 @@ app.post('/allVisitorsInSystem', function(request, response) {
     } else  {
         //deleteAcc
         var user = request.body.usernameval;
-        console.log(user);
-        var sql = `DELETE FROM User WHERE Username = ?`;
-        connection.query(sql, [user], function(err, result, fields) {
+        var sql = `DELETE FROM User WHERE Username = $visitorusername`;
+        var sql = sql.replace("$visitorusername", user)
+        connection.query(sql, function(err, result, fields) {
             console.log("deleteAcc");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
-            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
-            WHERE User.UserType = 'VISITOR'
-            GROUP BY Username`;
-            connection.query(sql2, function(err, result, fields) {
-                response.render('allVisitorsInSystem', {
-                    username: userInfo.Username,
-                    rows: result
-                });
-            });
+            // var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            // FROM User JOIN Visit ON Visit.Username = User.Username
+            // WHERE User.UserType = 'VISITOR'
+            // GROUP BY Username`;
+            // connection.query(sql2, function(err, result, fields) {
+            //     response.render('allVisitorsInSystem', {
+            //         username: userInfo.Username,
+            //         rows: result
+            //     });
+            // });
         });
     }
 })
