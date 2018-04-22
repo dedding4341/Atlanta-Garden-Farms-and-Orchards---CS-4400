@@ -1044,8 +1044,9 @@ app.post('/login', function(request, response) {
         if (err) {
             return;
         };
+        console.log(result[0]);
 
-        if (result[0] == '') {
+        if (result[0] == undefined) {
             console.log("Invalid Login");
             response.render('badLogin');
         } else {
