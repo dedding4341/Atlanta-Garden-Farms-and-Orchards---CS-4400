@@ -276,7 +276,17 @@ app.get('/manageProperty', function(request, response) {
 app.get('/allOwnersInSystem', function(request, response) {
 
     if (signedIn) {
-        response.render('allOwnersInSystem');
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+        WHERE User.UserType = 'OWNER'
+        GROUP BY Username;`;
+        connection.query(sql, function(err, result, fields) {
+            console.log(result);
+            response.render('allOwnersInSystem', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
 })
@@ -297,12 +307,50 @@ app.get('/allVisitorsInSystem', function(request, response) {
     }
 })
 
+app.post('/allOwnersInSystem', function(request, response) {
+    if (signedIn) {
+        var user = request.body.usernameval;
+        console.log(user);
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        connection.query(sql, [user], function(err, result, fields) {
+            console.log("deleteAcc");
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'OWNER'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                response.render('allOwnersInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
+    }
+})
+
 app.get('/viewConfirmedProperties', function(request, response) {
 
     if (signedIn) {
-        response.render('viewConfirmedProperties');
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+        CASE WHEN IsPublic =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Public, (
+        CASE WHEN IsCommercial =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
+        FROM Property
+        WHERE ApprovedBy = NULL
+        GROUP BY Name`;
+        connection.query(sql, function(err, result, fields) {
+            console.log(result);
+            response.render('viewConfirmedProperties', {
+            });
+        });
     }
-
 })
 
 app.get('/adminLandingPage', function(request, response) {
@@ -321,7 +369,24 @@ app.post('/adminLandingPage', function(request, response) {
 app.get('/viewUnconfirmedProperties', function(request, response) {
 
     if (signedIn) {
-        response.render('viewUnconfirmedProperties');
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+        CASE WHEN IsPublic =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Public, (
+        CASE WHEN IsCommercial =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Commercial, ID, Owner
+        FROM Property
+        WHERE ApprovedBy = NULL`;
+        connection.query(sql, function(err, result, fields) {
+            console.log(result);
+            response.render('viewUnconfirmedProperties', {
+            });
+        });
     }
 
 })
