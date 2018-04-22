@@ -211,7 +211,7 @@ app.get('/visitorHome', function(request, response) {
                     JOIN Visit ON Visit.PropertyID = Property.ID
                     WHERE Property.IsPublic = 0
                     AND Property.ApprovedBy IS NOT NULL
-                    GROUP BY Property.ID`;
+                    GROUP BY Property.ID`; // change isPublic to 1 later
 
         connection.query(sql, function(err, result, fields) {
             // console.log(result);
@@ -229,7 +229,103 @@ app.get('/visitorHome', function(request, response) {
 app.post('/visitorHome', function(request, response) {
     var col = request.body.column;
     var search = request.body.search;
-    response.render('visitorHome');
+    var min = request.body.min;
+    var max = request.body.max;
+    console.log(request.body);
+    if (signedIn) {
+        if (search != '') {
+            var sql2params = `
+                SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                TYPE , (
+
+                CASE WHEN IsPublic =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Public, (
+
+                CASE WHEN IsCommercial =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
+                FROM Property
+                JOIN Visit ON Visit.PropertyID = Property.ID
+                WHERE Property.IsPublic = 0
+                AND Property.ApprovedBy IS NOT NULL
+                AND ? = ?
+                GROUP BY Property.ID`; // change isPublic to 1 later
+
+            connection.query(sql2params, [col, search], function(err, result, fields) {
+                console.log(result);
+                response.render('visitorHome', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        } else if (search == '' && col == 'Visits') {
+            var sqlVisits = `
+                SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                TYPE , (
+
+                CASE WHEN IsPublic =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Public, (
+
+                CASE WHEN IsCommercial =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                FROM Property
+                JOIN Visit ON Visit.PropertyID = Property.ID
+                WHERE Property.IsPublic = 0
+                AND Property.ApprovedBy IS NOT NULL
+                GROUP BY Property.ID
+                HAVING COUNT(*) BETWEEN ? AND ?`;   // change isPublic to 1 later
+
+            connection.query(sqlVisits, [min, max], function(err, result, fields) {
+                console.log(result);
+                response.render('visitorHome', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        } else {
+            var sqlAvgRating = `
+                SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                TYPE , (
+
+                CASE WHEN IsPublic =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Public, (
+
+                CASE WHEN IsCommercial =1
+                THEN 'True'
+                ELSE 'False'
+                END
+                ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg.Rating'
+                FROM Property
+                JOIN Visit ON Visit.PropertyID = Property.ID
+                WHERE Property.IsPublic = 0
+                AND Property.ApprovedBy IS NOT NULL
+                GROUP BY Property.ID
+                HAVING AVG(Rating) BETWEEN ? AND ?`;    // change isPublic to 1 later
+
+            connection.query(sqlAvgRating, [min, max], function(err, result, fields) {
+                console.log(result);
+                response.render('visitorHome', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        }
+    }
+
     // if (signedIn) {
     //     var sql =  `
 
