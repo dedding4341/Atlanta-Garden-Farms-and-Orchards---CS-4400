@@ -18,61 +18,68 @@
 </head>
 
 <html>
+<form method="POST" action="/addProperty">
   <body>
     <div class="vertical-container">
       <h1 id="title" class="h3 mb-3 font-weight-normal text-center"> Add New Property</h1>
       <div class="space horizontal-container">
         <label for="propertyName" class="sr-only">Property Name</label>
-        <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" required autofocus>
+        <input name="idSelection" id="propertyName" class="form-control not-btn-input" placeholder="Property Name" required autofocus>
       </div>
       <div class="space horizontal-container">
         <label for="address" class="sr-only">Address</label>
-        <input id="address" class="form-control not-btn-input" placeholder="Address" required autofocus>
+        <input name="address" id="address" class="form-control not-btn-input" placeholder="Address" required autofocus>
       </div>
       <div class="horizontal-container space">
           <div class="line-spacing">
               <label for="city" class="sr-only">City</label>
-              <input id="city" class="form-control inline-input" placeholder="City" required autofocus>
+              <input name="city" id="city" class="form-control inline-input" placeholder="City" required autofocus>
           </div>
           <div class="line-spacing">
               <label for="zip" class="sr-only">Zip</label>
-              <input id="zip" class="form-control inline-input" placeholder="Zip" required autofocus>
+              <input name="zip" id="zip" class="form-control inline-input" placeholder="Zip" required autofocus>
           </div>
           <div>
               <label for="acres" class="sr-only">Acres</label>
-              <input id="acres" class="form-control inline-input" placeholder="Acres" required autofocus>
+              <input name="size" id="acres" class="form-control inline-input" placeholder="Acres" required autofocus>
           </div>
       </div>
       <div class="horizontal-container space">
           <div class=" line-spacing left-">
-              <select class="form-control inline-input"  id="propertyType">
+              <select name="type" class="form-control inline-input"  id="propertyType">
                   <option>Property Type...</option>
-                  <option>Farm</option>
-                  <option>Garden</option>
-                  <option>Orchard</option>
+                  <option>FARM</option>
+                  <option>GARDEN</option>
+                  <option>ORCHARD</option>
               </select>
           </div>
           <div class=" filterItem line-spacing hidden">
-              <select class="form-control inline-input"  id="animal">
-                  <option>Animal</option>
+              <select class="form-control inline-input" name="animals" id="animal"  contenteditable="false">
+                <option>Animal</option>
+                {{#each animals}}
+                  <option value="{{this.Name}}"> {{this.Name}}</option>
+                {{/each}}
               </select>
           </div>
           <div>
-              <select class="form-control inline-input"  id="crop">
+              <select class="form-control inline-input" name="crops"  id="crop" contenteditable="false">
                   <option>Crop</option>
+                  {{#each crops}}
+                    <option value="{{this.Name}}"> {{this.Name}}</option>
+                  {{/each}}
               </select>
           </div>
       </div>
       <div class="horizontal-container space">
         <div class="line-spacing">
-            <select class="form-control inline-input"  id="public">
+            <select required class="form-control inline-input" name="isPublic" id="isPublic">
                 <option>Public?</option>
                 <option>Yes</option>
                 <option>No</option>
             </select>
         </div>
         <div>
-            <select class="form-control inline-input"  id="commercial">
+            <select class="form-control inline-input" name="isCommercial" id="commercial">
                 <option>Commercial?</option>
                 <option>Yes</option>
                 <option>No</option>
@@ -81,7 +88,7 @@
       </div>
       <div class="horizontal-container btn-container">
         <div class="btn-spacing">
-          <button type="button" class="btn ">Add Property</button>
+          <button type="submit" class="btn ">Add Property</button>
         </div>
         <div>
           <a type="button" class="btn " href="/ownerProperties">Cancel</a >
@@ -89,7 +96,7 @@
       </div>
     </div>
 
-
+</from>
   </body>
 
 
@@ -177,7 +184,7 @@
 
       var currentSelected = $('#propertyType').find(":selected").text();
       //console.log(currentSelected)an;
-      if (currentSelected == "Farm") {
+      if (currentSelected == "FARM") {
         document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
       } else {
         document.getElementsByClassName("filterItem")[0].classList.add("hidden")
