@@ -1037,6 +1037,8 @@ app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword);
 
+    console.log(request.body);
+
     var sql = "SELECT * FROM User WHERE Email = ?";
     connection.query(sql, [email], function(err, result, fields) {
         if (err) {
