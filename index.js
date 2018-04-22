@@ -275,8 +275,8 @@ app.get('/visitorHome', function(request, response) {
                     GROUP BY Property.ID`;
 
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
-            console.log(userInfo.Username);
+            // console.log(result);
+            // console.log(userInfo.Username);
             response.render('visitorHome', {
                 username: userInfo.Username,
                 rows: result
@@ -335,10 +335,16 @@ app.post('/visitorDetails', function(request, response) {
     var logged = request.body.logged;
     var rating = request.body.rating;
 
-    // console.log(id);
+    console.log(id);
     // console.log(username);
     // console.log(logged);
     // console.log(rating);
+
+    var sqlHasLogged = `
+    SELECT *
+    FROM Visit 
+    WHERE PropertyID = ? AND Username = ?`;
+
     var sqlInit = `
     SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
     FROM (
@@ -368,12 +374,13 @@ app.post('/visitorDetails', function(request, response) {
     JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
 
     var sqlLog = 'INSERT INTO Visit VALUES (?, ?, CURRENT_TIMESTAMP, ?);';
+
     var sqlUnlog = 'DELETE FROM Visit WHERE Username = ? AND PropertyID = ?';
 
-    if (request.body.logged === false) {
+    if (logged === 'false') {
         connection.query(sqlLog, [username, id, rating], function(err, result, fields) {
             connection.query(sqlInit, [id], function(err, result, fields) {
-                console.log(result);
+                // console.log(result);
                 var crops = '';
                 var animals = '';
                 for (var i = 0; i < result.length; i++) {
@@ -383,8 +390,8 @@ app.post('/visitorDetails', function(request, response) {
                         crops += result[i].FarmItem + ', ';
                     }
                 }
-                console.log(crops);
-                console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
@@ -411,11 +418,11 @@ app.post('/visitorDetails', function(request, response) {
             });
 
         });
-    } else if (request.body.logged === true) {
+    } else if (logged === 'true') {
         connection.query(sqlUnlog, [username, id], function(err, result, fields) {
-            console.log(result);
+            // console.log(result);
             connection.query(sqlInit, [id], function(err, result, fields) {
-                console.log(result);
+                // console.log(result);
                 var crops = '';
                 var animals = '';
                 for (var i = 0; i < result.length; i++) {
@@ -425,8 +432,8 @@ app.post('/visitorDetails', function(request, response) {
                         crops += result[i].FarmItem + ', ';
                     }
                 }
-                console.log(crops);
-                console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
@@ -453,64 +460,65 @@ app.post('/visitorDetails', function(request, response) {
             });
         });
     } else {
-        connection.query(sqlInit, [id], function(err, result, fields) {
-            console.log(result);
-            var crops = '';
-            var animals = '';
-            for (var i = 0; i < result.length; i++) {
-                if (result[i].Type == 'Animals') {
-                    animals += result[i].FarmItem + ', ';
-                } else {
-                    crops += result[i].FarmItem + ', ';
+        connection.query(sqlHasLogged, [id, username], function(err, result, fields) {
+            logged = result.length > 0 ? true : false;
+            console.log("LOGGED: " + logged);
+            connection.query(sqlInit, [id], function(err, result, fields) {
+                // console.log(result);
+                var crops = '';
+                var animals = '';
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i].Type == 'Animals') {
+                        animals += result[i].FarmItem + ', ';
+                    } else {
+                        crops += result[i].FarmItem + ', ';
+                    }
                 }
-            }
-            console.log(crops);
-            console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
-            if (crops.length > 0) crops = crops.slice(0, -2);
-            if (animals.length > 0) animals = animals.slice(0, -2);
+                if (crops.length > 0) crops = crops.slice(0, -2);
+                if (animals.length > 0) animals = animals.slice(0, -2);
 
-            response.render('visitorDetails', {
-                logged: true,
-                username: username,
-                name: result[0].Name,
-                owner: result[0].Owner,
-                email: result[0]['Owner Email'],
-                visits: result[0].Visits,
-                address: result[0].Address,
-                city: result[0].City,
-                zip: result[0].Zip,
-                acres: result[0]['Size (acres)'],
-                avgRating: result[0]['Avg.Rating'],
-                type: result[0].TYPE,
-                public: result[0].Public,
-                commercial: result[0].Commercial,
-                id: result[0].ID,
-                crops: crops,
-                animals: animals
+                response.render('visitorDetails', {
+                    logged: logged,
+                    username: username,
+                    name: result[0].Name,
+                    owner: result[0].Owner,
+                    email: result[0]['Owner Email'],
+                    visits: result[0].Visits,
+                    address: result[0].Address,
+                    city: result[0].City,
+                    zip: result[0].Zip,
+                    acres: result[0]['Size (acres)'],
+                    avgRating: result[0]['Avg.Rating'],
+                    type: result[0].TYPE,
+                    public: result[0].Public,
+                    commercial: result[0].Commercial,
+                    id: result[0].ID,
+                    crops: crops,
+                    animals: animals
+                });
             });
         });
     }
 });
 
 // visitor history
-app.get('/visitorHistory', function(request, response) {
+app.post('/visitorHistory', function(request, response) {
 
     var username = request.body.username;
     if (signedIn) {
         var sql = `
         SELECT Property.Name, Visit.VisitDate, Visit.Rating, Property.ID
-        FROM Visit JOIN Property ON Property.ID = Visit.Property
+        FROM Visit JOIN Property ON Property.ID = Visit.PropertyID
         WHERE Visit.Username = ?`;
-
         connection.query(sql, [username], function(err, result, fields) {
             console.log(err);
             console.log(result);
-            response.render('visitorDetails', {
-                name: result[0],
-                visitDate: result[1],
-                rating: result[2],
-                id: result[3]
+            response.render('visitorHistory', {
+                username: username,
+                rows: result
             });
 
         });
