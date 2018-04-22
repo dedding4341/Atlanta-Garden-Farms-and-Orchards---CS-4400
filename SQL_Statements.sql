@@ -586,8 +586,8 @@ DELETE FROM User WHERE Username = $visitorusername
 --delete visitor's log history
 DELETE FROM Vist WHERE Username = $visitorusername
 --all owners list (initial population of table)
-SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-FROM User JOIN Visit ON Visit.Username = User.Username
+SELECT User.Username, User.Email, COUNT(*) as NumProperties
+FROM User LEFT JOIN Visit ON Visit.Username = User.Username
 WHERE User.UserType = 'OWNER'
 GROUP BY Username;
 --search by search term
