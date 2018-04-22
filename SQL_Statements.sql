@@ -56,7 +56,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, (
 
-CASE WHEN ApprovedBy = NULL
+CASE WHEN ApprovedBy IS NULL
 THEN 'False'
 ELSE 'True'
 END
@@ -81,7 +81,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, (
 
-CASE WHEN ApprovedBy = NULL
+CASE WHEN ApprovedBy IS NULL
 THEN 'False'
 ELSE 'True'
 END
@@ -110,7 +110,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, (
 
-CASE WHEN ApprovedBy = NULL
+CASE WHEN ApprovedBy IS NULL
 THEN 'False'
 ELSE 'True'
 END
@@ -135,7 +135,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, (
 
-CASE WHEN ApprovedBy = NULL
+CASE WHEN ApprovedBy IS NULL
 THEN 'False'
 ELSE 'True'
 END
@@ -435,7 +435,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, Owner
 FROM Property
-WHERE ApprovedBy = NULL;
+WHERE ApprovedBy IS NULL;
 --search by filter terms
 SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
 CASE WHEN IsPublic =1
@@ -449,7 +449,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, Owner
 FROM Property
-WHERE ApprovedBy = NULL and $searchby = $search
+WHERE ApprovedBy IS NULL and $searchby = $search
 --admin viewing details of unconfirmed property
 SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
@@ -558,7 +558,7 @@ ELSE 'False'
 END
 ) AS Commercial, ID, Owner
 FROM Property
-WHERE ApprovedBy = NULL and $searchby = $search
+WHERE ApprovedBy IS NULL and $searchby = $search
 --admin viewing details of unconfirmed property
 SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
