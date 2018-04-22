@@ -1026,12 +1026,65 @@ app.post('/login', function(request, response) {
                 signedIn = true;
 
                 if (userInfo.UserType === 'OWNER') {
-                    var sql = "SELECT * FROM Property WHERE Owner = ?";
+                    var sql = `SELECT
+                              	Name,
+                              	Street AS Address, City, Zip, Size, PropertyType AS
+                              TYPE , (
+
+                              CASE WHEN IsPublic =1
+                              THEN 'True'
+                              ELSE 'False'
+                              END
+                              ) AS Public, (
+
+                              CASE WHEN IsCommercial =1
+                              THEN 'True'
+                              ELSE 'False'
+                              END
+                              ) AS Commercial, ID, (
+
+                              CASE WHEN ApprovedBy IS NULL
+                              THEN 'False'
+                              ELSE 'True'
+                              END
+                            ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
+                              FROM Property, Visit
+                              WHERE Owner = ?
+                              GROUP BY ID`;
                     connection.query(sql, [userInfo.Username], function(err, result, fields) {
                         myPropertyInfo = result;
-                        var sql = "SELECT * FROM Property";
-                        connection.query(sql, function(err, result, fields) {
+                        console.log(result);
+                        var sql = `SELECT Name,
+                                    Street AS Address,
+                                    City,
+                                    Zip, Size, PropertyType AS
+                                    TYPE , (
+
+                                    CASE WHEN IsPublic =1
+                                    THEN 'True'
+                                    ELSE 'False'
+                                    END
+                                    ) AS Public, (
+
+                                    CASE WHEN IsCommercial =1
+                                    THEN 'True'
+                                    ELSE 'False'
+                                    END
+                                    ) AS Commercial, ID, (
+
+                                    CASE WHEN ApprovedBy IS NULL
+                                    THEN 'False'
+                                    ELSE 'True'
+                                    END
+                                    ) AS isValid, COUNT( * ) as Visits , AVG( Rating ) as 'Rating'
+                                    FROM Property, Visit
+                                    WHERE Owner != ?
+                                    GROUP BY ID
+                                    `;
+                        connection.query(sql, [userInfo.Username],function(err, result, fields) {
                             allPropertyInfo = result;
+                            console.log('everything');
+                            console.log(result);
                             response.render('ownerProperties', {
                                 username: userInfo.Username,
                                 personalProperty: myPropertyInfo,

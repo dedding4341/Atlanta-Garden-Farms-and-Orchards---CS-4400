@@ -46,18 +46,18 @@
 
           {{#each allProperty}}
             <tr>
-            <td scope="col"> {{this.Name}} </td>
-            <td scope="col"> {{this.Street}} </td>
-            <td scope="col"> {{this.City}} </td>
-            <td scope="col"> {{this.Zip}} </td>
-            <td scope="col"> {{this.Size}} </td>
-            <td scope="col"> {{this.PropertyType}} </td>
-            <td scope="col"> {{this.IsPublic}} </td>
-            <td scope="col"> {{this.IsCommercial}} </td>
-            <td scope="col"> {{this.ID}} </td>
-            <td scope="col"> PENDING </td>
-            <td scope="col"> PENDING </td>
-            <td scope="col"> PENDING </td>
+              <td scope="col"> {{this.Name}} </td>
+              <td scope="col"> {{this.Address}} </td>
+              <td scope="col"> {{this.City}} </td>
+              <td scope="col"> {{this.Zip}} </td>
+              <td scope="col"> {{this.Size}} </td>
+              <td scope="col"> {{this.TYPE}} </td>
+              <td scope="col"> {{this.Public}} </td>
+              <td scope="col"> {{this.Commercial}} </td>
+              <td scope="col"> {{this.ID}} </td>
+              <td scope="col"> {{this.isValid}} </td>
+              <td scope="col"> {{this.Visits}} </td>
+              <td scope="col"> {{this.Rating}} </td>
             </tr>
           {{/each}}
 
@@ -150,8 +150,8 @@
       background-color: #007bff;
       color: #ffffff;
     }
-    td {
-      text-align: center;
+    th {
+      text-align: ;
     }
     .selection-table {
       width: 100%;
