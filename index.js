@@ -214,8 +214,8 @@ app.get('/visitorHome', function(request, response) {
                     GROUP BY Property.ID`;
 
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
-            console.log(userInfo.Username);
+            // console.log(result);
+            // console.log(userInfo.Username);
             response.render('visitorHome', {
                 username: userInfo.Username,
                 rows: result
@@ -274,7 +274,7 @@ app.post('/visitorDetails', function(request, response) {
     var logged = request.body.logged;
     var rating = request.body.rating;
 
-    // console.log(id);
+    console.log(id);
     // console.log(username);
     // console.log(logged);
     // console.log(rating);
@@ -316,10 +316,10 @@ app.post('/visitorDetails', function(request, response) {
 
     var sqlUnlog = 'DELETE FROM Visit WHERE Username = ? AND PropertyID = ?';
 
-    if (logged === false) {
+    if (logged === 'false') {
         connection.query(sqlLog, [username, id, rating], function(err, result, fields) {
             connection.query(sqlInit, [id], function(err, result, fields) {
-                console.log(result);
+                // console.log(result);
                 var crops = '';
                 var animals = '';
                 for (var i = 0; i < result.length; i++) {
@@ -329,8 +329,8 @@ app.post('/visitorDetails', function(request, response) {
                         crops += result[i].FarmItem + ', ';
                     }
                 }
-                console.log(crops);
-                console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
@@ -357,11 +357,11 @@ app.post('/visitorDetails', function(request, response) {
             });
 
         });
-    } else if (logged === true) {
+    } else if (logged === 'true') {
         connection.query(sqlUnlog, [username, id], function(err, result, fields) {
-            console.log(result);
+            // console.log(result);
             connection.query(sqlInit, [id], function(err, result, fields) {
-                console.log(result);
+                // console.log(result);
                 var crops = '';
                 var animals = '';
                 for (var i = 0; i < result.length; i++) {
@@ -371,8 +371,8 @@ app.post('/visitorDetails', function(request, response) {
                         crops += result[i].FarmItem + ', ';
                     }
                 }
-                console.log(crops);
-                console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
@@ -401,8 +401,9 @@ app.post('/visitorDetails', function(request, response) {
     } else {
         connection.query(sqlHasLogged, [id, username], function(err, result, fields) {
             logged = result.length > 0 ? true : false;
+            console.log("LOGGED: " + logged);
             connection.query(sqlInit, [id], function(err, result, fields) {
-                console.log(result);
+                // console.log(result);
                 var crops = '';
                 var animals = '';
                 for (var i = 0; i < result.length; i++) {
@@ -412,8 +413,8 @@ app.post('/visitorDetails', function(request, response) {
                         crops += result[i].FarmItem + ', ';
                     }
                 }
-                console.log(crops);
-                console.log(animals);
+                // console.log(crops);
+                // console.log(animals);
 
                 if (crops.length > 0) crops = crops.slice(0, -2);
                 if (animals.length > 0) animals = animals.slice(0, -2);
@@ -451,17 +452,12 @@ app.post('/visitorHistory', function(request, response) {
         SELECT Property.Name, Visit.VisitDate, Visit.Rating, Property.ID
         FROM Visit JOIN Property ON Property.ID = Visit.PropertyID
         WHERE Visit.Username = ?`;
-
         connection.query(sql, [username], function(err, result, fields) {
             console.log(err);
             console.log(result);
             response.render('visitorHistory', {
-                name: result[0].Name,
-                visitDate: result[0]
-                // name: result[0],
-                // visitDate: result[1],
-                // rating: result[2],
-                // id: result[3]
+                username: username,
+                rows: result
             });
 
         });

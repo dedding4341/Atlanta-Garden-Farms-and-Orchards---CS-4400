@@ -89,7 +89,7 @@
     </style>
 
 <body>
-    <form class="form-unconfirmed">
+    <div class="form-unconfirmed">
         <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><strong>Your Visit History</strong></h1>
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
@@ -106,23 +106,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td scope="row" class="text-center">Georgia Tech Garden</td>
-                    <td class="text-center">2018-01-21</td>
-                    <td class="text-center">5</td>
-                </tr>
-                <tr>
-                    <td scope="row" class="text-center">Kenari Company Farm</td>
-                    <td class="text-center">2018-01-15</td>
-                    <td class="text-center">3</td>
-                </tr>
+                {{#each rows}}
+                  <tr>
+                    <td scope="row">{{this.Name}}</td>
+                    <td>{{this.VisitDate}}</td>
+                    <td>{{this.Rating}}</td>
+                    <td style="display:none;">{{this.ID}}</td>
+
+                  </tr>
+                {{/each}}
             </tbody>
         </table>
         <br>
         <div class="d-flex justify-content-between vertical-container">
             <div class="d-flex justify-content-between flex-direction: flex-column">
-                <form method = "POST" action = "/visitorDetails">
-                    <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
+                <form id="details" method = "POST" action = "/visitorDetails">
                     <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
                 </form>
 <!--                 <input id="searchProperties" class="btn btn-primary" type="submit" value="View Property Details" style="width: 200px; text-align: center; height: 35px;"> -->
@@ -134,15 +132,42 @@
 
 </html>
 <script type="text/javascript">
-    $('.dropdown-item').click(function() {
-        $('#dropdownMenuButton').text('Search by: ' + $(this).text());
+
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'username',
+        name: 'username',
+        value: '{{username}}'
+    }).appendTo('#details');
+
+    if ({{rows.length}} > 0) {
+        $('<input>').attr({
+            type: 'hidden',
+            id: 'id',
+            name: 'idSelection',
+            value: ''
+        }).appendTo('#details');
+    }
+
+    $("#viewProperty").click(function(e) {
+        if ($('#id').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
     });
+
 
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
+        // var rowNum = $(this).closest("tr").index();
         var cells = this.cells; //cells collection
-        var id = cells[8].innerHTML;
-        $('#idSelector').val(id);
+        var id = cells[3].innerHTML;
+        console.log(id);
+        $('#id').val(id);
+
+        // console.log(rowNum);
+        // console.log({{rows.[rowNum]}});
+
         // $(this).addClass('bg-info').siblings().removeClass('bg-info');
     });
 

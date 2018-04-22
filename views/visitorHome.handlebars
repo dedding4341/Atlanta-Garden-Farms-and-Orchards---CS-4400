@@ -139,7 +139,7 @@
 
                         <div class="not-btn-input">
                           <select class="form-control" id="searchBy" name="column" required>
-                            <option value="">Search by...</option>
+                            <option selected disabled hidden value="">Search by...</option>
                             <option>Name</option>
                             <option>City</option>
                             <option>Type</option>
@@ -154,7 +154,7 @@
                     </form>
                 </div>
                 <div class="d-flex justify-content-between flex-direction: flex-column-reverse">
-                    <form method = "POST" action = "/visitorDetails">
+                    <form id="details" method = "POST" action = "/visitorDetails">
                         <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
                         <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
                     </form>
@@ -185,6 +185,13 @@
         // $(this).addClass('bg-info').siblings().removeClass('bg-info');
     });
 
+    $("#viewProperty").click(function(e) {
+        if ($('#idSelector').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
+    });
+
     function onClick(e) {
         var th = $(e.target).parent();
         var col = th.text();
@@ -204,7 +211,14 @@
         id: 'username',
         name: 'username',
         value: '{{username}}'
-    }).appendTo('#history')
+    }).appendTo('#history');
+
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'username',
+        name: 'username',
+        value: '{{username}}'
+    }).appendTo('#details');
 
     function compare(index) {
         return function(a, b) {
