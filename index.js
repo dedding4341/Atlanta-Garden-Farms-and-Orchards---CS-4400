@@ -433,23 +433,25 @@ app.post('/visitorDetails', function(request, response) {
 });
 
 // visitor history
-app.get('/visitorHistory', function(request, response) {
+app.post('/visitorHistory', function(request, response) {
 
     var username = request.body.username;
     if (signedIn) {
         var sql = `
         SELECT Property.Name, Visit.VisitDate, Visit.Rating, Property.ID
-        FROM Visit JOIN Property ON Property.ID = Visit.Property
+        FROM Visit JOIN Property ON Property.ID = Visit.PropertyID
         WHERE Visit.Username = ?`;
 
         connection.query(sql, [username], function(err, result, fields) {
             console.log(err);
             console.log(result);
-            response.render('visitorDetails', {
-                name: result[0],
-                visitDate: result[1],
-                rating: result[2],
-                id: result[3]
+            response.render('visitorHistory', {
+                name: result[0].Name,
+                visitDate: result[0]
+                // name: result[0],
+                // visitDate: result[1],
+                // rating: result[2],
+                // id: result[3]
             });
 
         });

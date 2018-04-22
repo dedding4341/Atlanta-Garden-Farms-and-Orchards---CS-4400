@@ -158,7 +158,7 @@
                         <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
                         <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
                     </form>
-                    <form method = "GET" action = "/visitorHistory">
+                    <form id="history" method = "POST" action = "/visitorHistory">
                         <input id="visitHistory" class="btn btn-primary" type="submit" value="View Visit History" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
                     </form>
                 </div>
@@ -198,6 +198,13 @@
             table.append(rows[i]);
         }
     }
+
+    $('<input>').attr({
+        type: 'hidden',
+        id: 'username',
+        name: 'username',
+        value: {{username}}
+    }).appendTo('#history')
 
     function compare(index) {
         return function(a, b) {
