@@ -193,8 +193,8 @@ app.get('/allOwnersInSystem', function(request, response) {
 app.get('/allVisitorsInSystem', function(request, response) {
 
     if (signedIn) {
-        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-        FROM User JOIN Visit ON Visit.Username = User.Username
+        var sql = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
+        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
         WHERE User.UserType = 'VISITOR'
         GROUP BY Username`;
         connection.query(sql, function(err, result, fields) {
@@ -342,7 +342,7 @@ app.post('/visitorDetails', function(request, response) {
 
     var sqlHasLogged = `
     SELECT *
-    FROM Visit 
+    FROM Visit
     WHERE PropertyID = ? AND Username = ?`;
 
     var sqlInit = `
@@ -534,8 +534,8 @@ app.post('/allVisitorsInSystem', function(request, response) {
         console.log(String(user))
         connection.query(sql, [user], function(err, result, fields) {
             console.log("deleteLog");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            FROM User JOIN Visit ON Visit.Username = User.Username
+            var sql2 = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
             WHERE User.UserType = 'VISITOR'
             GROUP BY Username`;
             connection.query(sql2, function(err, result, fields) {
@@ -549,20 +549,20 @@ app.post('/allVisitorsInSystem', function(request, response) {
     } else  {
         //deleteAcc
         var user = request.body.usernameval;
-        var sql = `DELETE FROM User WHERE Username = $visitorusername`;
-        var sql = sql.replace("$visitorusername", user)
-        connection.query(sql, function(err, result, fields) {
+        console.log(user);
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        connection.query(sql, [user], function(err, result, fields) {
             console.log("deleteAcc");
-            // var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            // FROM User JOIN Visit ON Visit.Username = User.Username
-            // WHERE User.UserType = 'VISITOR'
-            // GROUP BY Username`;
-            // connection.query(sql2, function(err, result, fields) {
-            //     response.render('allVisitorsInSystem', {
-            //         username: userInfo.Username,
-            //         rows: result
-            //     });
-            // });
+            var sql2 = `SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
         });
     }
 })
