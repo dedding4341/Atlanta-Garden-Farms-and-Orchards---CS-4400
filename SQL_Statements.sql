@@ -597,3 +597,24 @@ WHERE User.UserType = 'OWNER' AND $searchby = $search
 GROUP BY Username;
 --delete owner account
 DELETE FROM User WHERE Username = $visitorusername
+--approved animals/crops list
+SELECT Name, Type
+FROM FarmItem
+WHERE IsApproved = True;
+--add to approved list
+INSERT INTO FarmItem VALUES ($itemname, True, $type);
+--search by search term
+SELECT Name, Type
+FROM FarmItem
+WHERE IsApproved = True AND $searchby = $search
+--pending approval animals/crops list
+SELECT Name, Type
+FROM FarmItem
+WHERE IsApproved = True;
+--approve selection
+UPDATE FarmItem
+SET IsApproved = True
+WHERE Name = $name;
+--delete selection
+DELETE FROM FarmItem
+WHERE Name = $name;
