@@ -572,8 +572,8 @@ WHERE ID = $id
 --update new crop/animal (approved)
 INSERT INTO Has VALUES ($propertyid, $itemname)
 --all visitors list (initial population of table)
-SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-FROM User JOIN Visit ON Visit.Username = User.Username
+SELECT User.Username, User.Email, COUNT(VisitDate) as LoggedVisits
+FROM User LEFT JOIN Visit ON Visit.Username = User.Username
 WHERE User.UserType = 'VISITOR'
 GROUP BY Username;
 --search by search term
