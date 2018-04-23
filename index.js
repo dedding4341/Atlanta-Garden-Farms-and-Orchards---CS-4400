@@ -636,41 +636,55 @@ app.get('/manageSelectedProperty', function(request, response) {
 
 app.post('/approvedAnimalsCrops', function(request, response) {
     console.log(request.body);
-    // if (request.body.column != undefined) {
-    //     var col = request.body.column;
-    //     var search = request.body.search;
-    //     sqlsearch = `
-    //     SELECT Name, Type
-    //     FROM FarmItem
-    //     WHERE IsApproved = True AND ` + col + ` = ?`;
-    //     console.log(sqlsearch);
-    //     connection.query(sqlsearch, [search], function(err, result, fields) {
-    //         console.log(result);
-    //         response.render('approvedAnimalsCrops', {
-    //             username: userInfo.Username,
-    //             rows: result
-    //         });
-    //     });
-    // } else if () {
-    //
-    // } else {
-    //     if (signedIn) {
-    //         var user = request.body.usernameval;
-    //         var sql = `DELETE FROM FarmItem
-    //         WHERE Name = ?`;
-    //         connection.query(sql, [user], function(err, result, fields) {
-    //             var sql2 = `SELECT Name, Type
-    //             FROM FarmItem
-    //             WHERE IsApproved = True`
-    //             connection.query(sql2, function(err, result, fields) {
-    //                 response.render('approvedAnimalsCrops', {
-    //                     username: userInfo.Username,
-    //                     rows: result
-    //                 });
-    //             });
-    //         });
-    //     }
-    // }
+    if (request.body.column != undefined) {
+        var col = request.body.column;
+        var search = request.body.search;
+        sqlsearch = `
+        SELECT Name, Type
+        FROM FarmItem
+        WHERE IsApproved = True AND ` + col + ` = ?`;
+        console.log(sqlsearch);
+        connection.query(sqlsearch, [search], function(err, result, fields) {
+            console.log(result);
+            response.render('approvedAnimalsCrops', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    } else if (request.body.type != undefined) {
+        var type = request.body.type;
+        var item = request.body.name;
+        var sql = `INSERT INTO FarmItem VALUES (?, 1, ?)`;
+        connection.query(sql, [item, type], function(err, result, fields) {
+            var sql2 = `SELECT Name, Type
+            FROM FarmItem
+            WHERE IsApproved = True`
+            connection.query(sql2, function(err, result, fields) {
+                response.render('approvedAnimalsCrops', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
+
+    } else {
+        if (signedIn) {
+            var user = request.body.usernameval;
+            var sql = `DELETE FROM FarmItem
+            WHERE Name = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                var sql2 = `SELECT Name, Type
+                FROM FarmItem
+                WHERE IsApproved = True`
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('approvedAnimalsCrops', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        }
+    }
 })
 
 app.get('/approvedAnimalsCrops', function(request, response) {
