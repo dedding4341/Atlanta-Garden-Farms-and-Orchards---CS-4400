@@ -556,10 +556,9 @@ app.post('/allOwnersInSystem', function(request, response) {
             if (col == "Number of Properties") {
                 col == "NumProperties";
             }
-            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-            FROM User JOIN Visit ON Visit.Username = User.Username
-            WHERE User.UserType = 'OWNER' AND User.`+ col + ` = ?
-            GROUP BY Username`;
+            var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            WHERE User.UserType = 'OWNER' AND `+ col +` = ?
+            GROUP BY Username;`;
             connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
                 console.log(result);
