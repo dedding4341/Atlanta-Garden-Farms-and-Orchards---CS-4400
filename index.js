@@ -667,6 +667,7 @@ app.post('/manageSelectedProperty', function(request, response) {
             JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
 
         connection.query(sql, [id], function(err, result, fields) {
+            
             response.render('manageSelectedProperty', {
             });
         });
