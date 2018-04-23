@@ -702,7 +702,6 @@ app.get('/adminLandingPage', function(request, response) {
     if (signedIn) {
         response.render('adminLandingPage');
     }
-
 })
 
 app.post('/adminLandingPage', function(request, response) {
@@ -728,7 +727,7 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
         FROM Property
         WHERE ApprovedBy IS NULL`;
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
+            // console.log(result);
             response.render('viewUnconfirmedProperties', {
                 username: userInfo.Username,
                 rows: result
@@ -762,8 +761,8 @@ app.post('/viewConfirmedProperties', function(request, response) {
             THEN 'True'
             ELSE 'False'
             END
-            ) AS Commercial, ID, Owner
-            FROM Property
+        ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating) as Rating
+            FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
             WHERE ApprovedBy IS NOT NULL and `+col+` = ?`;
             connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
@@ -775,6 +774,38 @@ app.post('/viewConfirmedProperties', function(request, response) {
                 });
             });
         }
+    }
+})
+
+app.post('/viewUnconfirmedProperties', function(request, response) {
+    if (request.body.column != undefined) {
+
+    } else {
+        console.log("aaaaaaaaaaaaa");
+        var col = request.body.column;
+        var search = request.body.search;
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+    CASE WHEN IsPublic =1
+    THEN 'True'
+    ELSE 'False'
+    END
+    ) AS Public, (
+    CASE WHEN IsCommercial =1
+    THEN 'True'
+    ELSE 'False'
+    END
+    ) AS Commercial, ID, Owner
+    FROM Property
+    WHERE ApprovedBy IS NULL and `+col+` = ?`;
+        connection.query(sql, [search], function(err, result, fields) {
+            console.log(sql);
+            console.log(result);
+            console.log(err);
+            response.render('viewUnconfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 })
 
