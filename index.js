@@ -759,7 +759,6 @@ app.post('/visitorHome', function(request, response) {
                 });
             }
         } else {
-            console.log("Hey");
             var sql2params = `
                  SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                  TYPE , (

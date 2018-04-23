@@ -212,9 +212,7 @@
 
     $('#searchBy').change(function() {
         var searchBy = $(this).val();
-        $('#dropdownMenuButton').text('Search by: ' + searchBy);
         if (searchBy == 'Visits' || searchBy == 'Avg. Rating') {
-            console.log("hey");
             document.getElementById('searchTextMin').classList.add("hiddenField");
             document.getElementById('searchTextMax').classList.add("hiddenField");
             $('#searchTextMin').val('');
@@ -222,15 +220,11 @@
             $('#checkbox').prop('checked', false);
             $("#searchTextMin").prop('required',false);
             $("#searchTextMax").prop('required',false);
-
             document.getElementById('checkbox').classList.remove("hiddenField");
             document.getElementById('rangeLabel').classList.remove("hiddenField");
             document.getElementById('searchText').classList.remove("hiddenField");
             $("#searchText").prop('required',true);
-
-
         } else {
-            console.log("hey2");
             document.getElementById('checkbox').classList.add("hiddenField");
             document.getElementById('rangeLabel').classList.add("hiddenField");
             document.getElementById('searchTextMin').classList.add("hiddenField");
