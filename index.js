@@ -648,66 +648,116 @@ app.post('/viewConfirmedProperties', function(request, response) {
 })
 
 app.post('/manageSelectedProperty', function(request, response) {
-
     if (signedIn) {
         console.log(request.body);
         var id = request.body.id;
-        var sql = `
-            SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
-            FROM (
-
-            SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
-            TYPE , (
-
-            CASE WHEN IsPublic =1
-            THEN 'True'
-            ELSE 'False'
-            END
-            ) AS Public, (
-
-            CASE WHEN IsCommercial =1
-            THEN 'True'
-            ELSE 'False'
-            END
-            ) AS Commercial, Property.ID AS ID
-            FROM Property
-            JOIN User ON Property.Owner = User.Username
-            JOIN Has ON Property.ID = Has.PropertyID
-            JOIN FarmItem ON FarmItem.Name = Has.ItemName
-            JOIN Visit ON Visit.PropertyID = Property.ID
-            WHERE Property.ID = ?
-            ) AS P
-            JOIN Has ON Has.PropertyID = P.ID
-            JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
-
+         var sql = `SELECT ItemName
+                   FROM Has
+                   JOIN FarmItem ON FarmItem.Name = Has.ItemName
+                   WHERE Has.PropertyID = ? AND FarmItem.Type != 'ANIMAL'`;
         connection.query(sql, [id], function(err, result, fields) {
-            console.log(result);
-            var crops = [];
-            var animals = [];
-            for (var i = 0; i < result.length; i++) {
-                if (result[i].Type == 'Animals') {
-                    animals.append(result[i].item);
-                } else {
-                    crops.append(result[i].item);
-                }
-            }
-            response.render('manageSelectedProperty', {
-                id: id,
-                name: result[0].Name,
-                owner: result[0].Owner,
-                email: result[0]['Owner Email'],
-                address: result[0].Address,
-                city: result[0].City,
-                zip: result[0].Zip,
-                acres: result[0]['Size (acres)'],
-                avgRating: result[0]['AVG( Rating )'],
-                type: result[0].TYPE,
-                public: result[0].Public,
-                commercial: result[0].Commercial,
-                crops: crops,
-                animals: animals
+            cropList = result;
+            // console.log('croplist');
+            // console.log(croplist);
+            var animalsql = `SELECT ItemName
+                            FROM Has
+                            JOIN FarmItem ON FarmItem.Name = Has.ItemName
+                            WHERE Has.PropertyID = ? AND FarmItem.Type = 'ANIMAL'`;
+            connection.query(animalsql, [id], function(err, result, fields) {
+                animalList = result;
+                // console.log('animals');
+                // console.log(animallist);
+                var newCropsql = `SELECT Name
+                                  FROM FarmItem
+                                  WHERE FarmItem.Type != 'ANIMAL'
+                                  AND FarmItem.IsApproved = True
+                                  AND NOT
+                                  EXISTS (
+                                  SELECT *
+                                  FROM Has
+                                  WHERE Has.ItemName = FarmItem.Name
+                                  AND Has.PropertyID =?)` ;
+                connection.query(newCropsql, [id], function(err, result, fields) {
+                    addCrops = result;
+                    // console.log('add crops');
+                    // console.log(result);
+                    var newAnimalsql = `SELECT Name
+                                        FROM FarmItem
+                                        WHERE FarmItem.Type = 'ANIMAL'
+                                        AND FarmItem.IsApproved = True
+                                        AND NOT
+                                        EXISTS (
+                                        SELECT *
+                                        FROM Has
+                                        WHERE Has.ItemName = FarmItem.Name
+                                        AND Has.PropertyID =?)`;
+                    connection.query(newAnimalsql, [id], function(err, result, fields) {
+                        addAnimals = result;
+                        var finalSql = `
+                            SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+                            FROM (
+
+                            SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
+                            TYPE , (
+
+                            CASE WHEN IsPublic =1
+                            THEN 'True'
+                            ELSE 'False'
+                            END
+                            ) AS Public, (
+
+                            CASE WHEN IsCommercial =1
+                            THEN 'True'
+                            ELSE 'False'
+                            END
+                            ) AS Commercial, Property.ID AS ID
+                            FROM Property
+                            JOIN User ON Property.Owner = User.Username
+                            JOIN Has ON Property.ID = Has.PropertyID
+                            JOIN FarmItem ON FarmItem.Name = Has.ItemName
+                            JOIN Visit ON Visit.PropertyID = Property.ID
+                            WHERE Property.ID = ?
+                            ) AS P
+                            JOIN Has ON Has.PropertyID = P.ID
+                            JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
+
+                        connection.query(finalSql, [id], function(err, result, fields) {
+                            console.log(result);
+                            // var crops = [];
+                            // var animals = [];
+                            // for (var i = 0; i < result.length; i++) {
+                            //     if (result[i].Type == 'Animals') {
+                            //         animals.push(result[i].item);
+                            //     } else {
+                            //         crops.push(result[i].item);
+                            //     }
+                            // }
+
+                            // console.log(crops);
+                            // console.log(animals);
+                            response.render('manageSelectedProperty', {
+                                id: id,
+                                name: result[0].Name,
+                                owner: result[0].Owner,
+                                email: result[0]['Owner Email'],
+                                address: result[0].Address,
+                                city: result[0].City,
+                                zip: result[0].Zip,
+                                acres: result[0]['Size (acres)'],
+                                avgRating: result[0]['AVG( Rating )'],
+                                type: result[0].TYPE,
+                                public: result[0].Public,
+                                commercial: result[0].Commercial,
+                                cropList: cropList,
+                                animalList: animalList,
+                                addCrops: addCrops,
+                                addAnimals: addAnimals
+                            });
+                        });
+                    });
+                });
             });
-        });
+        });        
     }
 });
 
