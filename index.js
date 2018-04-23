@@ -275,6 +275,7 @@ app.get('/ownerProperties', function(request, response) {
 
 //takes you to the mamage property screen from owner properties
 app.post('/ownerProperties', function(request, response){
+
    var id = request.body.ID;
    id = parseInt(id);
    chosenID = id;
@@ -513,7 +514,7 @@ app.post('/manageProperty', function(request, response) {
       var sql = `INSERT INTO Has
                 VALUES (?, ?)`;
       connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('manageProperty');
+        response.render('success');
       });
     }
 
@@ -522,7 +523,7 @@ app.post('/manageProperty', function(request, response) {
       var sql = `INSERT INTO Has
                 VALUES (?, ?)`;
       connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('manageProperty');
+        response.render('success');
       });
     }
 
@@ -530,7 +531,7 @@ app.post('/manageProperty', function(request, response) {
       var name = request.body.removeCrop;
       var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
       connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('sucess');
       });
 
     }
@@ -538,7 +539,7 @@ app.post('/manageProperty', function(request, response) {
       var name = request.body.removeAnimal;
       var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
       connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('success');
       });
     }
     if (request.body.submitRequest == '') {
@@ -546,7 +547,7 @@ app.post('/manageProperty', function(request, response) {
       var newType = request.body.newItemType;
       var sql = `INSERT INTO FarmItem VALUES (?, False, ?);`;
       connection.query(sql, [newName, newType], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('success');
       });
     }
     if (request.body.deleteProperty == '') {
@@ -554,13 +555,13 @@ app.post('/manageProperty', function(request, response) {
         var sql = `DELETE FROM Property
                   WHERE ID = ?`;
         connection.query(sql, [chosenID], function(err,result, fields){
-          response.render('ownerProperties');
+          response.render('success');
         });
 
     }
     if (request.body.saveChanges == '') {
       var name = request.body.name;
-      var address = request.body.name;
+      var address = request.body.address;
       var city = request.body.city;
       var zip = request.body.zip;
       zip = parseInt(zip);
@@ -586,15 +587,48 @@ app.post('/manageProperty', function(request, response) {
                 SET Name = ?, Size = ?, IsCommercial = ?, IsPublic = ?, Street = ?,City = ?, Zip = ?
                 WHERE ID = ?`;
       connection.query(sql, [name, size, isCommercial, isPublic, address, city, zip, chosenID ], function(err, result, fields) {
-            response.render('ownerProperties', {
+
+        var sql = `SELECT
+                    Name,
+                    Street AS Address, City, Zip, Size, PropertyType AS
+                  TYPE , (
+
+                  CASE WHEN IsPublic =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Public, (
+
+                  CASE WHEN IsCommercial =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Commercial, ID, (
+
+                  CASE WHEN ApprovedBy IS NULL
+                  THEN 'False'
+                  ELSE 'True'
+                  END
+                ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
+                  FROM Property, Visit
+                  WHERE Owner = ?
+                  GROUP BY ID`;
+        connection.query(sql, [userInfo.Username], function(err, result, fields) {
+            myPropertyInfo = result;
+            console.log(result);
+
+            response.render('success', {
+
+
               username: userInfo.Username,
               personalProperty: myPropertyInfo,
               allProperty: allPropertyInfo
             });
-      });
-    }
-});
+          });
 
+
+});
+}});
 
 app.get('/allOwnersInSystem', function(request, response) {
 
