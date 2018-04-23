@@ -27,35 +27,36 @@
             <div class=" vertical-container left">
                 <div class="space smaller-hor-container" >
                   <label class="left-label">Property Name: </label>
-                  <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" required autofocus>
+                  <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" value="{{name}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Address: </label>
-                  <input id="address" class="form-control not-btn-input" placeholder="Address" required autofocus>
+                  <input id="address" class="form-control not-btn-input" placeholder="Address" value="{{address}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">City: </label>
-                  <input id="city" class="form-control not-btn-input" placeholder="City" required autofocus>
+                  <input id="city" class="form-control not-btn-input" placeholder="City" value="{{city}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Zip: </label>
-                  <input id="zip" class="form-control not-btn-input" placeholder="Zip" required autofocus>
+                  <input id="zip" class="form-control not-btn-input" placeholder="Zip" value="{{zip}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Size(acres): </label>
-                  <input id="size" class="form-control not-btn-input" placeholder="Size" required autofocus>
+                  <input id="size" class="form-control not-btn-input" placeholder="Size" value="{{acres}}" required autofocus>
                 </div>
             </div>
             <div class=" vertical-container">
                 <div class="space left-container hor-container">
                   <label class="left-label">Type: </label>
-                  <label id="type" > Farm </label>
+                  <input readonly id="type" class="form-control not-btn-input" value="{{type}}"  >
                 </div>
                 <div class="space smaller-hor-container" >
                   <label class="left-label">Public: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
+                      <select name="isPublic" class="form-control" id="isPublic">
+                        <option selected disabled hidden >{{public}}</option>
                         <option>True</option>
                         <option>False</option>
                       </select>
@@ -66,7 +67,8 @@
                   <label class="left-label">Commercial: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
+                      <select name="isCommercial" class="form-control" id="isCommercial">
+                        <option selected disabled hidden>{{commercial}}</option>
                         <option>True</option>
                         <option>False</option>
                       </select>
@@ -76,7 +78,7 @@
 
                 <div class="space left-container hor-container">
                   <label class="left-label">ID: </label>
-                  <label id="city" > 00237 </label>
+                  <label id="id" > {{id}} </label>
                 </div>
             </div>
         </div>
@@ -331,6 +333,24 @@
 </html>
 
 <script>
+  var currentSelected = document.getElementById('type').value;
+  console.log(type);
+  if (currentSelected == 'FARM') {
+    document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+  }
 
+  $(document).change(function () {
+
+      var currentSelected = document.getElementById('type').value;
+      //console.log(currentSelected);
+      if (currentSelected == 'FARM') {
+        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+        console.log('not hidden');
+      } else {
+        document.getElementsByClassName("filterItem")[0].classList.add("hidden");
+        console.log('hidden');
+      }
+
+  });
 
 </script>
