@@ -812,7 +812,33 @@ app.post('/viewConfirmedProperties', function(request, response) {
 
 app.post('/viewUnconfirmedProperties', function(request, response) {
     if (request.body.column != undefined) {
-
+        var col = request.body.column;
+        var search = request.body.search;
+        if (col == "Number of Properties") {
+            col == "NumProperties";
+        }
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, Owner
+FROM Property
+WHERE ApprovedBy IS NULL and `+col+` = ?`;
+        connection.query(sql, [search], function(err, result, fields) {
+            console.log(sql);
+            console.log(result);
+            console.log(err);
+            response.render('viewUnconfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     } else {
         console.log("aaaaaaaaaaaaa");
         var col = request.body.column;
