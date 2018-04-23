@@ -88,34 +88,104 @@ app.post('/newVisitorRegistration', function(request, response) {
 });
 
 app.get('/newOwnerRegistration', function(request, response) {
-    response.render('newOwnerRegistration');
-    var username = request.body.inputEmail;
+    var sql = "SELECT * FROM FarmItem WHERE Type = 'ANIMAL' AND IsApproved = True";
+    connection.query(sql, [], function(err, results, fields) {
+        var animals = results;
+        var sql = "SELECT * FROM FarmItem WHERE Type != 'ANIMAL' AND IsApproved = True";
+        connection.query(sql, [], function(err, results, fields) {
+            var crops = results;
+            console.log(animals);
+
+            response.render('newOwnerRegistration', {
+                animalList: animals,
+                cropList: crops
+            })
+        })
+    })
+    //response.render('newOwnerRegistration');
+});
+
+app.post('/newOwnerRegistration', function(request, response) {
+    //response.render('newOwnerRegistration');
+    var username = request.body.inputUsername;
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword1);
     var confpassword = md5(request.body.inputPassword2);
+    var propertyName = request.body.inputProperty;
+    var streetAddress = request.body.inputStreetAddress;
+    var city = request.body.inputCity;
+    var zip = request.body.inputZip;
+    zip = parseInt(zip);
+    var acres = request.body.inputAcres;
+    acres = parseFloat(acres);
+    var propertyType = request.body.propertyType;
+    var animalType = request.body.animalType;
+    var cropType = request.body.cropType;
+    var public = request.body.publicType;
+    if (public == "Yes") {
+        public = 1;
+    } else {
+        public = 0;
+    }
+    var commercial = request.body.commercialType;
+    if (commercial == "Yes") {
+        commercial = 1;
+    } else {
+        commercial = 0;
+    }
+    console.log(request.body);
 
     var sql = "SELECT * FROM User WHERE Username = ? OR Email = ?";
-    connection.query(sql, [username, email], function(err, result, fields) {
+    connection.query(sql, [username, email], function(err, results, fields) {
         if (err) {
             return;
         };
-        if (results.length > 0) {
-            console.log("Username or Email invalid.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+        if (results != '') {
+            console.log("Username or Email exits.");
+            response.render('usernameOrEmailExists2');;
         } else if (password != confpassword) {
             console.log("Password and confirm password does not match.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+            response.render('passwordNoMatch2');
         } else {
-            var insertsql = "INSERT INTO User VALUES (?,?,?,'VISITOR')";
-            connection.query(insertsql, [username, email, password], function (err2, results2, fields2) {
-                if (err2) {
-                    return;
-                };
+            var sql = `SELECT MAX(ID) AS Id FROM Property`;
+            connection.query(sql, function(err, result, fields) {
+                console.log('result: '+result);
+                var Id = result[0].Id;
+
+                console.log(Id);
+                Id = Id + 1;
+
+                var sql = "INSERT INTO User VALUES (?, ?, ?, 'OWNER')";
+                connection.query(sql, [username, email, password], function(err3, results3, fields3) {
+                        var insertsql = "INSERT INTO Property VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
+                        console.log(insertsql);
+                        console.log(Id, propertyName, acres, commercial, public, city, zip, propertyType, username);
+                        connection.query(insertsql, [Id, propertyName, acres, commercial, public, streetAddress,city, zip, propertyType, username], function (err2, results2, fields2) {
+                            if (err2) {
+                                //return;
+                            };
+
+                          // console.log("second query");
+                          var sql3 = `INSERT INTO Has Values (?, ?);`;
+
+                          connection.query(sql3, [Id, cropType], function(err, result, fields) {
+                                console.log(cropType);
+                                if (propertyType == 'FARM') {
+                                    var sql4 =  `INSERT INTO Has Values (?, ?);`;
+                                    connection.query(sql4, [Id, animalType], function(err,result, fields) {
+                                        console.log(animalType);
+                                    });
+                                }
+                            console.log("We were here")
+
+                });
             });
-            console.log("New visitor added.");
-        };
-    });
-});
+            console.log("New Owner added.");
+            response.render('registrationSuccessful');
+        });
+        });
+    };
+})});
 
 app.get('/otherProperties', function(request, response) {
     console.log(signedIn);
@@ -522,6 +592,7 @@ app.get('/allVisitorsInSystem', function(request, response) {
         WHERE User.UserType = 'VISITOR'
         GROUP BY Username`;
         connection.query(sql, function(err, result, fields) {
+            console.log(result);
             response.render('allVisitorsInSystem', {
                 username: userInfo.Username,
                 rows: result
@@ -556,8 +627,9 @@ app.post('/allOwnersInSystem', function(request, response) {
             if (col == "Number of Properties") {
                 col == "NumProperties";
             }
-            var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            WHERE User.UserType = 'OWNER' AND `+ col +` = ?
+            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User JOIN Property ON Property.Owner = User.Username
+            WHERE User.UserType = 'OWNER' AND User.`+ col +` = ?
             GROUP BY Username;`;
             connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
@@ -761,7 +833,7 @@ app.post('/manageSelectedProperty', function(request, response) {
                     });
                 });
             });
-        });        
+        });
     }
 });
 
@@ -1313,7 +1385,26 @@ app.post('/visitorHistory', function(request, response) {
 })
 
 app.post('/allVisitorsInSystem', function(request, response) {
-    if (request.body.deleteLog == "") {
+    if (request.body.column != undefined) {
+        var col = request.body.column;
+        var search = request.body.search;
+        if (col == "Logged Visits") {
+            col == "LoggedVisits";
+        }
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+        FROM User JOIN Visit ON Visit.Username = User.Username
+        WHERE User.UserType = 'VISITOR' AND User.`+ col +` = ?
+        GROUP BY Username;`;
+        connection.query(sql, [search], function(err, result, fields) {
+            console.log(sql);
+            console.log(result);
+            console.log(err);
+            response.render('allVisitorsInSystem', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    } else if (request.body.deleteLog == "") {
         //deleteLog
         var user = request.body.usernameval;
         var sql = `DELETE FROM Visit WHERE Username = ?`;
@@ -1335,20 +1426,19 @@ app.post('/allVisitorsInSystem', function(request, response) {
     } else  {
         //deleteAcc
         var user = request.body.usernameval;
-        var sql = `DELETE FROM User WHERE Username = $visitorusername`;
-        var sql = sql.replace("$visitorusername", user)
-        connection.query(sql, function(err, result, fields) {
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        connection.query(sql, [user],  function(err, result, fields) {
             console.log("deleteAcc");
-            // var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            // FROM User JOIN Visit ON Visit.Username = User.Username
-            // WHERE User.UserType = 'VISITOR'
-            // GROUP BY Username`;
-            // connection.query(sql2, function(err, result, fields) {
-            //     response.render('allVisitorsInSystem', {
-            //         username: userInfo.Username,
-            //         rows: result
-            //     });
-            // });
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            FROM User JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
         });
     }
 })
