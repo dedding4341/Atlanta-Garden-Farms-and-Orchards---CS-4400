@@ -691,9 +691,8 @@ app.post('/allOwnersInSystem', function(request, response) {
                 col == "NumProperties";
             }
             var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-            FROM User JOIN Property ON Property.Owner = User.Username
-            WHERE User.UserType = 'OWNER' AND User.`+ col +` = ?
-            GROUP BY Username;`;
+FROM User JOIN Property ON Property.Owner = User.Username
+WHERE User.UserType = 'OWNER' AND `+col+` = ?`;
             connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
                 console.log(result);
@@ -719,7 +718,7 @@ app.get('/viewConfirmedProperties', function(request, response) {
         THEN 'True'
         ELSE 'False'
         END
-        ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
+    ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating) as Rating
         FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
         WHERE ApprovedBy IS NOT NULL
         GROUP BY Name`;
