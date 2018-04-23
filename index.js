@@ -683,6 +683,15 @@ app.post('/manageSelectedProperty', function(request, response) {
 
         connection.query(sql, [id], function(err, result, fields) {
             console.log(result);
+            var crops = [];
+            var animals = [];
+            for (var i = 0; i < result.length; i++) {
+                if (result[i].Type == 'Animals') {
+                    animals.append(result[i].item);
+                } else {
+                    crops.append(result[i].item);
+                }
+            }
             response.render('manageSelectedProperty', {
                 id: id,
                 name: result[0].Name,
@@ -696,7 +705,6 @@ app.post('/manageSelectedProperty', function(request, response) {
                 type: result[0].TYPE,
                 public: result[0].Public,
                 commercial: result[0].Commercial,
-                itemType: result[0]
                 crops: crops,
                 animals: animals
             });
