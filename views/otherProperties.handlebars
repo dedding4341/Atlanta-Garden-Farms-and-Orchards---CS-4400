@@ -92,8 +92,8 @@
           </td>
           <td>
             <form method = "POST" action = "/viewPropertyDetails">
-            <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
-            <button class="btn" type="submit"  >View Property Details</button>
+              <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
+              <button class="btn" type="submit"  >View Property Details</button>
             </form>
           </td>
         </tr>
@@ -184,6 +184,10 @@
 <script>
   $('#infoTable').on('click', 'tbody tr', function(event) {
     $(this).addClass('highlight').siblings().removeClass('highlight');
+  });
+
+  $('#searchBy').change(function() {
+      var searchBy = $(this).val();
   });
 
   (function () {

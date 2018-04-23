@@ -19,7 +19,7 @@
 
 <html>
   <body>
-    <form>
+    <form method="POST" action="/viewConfirmedProperties">
         <div >
             <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> {{name}}</b></u></h1>
         </div>
@@ -152,58 +152,16 @@
             </div>
           </div>
         </div>
-<!--         <div class="hor-container">
-            <div class=" vertical-container left">
-              <div class="space smaller-hor-container" >
-                <label class="left-label">Add new Animal: </label>
-                <div class="smaller-hor-container">
-                  <div class="form-control-plaintext">
-                    <select class="form-control "  id="searchBy">
-                      <option>A</option>
-                      <option>B</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class=" vertical-container"> -->
-              <!-- start comment -->
-                <!-- <div class="space left-container">
-                  <label class="left-label left-containe">Crops: </label>
-                </div> -->
-                <!-- end comment -->
-<!--                 <div class="space smaller-hor-container" >
-                  <label class="left-label">Add new Crop: </label>
-                  <div class="smaller-hor-container">
-                    <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy">
-                        <option>True</option>
-                        <option>False</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-            </div>
-        </div> -->
-
-<!--         <div class="hor-container container-margin">
-            <div class="vertical-container left">
-                <button type="button" class="btn ">Add Selected Animal</button>
-            </div>
-            <div class="vertical-container">
-                <button type="button" class="btn ">Add Selected Crop</button>
-            </div>
-        </div> -->
         <div class="smaller-hor-container">
-            <div>
-                <button type="button" class="left btn bottom-btn ">Delete Property</button>
-            </div>
-            <div>
-                <button type="button" class="btn left  bottom-btn ">Save Changes</button>
-            </div>
-            <div>
-                <button type="button" class="btn bottom-btn ">Back</button>
-            </div>
+          <div>
+              <button name="deleteProperty" id="deleteProperty" type="submit" class="left btn bottom-btn ">Delete Property</button>
+          </div>
+          <div>
+              <button type="submit" class="btn left  bottom-btn " id="saveChanges" name="saveChanges">Save Changes</button>
+          </div>
+          <div>
+              <a type="button" class="btn bottom-btn " href = "/viewConfirmedProperties">Back</a>
+          </div>
         </div>
       </form>
 

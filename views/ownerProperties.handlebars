@@ -103,7 +103,7 @@
         </tr>
         <tr>
           <th>
-            <button type="button" class="btn ">Search Properties</button>
+            <button id="searchProperties" class="btn" type="submit"">Search Properties</button>
           </th>
           <th>
             <a type="button" class="btn" href = "/otherProperties">View Other Properties</a>
@@ -210,6 +210,10 @@
       $('#dropdownMenuButton').text('Search by: ' + $(this).text());
   });
 
+  $('#searchBy').change(function() {
+      var searchBy = $(this).val();
+  });
+
   $('th>.dropdown-toggle').on('click', onClick);
 
 
@@ -266,4 +270,6 @@
         }
 
     })();
+
+
 </script>
