@@ -21,7 +21,7 @@ WHERE Username = $username AND Email = $email;
 --populate animal dropdown
 SELECT *
 FROM FarmItem
-WHERE Type = 'ANIMAL';
+WHERE Type = 'ANIMAL' AND IsApproved = 1;
 --populate crop dropdown
 SELECT *
 FROM FarmItem
@@ -639,10 +639,12 @@ DELETE FROM User WHERE Username = $visitorusername
 DELETE FROM Vist WHERE Username = $visitorusername
 --all owners list (initial population of table)
 SELECT User.Username, User.Email, COUNT(*) as NumProperties
+FROM User JOIN Property ON Property.Owner = User.Username
 WHERE User.UserType = 'OWNER'
 GROUP BY Username;
 --search by search term
-SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+SELECT User.Username, User.Email, COUNT(*) as NumProperties
+FROM User JOIN Property ON Property.Owner = User.Username
 WHERE User.UserType = 'OWNER' AND $searchby = $search
 GROUP BY Username;
 --delete owner account
