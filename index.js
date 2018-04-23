@@ -658,6 +658,7 @@ app.get('/manageSelectedProperty', function(request, response) {
 app.post('/manageSelectedProperty', function(request, response) {
 
     if (signedIn) {
+        console.log(request.body);
         var id = request.body.id;
         var sql = `
             SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
@@ -682,13 +683,30 @@ app.post('/manageSelectedProperty', function(request, response) {
             JOIN Has ON Property.ID = Has.PropertyID
             JOIN FarmItem ON FarmItem.Name = Has.ItemName
             JOIN Visit ON Visit.PropertyID = Property.ID
-            WHERE Property.ID =$id
+            WHERE Property.ID = ?
             ) AS P
             JOIN Has ON Has.PropertyID = P.ID
             JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
 
         connection.query(sql, [id], function(err, result, fields) {
+            console.log(result);
             response.render('manageSelectedProperty', {
+                id: id,
+                name: result[0].Name,
+                owner: result[0].Owner,
+                email: result[0]['Owner Email'],
+                address: result[0].Address,
+                city: result[0].City,
+                zip: result[0].Zip,
+                acres: result[0]['Size (acres)'],
+                avgRating: result[0]['AVG( Rating )'],
+                type: result[0].TYPE,
+                public: result[0].Public,
+                commercial: result[0].Commercial,
+                itemType: result[0]
+                id: result[0].ID,
+                crops: crops,
+                animals: animals
             });
         });
     }
