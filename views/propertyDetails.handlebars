@@ -23,90 +23,90 @@
 
     <form>
       <div class="center-h-container">
-        <h1 class="font-weight-normal"> <u> <b>{{propertyInfo.Name}} Details </b></u></h1>
+        <h1 class="font-weight-normal"> <u> <b>{{name}} Details </b></u></h1>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Name:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> {{propertyInfo.Name}} </label>
+          <label class="form-control-plaintext"> {{name}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Owner:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> {{propertyInfo.Owner}} </label>
+          <label class="form-control-plaintext"> {{owner}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"> <b>Email:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">{{personalInfo.Email}} </label>
+          <label class="form-control-plaintext">{{email}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Visits:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> PENDING </label>
+          <label class="form-control-plaintext"> {{visits}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Address:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">{{propertyInfo.Street}}</label>
+          <label class="form-control-plaintext">{{address}}</label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>City:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext">{{propertyInfo.City}}</label>
+          <label class="form-control-plaintext">{{city}}</label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Zip:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> {{propertyInfo.Zip}} </label>
+          <label class="form-control-plaintext"> {{zip}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Size(acres):</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> {{propertyInfo.Size}} </label>
+          <label class="form-control-plaintext"> {{size}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Type:</b></label>
         <div class="col-sm-10">
-          <label id = "farm" class="form-control-plaintext"> {{propertyInfo.PropertyType}} </label>
+          <label id = "type" class="form-control-plaintext" value ="{{type}}" > {{type}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Public:</b></label>
         <div class="col-sm-10">
-          <label id = "public" class="form-control-plaintext"> {{propertyInfo.IsPublic}} </label>
+          <label id = "public" class="form-control-plaintext"> {{isPublic}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Commercial:</b></label>
         <div class="col-sm-10">
-          <label id = "commercial" class="form-control-plaintext"> {{propertyInfo.IsCommercial}} </label>
+          <label id = "commercial" class="form-control-plaintext"> {{isCommercial}} </label>
         </div>
       </div>
       <div class="form-group row last">
         <label class="row-label col-sm-2 col-form-label"><b>ID: </b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> {{propertyInfo.ID}} </label>
+          <label class="form-control-plaintext"> {{id}} </label>
         </div>
       </div>
       <div class="form-group row">
         <label class="row-label col-sm-2 col-form-label"><b>Crops:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> PENDING </label>
+          <label class="form-control-plaintext"> {{crops}} </label>
         </div>
       </div>
-      <div class="form-group row last">
+      <div class="filterItem hidden form-group row last">
         <label class="row-label col-sm-2 col-form-label"><b>Animals:</b></label>
         <div class="col-sm-10">
-          <label class="form-control-plaintext"> PENDING </label>
+          <label class="form-control-plaintext"> {{animals}} </label>
         </div>
       </div>
       <div class="btn-container">
@@ -203,7 +203,7 @@
       }
 
       .hidden {
-        display: none
+        display: none;
       }
   </style>
 
@@ -211,46 +211,29 @@
 
 <script>
 
-  $(document).ready(function () {
+var currentSelected = document.getElementById('type').textContent;
+console.log('what the fuck');
+console.log(type);
+console.log(type == 'FARM');
+if (currentSelected == 'FARM') {
+  document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+}
 
-      var currentSelected = document.getElementById('farm').textContent;
-      var valLoadPub = document.getElementById('public').textContent;
-      var valLoadCom = document.getElementById('commercial').textContent;
+$(document).change(function () {
 
-      //FIX THIS
-
-
-/*     if (valLoadPub == 0) {
-         document.getElementById('public').innerHTML = 'False';
-      } else {
-        document.getElementById('public').innerHTML = 'True';
-      }
-
-      if (valLoadCom ==0) {
-        document.getElementById('commercial').innerHTML = 'False';
-      } else {
-        document.getElementById('commercial').innerHTML = 'True';
-      }*/
-
-
-      //console.log(currentSelected);
-      if (currentSelected == "FARM") {
-        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
-      }
-
-    $(document).change(function () {
-
-      var currentSelected = document.getElementById('farm').textContent;
-      //console.log(currentSelected);
-      if (currentSelected == "FARM") {
-        document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
-      } else {
-        console.log('whysadkj')
-        document.getElementsByClassName("filterItem")[0].classList.add("hidden")
-      }
+    var currentSelected = document.getElementById('type').textContent;
+    //console.log(currentSelected);
+    if (currentSelected == 'FARM') {
+      document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
+      console.log('not hidden');
+    } else {
+      document.getElementsByClassName("filterItem")[0].classList.add("hidden");
+      console.log('hidden');
+    }
 
 
-    });
-  });
+      });
+
+
 
 </script>
