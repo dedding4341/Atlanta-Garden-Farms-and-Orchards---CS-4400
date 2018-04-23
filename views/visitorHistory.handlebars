@@ -121,7 +121,7 @@
         <div class="d-flex justify-content-between vertical-container">
             <div class="d-flex justify-content-between flex-direction: flex-column">
                 <form id="details" method = "POST" action = "/visitorDetails">
-                    <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+                    <input id="viewProperty" class="btn btn-primary" type="submit" value="View Property" style="width: 200px; text-align: center; height: 35px; margin-top: 5px; margin-bottom: 5px;">
                 </form>
 <!--                 <input id="searchProperties" class="btn btn-primary" type="submit" value="View Property Details" style="width: 200px; text-align: center; height: 35px;"> -->
                 <a id="back" class="btn btn-info" href = "/visitorHome">Back</a>
@@ -150,7 +150,8 @@
     }
 
     $("#viewProperty").click(function(e) {
-        if ($('#id').val() == '') {
+        var select = $('#id').val();
+        if (select == '' || select == undefined) {
             e.preventDefault();
             window.alert('Please select a property.');
         }
