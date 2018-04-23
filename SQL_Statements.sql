@@ -21,11 +21,11 @@ WHERE Username = $username AND Email = $email;
 --populate animal dropdown
 SELECT *
 FROM FarmItem
-WHERE Type = 'ANIMAL' AND IsApproved = 1;
+WHERE Type = 'ANIMAL' AND IsApproved = True;
 --populate crop dropdown
 SELECT *
 FROM FarmItem
-WHERE Type != 'ANIMAL';
+WHERE Type != 'ANIMAL' AND IsApproved = True;
 --add new owner
 INSERT INTO User
 VALUES ($username, $email, $password, 'OWNER');
@@ -40,8 +40,8 @@ VALUES ($propertyid, $itemName);
 /* Owner functionality */
 --default view of owners properties
 SELECT
-	Name,
-	Street AS Address, City, Zip, Size, PropertyType AS
+    Name,
+    Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
 
 CASE WHEN IsPublic =1
@@ -66,8 +66,8 @@ WHERE Owner = $owner
 GROUP BY ID;
 --search by term filter
 SELECT
-	Name,
-	Street AS Address, City, Zip, Size, PropertyType AS
+    Name,
+    Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
 CASE WHEN IsPublic =1
 THEN 'True'
@@ -451,7 +451,7 @@ END
 FROM Property
 WHERE ApprovedBy IS NULL and $searchby = $search
 --admin viewing details of unconfirmed property
-SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
 SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
@@ -639,12 +639,12 @@ DELETE FROM User WHERE Username = $visitorusername
 DELETE FROM Vist WHERE Username = $visitorusername
 --all owners list (initial population of table)
 SELECT User.Username, User.Email, COUNT(*) as NumProperties
-FROM User JOIN Property ON Property.Owner = User.Username
+FROM User LEFT JOIN Visit ON Visit.Username = User.Username
 WHERE User.UserType = 'OWNER'
 GROUP BY Username;
 --search by search term
-SELECT User.Username, User.Email, COUNT(*) as NumProperties
-FROM User JOIN Property ON Property.Owner = User.Username
+SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+FROM User JOIN Visit ON Visit.Username = User.Username
 WHERE User.UserType = 'OWNER' AND $searchby = $search
 GROUP BY Username;
 --delete owner account

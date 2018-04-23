@@ -116,44 +116,44 @@
     </style>
 
     <body class = "text-center">
-        <form class = "form-signup">
+        <form class = "form-signup" method = "POST" action = "/newOwnerRegistration">
             <h1 class="h4 mb-3 font-weight-normal">New Owner Registration</h1>
 
             <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+            <input type="email" name = "inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
 
             <label for = "inputUsername" class = "sr-only">Username</label>
-            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required>
+            <input type="text" name = "inputUsername" id="inputUsername" class="form-control" placeholder="Username" required>
 
             <label for="inputPassword1" class="sr-only">Password</label>
-            <input type="password" id="inputPassword1" class="form-control" placeholder="Password" required>
+            <input type="password" name = "inputPassword1" id="inputPassword1" class="form-control" placeholder="Password" required>
 
             <label for="inputPassword2" class="sr-only">ConfirmPassword</label>
-            <input type="password" id="inputPassword2" class="form-control" placeholder="Confirm password" required>
+            <input type="password" id="inputPassword2" name = "inputPassword2" class="form-control" placeholder="Confirm password" required>
 
             <label for="inputProperty" class="sr-only">Property</label>
-            <input type="property" id="inputProperty" class="form-control" placeholder="Property name" required>
+            <input type="property" id="inputProperty" name = "inputProperty" class="form-control" placeholder="Property name" required>
 
             <label for="inputStreetAddress" class="sr-only">StreetAddress</label>
-            <input type="streetAddress" id="inputStreetAddress" class="form-control" placeholder="Street address" required>
+            <input type="streetAddress" id="inputStreetAddress" name = "inputStreetAddress" class="form-control" placeholder="Street address" required>
 
             <label for="inputCity" class="sr-only">City</label>
-            <input type="city" id="inputCity" class="form-control" placeholder="City" required>
+            <input type="city" id="inputCity" name = "inputCity" class="form-control" placeholder="City" required>
 
             <label for="inputZip" class="sr-only">Zip</label>
-            <input type="zip" id="inputZip" class="form-control" placeholder="Zip" required>
+            <input type="zip" id="inputZip" name = "inputZip" class="form-control" placeholder="Zip" required>
 
             <label for="inputAcres" class="sr-only">Acres</label>
-            <input type="acres" id="inputAcres" class="form-control" placeholder="Acres" required>
+            <input type="acres" id="inputAcres" name = "inputAcres" class="form-control" placeholder="Acres" required>
 
 
 
               <div class = "property">
               <label for = "propertyType">Property Type:</label>
-              <select id="propertyType">
-                <option>Farm</option>
-                <option>Garden</option>
-                <option>Orchards</option>
+              <select name = "propertyType" id="propertyType">
+                <option>FARM</option>
+                <option>GARDEN</option>
+                <option>ORCHARDS</option>
               </select>
               </div>
 
@@ -161,10 +161,10 @@
 
               <div class = "animal filterItem hidden">
               <label for = "animalType">Animal:</label>
-              <select id="animalType">
-                <option>Animal 1</option>
-                <option>Animal 2</option>
-                <option>Animal 3</option>
+              <select name = "animalType"  id="animalType">
+                {{#each animalList}}
+                  <option> {{this.Name}} </option>
+                {{/each}}
               </select>
               </div>
 
@@ -172,10 +172,10 @@
 
               <div class = "crop">
               <label for = "cropType">Crop:</label>
-              <select id="cropType">
-                <option>Crop 1</option>
-                <option>Crop 2</option>
-                <option>Crop 3</option>
+              <select name = "cropType" id="cropType">
+                {{#each cropList}}
+                  <option> {{this.Name}}</option>
+                {{/each}}
               </select>
               </div>
 
@@ -183,7 +183,7 @@
 
               <div class = "public">
               <label for = "publicType">Public:</label>
-              <select id="publicType">
+              <select name = "publicType" id="publicType">
                 <option>Yes</option>
                 <option>No</option>
               </select>
@@ -193,7 +193,7 @@
 
               <div class = "commercial">
               <label for = "commercialType">Commercial:</label>
-              <select id="commercialType">
+              <select name = "commercialType" id="commercialType">
                 <option>Yes</option>
                 <option>No</option>
               </select>
@@ -219,7 +219,7 @@
 
     var currentSelected = $('#propertyType').find(":selected").text();
       //console.log(currentSelected);
-      if (currentSelected == "Farm") {
+      if (currentSelected == "FARM") {
         document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
       }
 
@@ -227,7 +227,7 @@
 
       var currentSelected = $('#propertyType').find(":selected").text();
       //console.log(currentSelected);
-      if (currentSelected == "Farm") {
+      if (currentSelected == "FARM") {
         document.getElementsByClassName("filterItem")[0].classList.remove("hidden");
       } else {
         document.getElementsByClassName("filterItem")[0].classList.add("hidden")

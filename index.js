@@ -88,34 +88,104 @@ app.post('/newVisitorRegistration', function(request, response) {
 });
 
 app.get('/newOwnerRegistration', function(request, response) {
-    response.render('newOwnerRegistration');
-    var username = request.body.inputEmail;
+    var sql = "SELECT * FROM FarmItem WHERE Type = 'ANIMAL' AND IsApproved = True";
+    connection.query(sql, [], function(err, results, fields) {
+        var animals = results;
+        var sql = "SELECT * FROM FarmItem WHERE Type != 'ANIMAL' AND IsApproved = True";
+        connection.query(sql, [], function(err, results, fields) {
+            var crops = results;
+            console.log(animals);
+
+            response.render('newOwnerRegistration', {
+                animalList: animals,
+                cropList: crops
+            })
+        })
+    })
+    //response.render('newOwnerRegistration');
+});
+
+app.post('/newOwnerRegistration', function(request, response) {
+    //response.render('newOwnerRegistration');
+    var username = request.body.inputUsername;
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword1);
     var confpassword = md5(request.body.inputPassword2);
+    var propertyName = request.body.inputProperty;
+    var streetAddress = request.body.inputStreetAddress;
+    var city = request.body.inputCity;
+    var zip = request.body.inputZip;
+    zip = parseInt(zip);
+    var acres = request.body.inputAcres;
+    acres = parseFloat(acres);
+    var propertyType = request.body.propertyType;
+    var animalType = request.body.animalType;
+    var cropType = request.body.cropType;
+    var public = request.body.publicType;
+    if (public == "Yes") {
+        public = 1;
+    } else {
+        public = 0;
+    }
+    var commercial = request.body.commercialType;
+    if (commercial == "Yes") {
+        commercial = 1;
+    } else {
+        commercial = 0;
+    }
+    console.log(request.body);
 
     var sql = "SELECT * FROM User WHERE Username = ? OR Email = ?";
-    connection.query(sql, [username, email], function(err, result, fields) {
+    connection.query(sql, [username, email], function(err, results, fields) {
         if (err) {
             return;
         };
-        if (results.length > 0) {
-            console.log("Username or Email invalid.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+        if (results != '') {
+            console.log("Username or Email exits.");
+            response.render('usernameOrEmailExists2');;
         } else if (password != confpassword) {
             console.log("Password and confirm password does not match.");
-            response.sendFile(__dirname + '/pages/newVisitorRegistration.html');
+            response.render('passwordNoMatch2');
         } else {
-            var insertsql = "INSERT INTO User VALUES (?,?,?,'VISITOR')";
-            connection.query(insertsql, [username, email, password], function (err2, results2, fields2) {
-                if (err2) {
-                    return;
-                };
+            var sql = `SELECT MAX(ID) AS Id FROM Property`;
+            connection.query(sql, function(err, result, fields) {
+                console.log('result: '+result);
+                var Id = result[0].Id;
+
+                console.log(Id);
+                Id = Id + 1;
+
+                var sql = "INSERT INTO User VALUES (?, ?, ?, 'OWNER')";
+                connection.query(sql, [username, email, password], function(err3, results3, fields3) {
+                        var insertsql = "INSERT INTO Property VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
+                        console.log(insertsql);
+                        console.log(Id, propertyName, acres, commercial, public, city, zip, propertyType, username);
+                        connection.query(insertsql, [Id, propertyName, acres, commercial, public, streetAddress,city, zip, propertyType, username], function (err2, results2, fields2) {
+                            if (err2) {
+                                //return;
+                            };
+
+                          // console.log("second query");
+                          var sql3 = `INSERT INTO Has Values (?, ?);`;
+
+                          connection.query(sql3, [Id, cropType], function(err, result, fields) {
+                                console.log(cropType);
+                                if (propertyType == 'FARM') {
+                                    var sql4 =  `INSERT INTO Has Values (?, ?);`;
+                                    connection.query(sql4, [Id, animalType], function(err,result, fields) {
+                                        console.log(animalType);
+                                    });
+                                }
+                            console.log("We were here")
+
+                });
             });
-            console.log("New visitor added.");
-        };
-    });
-});
+            console.log("New Owner added.");
+            response.render('registrationSuccessful');
+        });
+        });
+    };
+})});
 
 app.get('/otherProperties', function(request, response) {
     console.log(signedIn);
@@ -130,35 +200,64 @@ app.get('/otherProperties', function(request, response) {
 });
 
 app.post('/viewPropertyDetails', function(request, response) {
-    //console.log("Running");
-    //console.log(request.body);
-    var idSelection = request.body.idSelection;
-    var sql = "SELECT * FROM Property WHERE ID = ?";
-    connection.query(sql, [idSelection], function(err, result, fields) {
-        if (err) {
-            return;
+    var id = request.body.idSelection;
+    var sql = `SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+              FROM (
+
+              SELECT Property.Name, Property.Owner, Email AS 'Email', Street AS Address, City, Zip, AVG(Rating) as 'Rating', Size AS 'Size', PropertyType AS
+              PropType , COUNT(* ) as Visits, (
+
+              CASE WHEN IsPublic =1
+              THEN 'True'
+              ELSE 'False'
+              END
+              ) AS Public, (
+
+              CASE WHEN IsCommercial =1
+              THEN 'True'
+              ELSE 'False'
+              END
+              ) AS Commercial, Property.ID AS ID
+              FROM Property
+              JOIN User ON Property.Owner = User.Username
+              JOIN Has ON Property.ID = Has.PropertyID
+              JOIN FarmItem ON FarmItem.Name = Has.ItemName
+              JOIN Visit ON Visit.PropertyID = Property.ID
+              WHERE Property.ID =?
+              ) AS P
+              JOIN Has ON Has.PropertyID = P.ID
+              JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
+    connection.query(sql, [id], function(err, result, fields) {
+        var crops = '';
+        var animals = '';
+        for (var i = 0; i < result.length; i++) {
+            if (result[i].TYPE == 'Animals') {
+                animals += result[i].FarmItem + ', ';
+            } else {
+                crops += result[i].FarmItem + ', ';
+            }
         }
-
-        if (result == '') {
-
-        } else {
-
-            var resultPropInfo = result;
-            var sql = "SELECT * FROM User WHERE Username = ?";
-            console.log(resultPropInfo[0].Owner);
-            connection.query(sql, [resultPropInfo[0].Owner], function(err, result, fields) {
-                //console.log(result);
-                response.render('propertyDetails', {
-                    propertyInfo: resultPropInfo[0],
-                    personalInfo: result[0]
-                });
-                //console.log(resultPropInfo);
-
-            })
-
-        }
-    })
-
+        if (crops.length > 0) crops = crops.slice(0, -2);
+        if (animals.length > 0) animals = animals.slice(0, -2);
+        response.render('propertyDetails', {
+              crops : crops,
+              animals : animals,
+              name : result[0].Name,
+              owner : result[0].Owner,
+              email : result[0].Email,
+              visits : result[0].Visits,
+              address: result[0].Address,
+              city: result[0].City,
+              zip: result[0].Zip,
+              size: result[0].Size,
+              type: result[0].PropType,
+              isPublic: result[0].Public,
+              isCommercial:result[0].Commercial,
+              id: result[0].ID,
+        });
+        // console.log('what is returned');
+        // console.log(result);
+    });
 });
 
 
@@ -755,6 +854,10 @@ app.post('/manageSelectedProperty', function(request, response) {
 
                         connection.query(finalSql, [id], function(err, result, fields) {
                             console.log(result);
+                            console.log(cropList);
+                            console.log(animalList);
+                            console.log(addCrops);
+                            console.log(addAnimals);
                             // var crops = [];
                             // var animals = [];
                             // for (var i = 0; i < result.length; i++) {
