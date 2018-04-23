@@ -641,11 +641,41 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
 
 app.post('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
-        var user = request.body.usernameval;
-        console.log(user);
-        var sql = `DELETE FROM User WHERE Username = ?`;
-        response.render('manageSelectedProperty', {
-        });
+        if (request.body.usernameval != undefined) {
+            var user = request.body.usernameval;
+            console.log(user);
+            var sql = `DELETE FROM User WHERE Username = ?`;
+            response.render('manageSelectedProperty', {
+            });
+        } else {
+            var col = request.body.column;
+            var search = request.body.search;
+            if (col == "Number of Properties") {
+                col == "NumProperties";
+            }
+            var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+            CASE WHEN IsPublic =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Public, (
+            CASE WHEN IsCommercial =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Commercial, ID, Owner
+            FROM Property
+            WHERE ApprovedBy IS NOT NULL and `+col+` = ?`;
+            connection.query(sql, [search], function(err, result, fields) {
+                console.log(sql);
+                console.log(result);
+                console.log(err);
+                response.render('viewConfirmedProperties', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        }
     }
 })
 
@@ -759,7 +789,7 @@ app.post('/manageSelectedProperty', function(request, response) {
                     });
                 });
             });
-        });        
+        });
     }
 });
 
