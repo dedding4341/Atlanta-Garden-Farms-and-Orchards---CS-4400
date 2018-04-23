@@ -275,6 +275,7 @@ app.get('/ownerProperties', function(request, response) {
 
 //takes you to the mamage property screen from owner properties
 app.post('/ownerProperties', function(request, response){
+
    var id = request.body.ID;
    id = parseInt(id);
    chosenID = id;
