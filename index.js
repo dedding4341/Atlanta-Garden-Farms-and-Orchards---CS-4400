@@ -653,7 +653,46 @@ app.get('/manageSelectedProperty', function(request, response) {
         response.render('manageSelectedProperty', {
         });
     }
-})
+});
+
+app.post('/manageSelectedProperty', function(request, response) {
+
+    if (signedIn) {
+        var id = request.body.id;
+        var sql = `
+            SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+            FROM (
+
+            SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
+            TYPE , (
+
+            CASE WHEN IsPublic =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Public, (
+
+            CASE WHEN IsCommercial =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Commercial, Property.ID AS ID
+            FROM Property
+            JOIN User ON Property.Owner = User.Username
+            JOIN Has ON Property.ID = Has.PropertyID
+            JOIN FarmItem ON FarmItem.Name = Has.ItemName
+            JOIN Visit ON Visit.PropertyID = Property.ID
+            WHERE Property.ID =$id
+            ) AS P
+            JOIN Has ON Has.PropertyID = P.ID
+            JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
+
+        connection.query(sql, [id], function(err, result, fields) {
+            response.render('manageSelectedProperty', {
+            });
+        });
+    }
+});
 
 app.post('/approvedAnimalsCrops', function(request, response) {
     console.log(request.body);
