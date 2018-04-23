@@ -522,6 +522,7 @@ app.get('/allVisitorsInSystem', function(request, response) {
         WHERE User.UserType = 'VISITOR'
         GROUP BY Username`;
         connection.query(sql, function(err, result, fields) {
+            console.log(result);
             response.render('allVisitorsInSystem', {
                 username: userInfo.Username,
                 rows: result
@@ -556,8 +557,9 @@ app.post('/allOwnersInSystem', function(request, response) {
             if (col == "Number of Properties") {
                 col == "NumProperties";
             }
-            var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            WHERE User.UserType = 'OWNER' AND `+ col +` = ?
+            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User JOIN Property ON Property.Owner = User.Username
+            WHERE User.UserType = 'OWNER' AND User.`+ col +` = ?
             GROUP BY Username;`;
             connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
@@ -1259,7 +1261,26 @@ app.post('/visitorHistory', function(request, response) {
 })
 
 app.post('/allVisitorsInSystem', function(request, response) {
-    if (request.body.deleteLog == "") {
+    if (request.body.column != undefined) {
+        var col = request.body.column;
+        var search = request.body.search;
+        if (col == "Logged Visits") {
+            col == "LoggedVisits";
+        }
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+        FROM User JOIN Visit ON Visit.Username = User.Username
+        WHERE User.UserType = 'VISITOR' AND User.`+ col +` = ?
+        GROUP BY Username;`;
+        connection.query(sql, [search], function(err, result, fields) {
+            console.log(sql);
+            console.log(result);
+            console.log(err);
+            response.render('allVisitorsInSystem', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    } else if (request.body.deleteLog == "") {
         //deleteLog
         var user = request.body.usernameval;
         var sql = `DELETE FROM Visit WHERE Username = ?`;
@@ -1281,20 +1302,19 @@ app.post('/allVisitorsInSystem', function(request, response) {
     } else  {
         //deleteAcc
         var user = request.body.usernameval;
-        var sql = `DELETE FROM User WHERE Username = $visitorusername`;
-        var sql = sql.replace("$visitorusername", user)
-        connection.query(sql, function(err, result, fields) {
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        connection.query(sql, [user],  function(err, result, fields) {
             console.log("deleteAcc");
-            // var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            // FROM User JOIN Visit ON Visit.Username = User.Username
-            // WHERE User.UserType = 'VISITOR'
-            // GROUP BY Username`;
-            // connection.query(sql2, function(err, result, fields) {
-            //     response.render('allVisitorsInSystem', {
-            //         username: userInfo.Username,
-            //         rows: result
-            //     });
-            // });
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
+            FROM User JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
         });
     }
 })
