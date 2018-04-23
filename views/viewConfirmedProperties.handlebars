@@ -111,7 +111,7 @@
         <div class="btn-container">
             <div class="colrev">
                 <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;">Search Properties</button>
-                <input type="text" id="searchText" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
+                <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
                 <div class="form-control-plaintext">
                     <select class="form-control " id="searchBy" name="column" style="height: 45px;">
                             <option selected disabled hidden>Search by...</option>
@@ -130,7 +130,7 @@
                 </div>
             </div>
             <div class="colrev">
-                <form method="POST" action="/viewConfirmedProperties">
+                <form method="GET" action="/manageSelectedProperty">
                     <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
                     <input type="hidden" id="usernameval" name="usernameval" class="hiddenField" placeholder="Username">
                 </form>
@@ -149,7 +149,7 @@
 <script type="text/javascript">
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
-        var cells = this.cells; //cells collection
+        var cells = this.cells;
         var id = cells[0].innerHTML;
         $('#usernameval').val(id);
         console.log(id);

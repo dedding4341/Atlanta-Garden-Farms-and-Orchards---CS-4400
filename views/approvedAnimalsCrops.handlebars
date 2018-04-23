@@ -93,33 +93,37 @@
         </div>
         <div class="container">
             <div class="col">
-                <div class="form-control-plaintext">
-                    <select class="form-control " id="type" name="column" style="height: 45px;">
-                        <option selected disabled hidden>Type...</option>
-                        <option>Animal</option>
-                        <option>Fruit</option>
-                        <option>Vegetable</option>
-                        <option>Flower</option>
-                        <option>Nut</option>
-                    </select>
-                </div>
-                <input id="zip" class="form-control not-btn-input" placeholder="Enter Name" style="margin-bottom: 7px;">
-                <button type="button" class="btn" style="height: 50px;margin-bottom: 7px;">Add to Approved List</button>
+                <form method="POST" action="/approvedAnimalsCrops">
+                    <div class="form-control-plaintext">
+                        <select class="form-control " id="type" name="type" style="height: 45px;">
+                            <option selected disabled hidden>Type...</option>
+                            <option>Animal</option>
+                            <option>Fruit</option>
+                            <option>Vegetable</option>
+                            <option>Flower</option>
+                            <option>Nut</option>
+                        </select>
+                    </div>
+                    <input id="name" name="name" class="form-control not-btn-input" placeholder="Enter Name" style="margin-bottom: 7px;">
+                    <button type="submit" id="approve" name="approve" class="btn" style="height: 50px;margin-bottom: 7px;">Add to Approved List</button>
+                </form>
             </div>
 
             <div class="col">
 
             </div>
             <div class="col">
-                <div class="form-control-plaintext">
-                    <select class="form-control " id="searchBy" name="column" style="height: 45px;">
-                        <option selected disabled hidden>Search by...</option>
-                        <option>Name</option>
-                        <option>Type</option>
-                    </select>
-                </div>
-                <input id="zip" class="form-control not-btn-input" placeholder="Search Term" style="margin-bottom: 7px;">
-                <button type="button" class="btn" style="height: 50px;margin-bottom: 7px;">Search</button>
+                <form method="POST" action="/approvedAnimalsCrops">
+                    <div class="form-control-plaintext">
+                        <select class="form-control " id="searchBy" name="column" style="height: 45px;">
+                            <option selected disabled hidden>Search by...</option>
+                            <option>Name</option>
+                            <option>Type</option>
+                        </select>
+                    </div>
+                    <input id="searchText" name="search" class="form-control not-btn-input" placeholder="Search Term" style="margin-bottom: 7px;">
+                    <button type="submit" class="btn" style="height: 50px;margin-bottom: 7px;">Search</button>
+                </form>
             </div>
         </div>
         <div class="container">
@@ -138,6 +142,16 @@
 
 </html>
 <script type="text/javascript">
+
+    $('#searchBy').change(function() {
+        var searchBy = $(this).val();
+        console.log(searchBy);
+    });
+    $('#type').change(function() {
+        var type = $(this).val();
+        console.log(type);
+    });
+
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
         var cells = this.cells;
