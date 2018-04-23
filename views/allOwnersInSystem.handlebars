@@ -1,108 +1,188 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Home</title>
-        <!-- Bootstrap core CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    </head>
-    <style media="screen">
-        html,
-        body {
-          height: 100%;
-        }
 
-        body {
-          display: -ms-flexbox;
-          display: -webkit-box;
-          display: flex;
-          /* padding-top: 40px; */
-          padding-bottom: 40px;
-          background-color: #f5f5f5;
-        }
-        .form-unconfirmed {
-          width: 100%;
-          padding: 50px;
-          margin: 0 auto;
-        }
-        .form-unconfirmed .checkbox {
-          font-weight: 400;
-        }
-        .form-unconfirmed .form-control {
-          position: relative;
-          box-sizing: border-box;
-          height: auto;
-          padding: 10px;
-          font-size: 16px;
-        }
-        .container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .col {
-            display: flex;
-            flex-direction: column;
-        }
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<style media="screen">
+    html,
+    body {
+        height: 100%;
+    }
 
-        .container-margin {
-          margin-bottom: 40px;
-        }
+    .table tbody tr.highlight td {
+        background-color: #ddd;
+    }
 
-    </style>
-    <body>
-        <form class="form-unconfirmed">
-            <h1 class="h3 mb-3 font-weight-normal text-center">All Owners In System hi {{username}}</h1>
-            <div class="container">
-                <table class="table table-bordered table-hover container-margin">
-                    <thead class="thead-light">
-                        <tr class="text-center">
-                            <th scope="col">Username
-                                <button class="btn dropdown-toggle float-right" type="button"></button>
-                            </th>
-                            <th scope="col">Email
-                                <button class="btn dropdown-toggle float-right" type="button"></button>
-                            </th>
-                            <th scope="col">Number of Properties
-                                <button class="btn dropdown-toggle float-right" type="button"></button>
-                            </th>
+    body {
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: flex;
+        /* padding-top: 40px; */
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+    }
+
+    .form-unconfirmed {
+        width: 100%;
+        padding: 50px;
+        margin: 0 auto;
+    }
+
+    .form-unconfirmed .checkbox {
+        font-weight: 400;
+    }
+
+    .form-unconfirmed .form-control {
+        position: relative;
+        box-sizing: border-box;
+        height: auto;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container-margin {
+        margin-bottom: 40px;
+    }
+</style>
+
+<body>
+    <div class="form-unconfirmed">
+        <h1 class="h3 mb-3 font-weight-normal text-center">All Owners In System</h1>
+        <div class="container">
+            <table id="table" class="table table-bordered table-hover container-margin">
+                <thead class="thead-light">
+                    <tr class="text-center">
+                        <th scope="col">Username
+                            <button class="btn dropdown-toggle float-right" type="button"></button>
+                        </th>
+                        <th scope="col">Email
+                            <button class="btn dropdown-toggle float-right" type="button"></button>
+                        </th>
+                        <th scope="col">Number of Properties
+                            <button class="btn dropdown-toggle float-right" type="button"></button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="rows">
+
+                    {{#each rows}}
+                        <tr class='clickable-row'>
+                            <td scope="row">{{this.Username}}</td>
+                            <td>{{this.Email}}</td>
+                            <td>{{this.NumProperties}}</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td scope="row" class="text-center">Georgia Tech Garden</td>
-                            <td class="text-center">2018-01-21</td>
-                            <td class="text-center">5</td>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="text-center">Kenari Company Farm</td>
-                            <td class="text-center">2018-01-15</td>
-                            <td class="text-center">3</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <div class="col">
+                <form method="POST" action="/allOwnersInSystem">
+                    <button type="submit" class="btn " style="margin-bottom: 7px;height: 50px; width:340px;">Delete Owner Account</button>
+                    <input type="hidden" id="usernameval" name="usernameval" class="hiddenField" placeholder="Username">
+                </form>
+
+                <form method="GET" action="/adminLandingPage">
+                    <button type="submit" class="btn" style="height: 50px; width:340px;">Back</button>
+                </form>
             </div>
-            <div class="container">
-                <div class="col">
-                    <button type="button" class="btn " style="margin-bottom: 7px;height: 50px">Delete Owner Account</button>
-                    <button type="button" class="btn" style="height: 50px;">Back</button>
-                </div>
 
-                <div class="col">
+            <div class="col">
 
-                </div>
-                <div class="col">
-                    <div class="form-control-plaintext">
-                      <select class="form-control "  id="searchBy" style="height: 50px;">
-                        <option>True</option>
-                        <option>False</option>
-                      </select>
-                    </div>
-                    <input id="zip" class="form-control not-btn-input" placeholder="Search Term" required autofocus style="margin-bottom: 7px;">
-                    <button type="button" class="btn" style="height: 50px;">Search Owner</button>
-                </div>
             </div>
-        </form>
-    </body>
+            <div class="col">
+                <div class="form-control-plaintext">
+                    <select class="form-control " id="searchBy" name="column" style="height: 50px;">
+                        <option selected disabled hidden>Search by...</option>
+                        <option>Username</option>
+                        <option>Email</option>
+                        <option>Number of Properties</option>
+                    </select>
+                </div>
+                <input id="zip" class="form-control not-btn-input" placeholder="Search Term" required autofocus style="margin-bottom: 7px;">
+                <button type="button" class="btn" style="height: 50px;">Search Owner</button>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
+
+<script type="text/javascript">
+    $("tbody tr").click(function() {
+        $(this).addClass('highlight').siblings().removeClass('highlight');
+        // var cells = this.cells; //cells collection
+        // var id = cells[8].innerHTML;
+        // $('#idSelector').val(id);
+        // $(this).addClass('bg-info').siblings().removeClass('bg-info');
+    });
+    (function() {
+        if (window.addEventListener) {
+            window.addEventListener('load', run, false);
+        } else if (window.attachEvent) {
+            window.attachEvent('onload', run);
+        }
+
+        function run() {
+            var t = document.getElementById('table');
+            var rows = t.rows;
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].onclick = function(event) {
+                    //event = event || window.event; // for IE8 backward compatibility
+                    //console.log(event, this, this.outerHTML);
+                    if (this.parentNode.nodeName == 'THEAD') {
+                        return;
+                    }
+                    var cells = this.cells; //cells collection
+                    var id = cells[0].innerHTML;
+                    $('#usernameval').val(id + "");
+                    console.log(id);
+                };
+            }
+        }
+
+    })();
+    $('th>.dropdown-toggle').on('click', onClick);
+
+    function onClick(e) {
+        var th = $(e.target).parent();
+        var col = th.text();
+        var table = $(th).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+        this.asc = !this.asc;
+        if (!this.asc) {
+            rows = rows.reverse();
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    }
+
+    function compare(index) {
+        return function(a, b) {
+            var valA = getCellValue(a, index);
+            var valB = getCellValue(b, index);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        }
+    }
+
+    function getCellValue(row, index) {
+        return $(row).children('td').eq(index).text();
+    }
+</script>

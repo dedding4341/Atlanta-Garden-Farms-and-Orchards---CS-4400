@@ -500,7 +500,17 @@ app.post('/manageProperty', function(request, response) {
 app.get('/allOwnersInSystem', function(request, response) {
 
     if (signedIn) {
-        response.render('allOwnersInSystem');
+        var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+        WHERE User.UserType = 'OWNER'
+        GROUP BY Username;`;
+        connection.query(sql, function(err, result, fields) {
+            console.log(result);
+            response.render('allOwnersInSystem', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
 })
@@ -521,12 +531,50 @@ app.get('/allVisitorsInSystem', function(request, response) {
     }
 })
 
-app.get('/viewConfirmedProperties', function(request, response) {
-
+app.post('/allOwnersInSystem', function(request, response) {
     if (signedIn) {
-        response.render('viewConfirmedProperties');
+        var user = request.body.usernameval;
+        console.log(user);
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        connection.query(sql, [user], function(err, result, fields) {
+            console.log("deleteAcc");
+            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'OWNER'
+            GROUP BY Username`;
+            connection.query(sql2, function(err, result, fields) {
+                response.render('allOwnersInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
     }
+})
 
+app.get('/viewConfirmedProperties', function(request, response) {
+    if (signedIn) {
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+        CASE WHEN IsPublic =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Public, (
+        CASE WHEN IsCommercial =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating)
+        FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
+        WHERE ApprovedBy IS NOT NULL
+        GROUP BY Name`;
+        connection.query(sql, function(err, result, fields) {
+            response.render('viewConfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    }
 })
 
 app.get('/adminLandingPage', function(request, response) {
@@ -545,25 +593,154 @@ app.post('/adminLandingPage', function(request, response) {
 app.get('/viewUnconfirmedProperties', function(request, response) {
 
     if (signedIn) {
-        response.render('viewUnconfirmedProperties');
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+        CASE WHEN IsPublic =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Public, (
+        CASE WHEN IsCommercial =1
+        THEN 'True'
+        ELSE 'False'
+        END
+        ) AS Commercial, ID, Owner
+        FROM Property
+        WHERE ApprovedBy IS NULL`;
+        connection.query(sql, function(err, result, fields) {
+            console.log(result);
+            response.render('viewUnconfirmedProperties', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
 })
 
-app.get('/approvedAnimalsCrops', function(request, response) {
-
+app.post('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
-        response.render('approvedAnimalsCrops');
+        var user = request.body.usernameval;
+        console.log(user);
+        var sql = `DELETE FROM User WHERE Username = ?`;
+        response.render('manageSelectedProperty', {
+        });
+    }
+})
+
+app.get('/manageSelectedProperty', function(request, response) {
+    if (signedIn) {
+        response.render('manageSelectedProperty', {
+        });
+    }
+})
+
+app.post('/approvedAnimalsCrops', function(request, response) {
+    console.log(request.body);
+    // if (request.body.column != undefined) {
+    //     var col = request.body.column;
+    //     var search = request.body.search;
+    //     sqlsearch = `
+    //     SELECT Name, Type
+    //     FROM FarmItem
+    //     WHERE IsApproved = True AND ` + col + ` = ?`;
+    //     console.log(sqlsearch);
+    //     connection.query(sqlsearch, [search], function(err, result, fields) {
+    //         console.log(result);
+    //         response.render('approvedAnimalsCrops', {
+    //             username: userInfo.Username,
+    //             rows: result
+    //         });
+    //     });
+    // } else if () {
+    //
+    // } else {
+    //     if (signedIn) {
+    //         var user = request.body.usernameval;
+    //         var sql = `DELETE FROM FarmItem
+    //         WHERE Name = ?`;
+    //         connection.query(sql, [user], function(err, result, fields) {
+    //             var sql2 = `SELECT Name, Type
+    //             FROM FarmItem
+    //             WHERE IsApproved = True`
+    //             connection.query(sql2, function(err, result, fields) {
+    //                 response.render('approvedAnimalsCrops', {
+    //                     username: userInfo.Username,
+    //                     rows: result
+    //                 });
+    //             });
+    //         });
+    //     }
+    // }
+})
+
+app.get('/approvedAnimalsCrops', function(request, response) {
+    if (signedIn) {
+        var sql = `SELECT Name, Type
+        FROM FarmItem
+        WHERE IsApproved = True`;
+        connection.query(sql, function(err, result, fields) {
+            response.render('approvedAnimalsCrops', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
 })
 
 app.get('/pendingApprovalAnimalsCrops', function(request, response) {
-
     if (signedIn) {
-        response.render('pendingApprovalAnimalsCrops');
+        var sql = `SELECT Name, Type
+        FROM FarmItem
+        WHERE IsApproved = False`;
+        connection.query(sql, function(err, result, fields) {
+            response.render('pendingApprovalAnimalsCrops', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
     }
 
+})
+
+app.post('/pendingApprovalAnimalsCrops', function(request, response) {
+    console.log(request.body);
+    if (signedIn) {
+        if (request.body.approve == "") {
+            console.log("approve");
+            var user = request.body.usernameval;
+            var sql = `UPDATE FarmItem
+            SET IsApproved = True
+            WHERE Name = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                var sql2 = `SELECT Name, Type
+                FROM FarmItem
+                WHERE IsApproved = False`
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('pendingApprovalAnimalsCrops', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        } else {
+            console.log("delete");
+            var user = request.body.usernameval;
+            var sql = `DELETE FROM FarmItem
+            WHERE Name = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                var sql2 = `SELECT Name, Type
+                FROM FarmItem
+                WHERE IsApproved = False`
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('pendingApprovalAnimalsCrops', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        }
+    }
 })
 
 // initial visitor page
