@@ -200,35 +200,64 @@ app.get('/otherProperties', function(request, response) {
 });
 
 app.post('/viewPropertyDetails', function(request, response) {
-    //console.log("Running");
-    //console.log(request.body);
-    var idSelection = request.body.idSelection;
-    var sql = "SELECT * FROM Property WHERE ID = ?";
-    connection.query(sql, [idSelection], function(err, result, fields) {
-        if (err) {
-            return;
+    var id = request.body.idSelection;
+    var sql = `SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+              FROM (
+
+              SELECT Property.Name, Property.Owner, Email AS 'Email', Street AS Address, City, Zip, AVG(Rating) as 'Rating', Size AS 'Size', PropertyType AS
+              PropType , COUNT(* ) as Visits, (
+
+              CASE WHEN IsPublic =1
+              THEN 'True'
+              ELSE 'False'
+              END
+              ) AS Public, (
+
+              CASE WHEN IsCommercial =1
+              THEN 'True'
+              ELSE 'False'
+              END
+              ) AS Commercial, Property.ID AS ID
+              FROM Property
+              JOIN User ON Property.Owner = User.Username
+              JOIN Has ON Property.ID = Has.PropertyID
+              JOIN FarmItem ON FarmItem.Name = Has.ItemName
+              JOIN Visit ON Visit.PropertyID = Property.ID
+              WHERE Property.ID =?
+              ) AS P
+              JOIN Has ON Has.PropertyID = P.ID
+              JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
+    connection.query(sql, [id], function(err, result, fields) {
+        var crops = '';
+        var animals = '';
+        for (var i = 0; i < result.length; i++) {
+            if (result[i].TYPE == 'Animals') {
+                animals += result[i].FarmItem + ', ';
+            } else {
+                crops += result[i].FarmItem + ', ';
+            }
         }
-
-        if (result == '') {
-
-        } else {
-
-            var resultPropInfo = result;
-            var sql = "SELECT * FROM User WHERE Username = ?";
-            console.log(resultPropInfo[0].Owner);
-            connection.query(sql, [resultPropInfo[0].Owner], function(err, result, fields) {
-                //console.log(result);
-                response.render('propertyDetails', {
-                    propertyInfo: resultPropInfo[0],
-                    personalInfo: result[0]
-                });
-                //console.log(resultPropInfo);
-
-            })
-
-        }
-    })
-
+        if (crops.length > 0) crops = crops.slice(0, -2);
+        if (animals.length > 0) animals = animals.slice(0, -2);
+        response.render('propertyDetails', {
+              crops : crops,
+              animals : animals,
+              name : result[0].Name,
+              owner : result[0].Owner,
+              email : result[0].Email,
+              visits : result[0].Visits,
+              address: result[0].Address,
+              city: result[0].City,
+              zip: result[0].Zip,
+              size: result[0].Size,
+              type: result[0].PropType,
+              isPublic: result[0].Public,
+              isCommercial:result[0].Commercial,
+              id: result[0].ID,
+        });
+        // console.log('what is returned');
+        // console.log(result);
+    });
 });
 
 
@@ -485,7 +514,7 @@ app.post('/manageProperty', function(request, response) {
       var sql = `INSERT INTO Has
                 VALUES (?, ?)`;
       connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('manageProperty');
+        response.render('success');
       });
     }
 
@@ -494,7 +523,7 @@ app.post('/manageProperty', function(request, response) {
       var sql = `INSERT INTO Has
                 VALUES (?, ?)`;
       connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('manageProperty');
+        response.render('success');
       });
     }
 
@@ -502,7 +531,7 @@ app.post('/manageProperty', function(request, response) {
       var name = request.body.removeCrop;
       var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
       connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('sucess');
       });
 
     }
@@ -510,7 +539,7 @@ app.post('/manageProperty', function(request, response) {
       var name = request.body.removeAnimal;
       var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
       connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('success');
       });
     }
     if (request.body.submitRequest == '') {
@@ -518,7 +547,7 @@ app.post('/manageProperty', function(request, response) {
       var newType = request.body.newItemType;
       var sql = `INSERT INTO FarmItem VALUES (?, False, ?);`;
       connection.query(sql, [newName, newType], function(err, result, fields) {
-          response.render('manageProperty');
+          response.render('success');
       });
     }
     if (request.body.deleteProperty == '') {
@@ -526,13 +555,13 @@ app.post('/manageProperty', function(request, response) {
         var sql = `DELETE FROM Property
                   WHERE ID = ?`;
         connection.query(sql, [chosenID], function(err,result, fields){
-          response.render('ownerProperties');
+          response.render('success');
         });
 
     }
     if (request.body.saveChanges == '') {
       var name = request.body.name;
-      var address = request.body.name;
+      var address = request.body.address;
       var city = request.body.city;
       var zip = request.body.zip;
       zip = parseInt(zip);
@@ -558,15 +587,48 @@ app.post('/manageProperty', function(request, response) {
                 SET Name = ?, Size = ?, IsCommercial = ?, IsPublic = ?, Street = ?,City = ?, Zip = ?
                 WHERE ID = ?`;
       connection.query(sql, [name, size, isCommercial, isPublic, address, city, zip, chosenID ], function(err, result, fields) {
-            response.render('ownerProperties', {
+
+        var sql = `SELECT
+                    Name,
+                    Street AS Address, City, Zip, Size, PropertyType AS
+                  TYPE , (
+
+                  CASE WHEN IsPublic =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Public, (
+
+                  CASE WHEN IsCommercial =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Commercial, ID, (
+
+                  CASE WHEN ApprovedBy IS NULL
+                  THEN 'False'
+                  ELSE 'True'
+                  END
+                ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
+                  FROM Property, Visit
+                  WHERE Owner = ?
+                  GROUP BY ID`;
+        connection.query(sql, [userInfo.Username], function(err, result, fields) {
+            myPropertyInfo = result;
+            console.log(result);
+
+            response.render('success', {
+
+
               username: userInfo.Username,
               personalProperty: myPropertyInfo,
               allProperty: allPropertyInfo
             });
-      });
-    }
-});
+          });
 
+
+});
+}});
 
 app.get('/allOwnersInSystem', function(request, response) {
 
@@ -712,11 +774,41 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
 
 app.post('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
-        var user = request.body.usernameval;
-        console.log(user);
-        var sql = `DELETE FROM User WHERE Username = ?`;
-        response.render('manageSelectedProperty', {
-        });
+        if (request.body.usernameval != undefined) {
+            var user = request.body.usernameval;
+            console.log(user);
+            var sql = `DELETE FROM User WHERE Username = ?`;
+            response.render('manageSelectedProperty', {
+            });
+        } else {
+            var col = request.body.column;
+            var search = request.body.search;
+            if (col == "Number of Properties") {
+                col == "NumProperties";
+            }
+            var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
+            CASE WHEN IsPublic =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Public, (
+            CASE WHEN IsCommercial =1
+            THEN 'True'
+            ELSE 'False'
+            END
+            ) AS Commercial, ID, Owner
+            FROM Property
+            WHERE ApprovedBy IS NOT NULL and `+col+` = ?`;
+            connection.query(sql, [search], function(err, result, fields) {
+                console.log(sql);
+                console.log(result);
+                console.log(err);
+                response.render('viewConfirmedProperties', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        }
     }
 })
 

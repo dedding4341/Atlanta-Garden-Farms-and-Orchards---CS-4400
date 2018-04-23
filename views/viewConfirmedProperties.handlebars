@@ -110,24 +110,26 @@
         </table>
         <div class="btn-container">
             <div class="colrev">
-                <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;">Search Properties</button>
-                <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
-                <div class="form-control-plaintext">
-                    <select class="form-control " id="searchBy" name="column" style="height: 45px;">
-                            <option selected disabled hidden>Search by...</option>
-                            <option>Name</option>
-                            <option>Address</option>
-                            <option>City</option>
-                            <option>Zip</option>
-                            <option>Size</option>
-                            <option>Type</option>
-                            <option>Public</option>
-                            <option>Commercial</option>
-                            <option>ID</option>
-                            <option>Verified by</option>
-                            <option>Avg. Rating</option>
-                        </select>
-                </div>
+                <form method="POST" action="/viewConfirmedProperties">
+                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;">Search Properties</button>
+                    <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
+                    <div class="form-control-plaintext">
+                        <select class="form-control " id="searchBy" name="column" style="height: 45px;">
+                                <option selected disabled hidden>Search by...</option>
+                                <option>Name</option>
+                                <option>Address</option>
+                                <option>City</option>
+                                <option>Zip</option>
+                                <option>Size</option>
+                                <option>Type</option>
+                                <option>Public</option>
+                                <option>Commercial</option>
+                                <option>ID</option>
+                                <option>Verified by</option>
+                                <option>Avg. Rating</option>
+                            </select>
+                    </div>
+                </form>
             </div>
             <div class="colrev">
                 <form method="POST" action="/manageSelectedProperty">
@@ -147,6 +149,10 @@
 
 </html>
 <script type="text/javascript">
+    $('#searchBy').change(function() {
+        var searchBy = $(this).val();
+        console.log(searchBy);
+    });
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
         var cells = this.cells;

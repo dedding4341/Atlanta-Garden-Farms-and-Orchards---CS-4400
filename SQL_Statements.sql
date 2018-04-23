@@ -21,11 +21,11 @@ WHERE Username = $username AND Email = $email;
 --populate animal dropdown
 SELECT *
 FROM FarmItem
-WHERE Type = 'ANIMAL' AND IsApproved = True;
+WHERE Type = 'ANIMAL' AND IsApproved = 1;
 --populate crop dropdown
 SELECT *
 FROM FarmItem
-WHERE Type != 'ANIMAL' AND IsApproved = True;
+WHERE Type != 'ANIMAL';
 --add new owner
 INSERT INTO User
 VALUES ($username, $email, $password, 'OWNER');
@@ -39,9 +39,7 @@ VALUES ($propertyid, $itemName);
 
 /* Owner functionality */
 --default view of owners properties
-SELECT
-    Name,
-    Street AS Address, City, Zip, Size, PropertyType AS
+SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
 
 CASE WHEN IsPublic =1
@@ -61,13 +59,14 @@ THEN 'False'
 ELSE 'True'
 END
 ) AS isValid, COUNT( * ) , AVG( Rating )
-FROM Property, Visit
+FROM Property
+JOIN Visit ON Visit.PropertyID = Property.ID
 WHERE Owner = $owner
-GROUP BY ID;
+GROUP BY ID
 --search by term filter
 SELECT
-    Name,
-    Street AS Address, City, Zip, Size, PropertyType AS
+	Name,
+	Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
 CASE WHEN IsPublic =1
 THEN 'True'
@@ -115,7 +114,7 @@ THEN 'False'
 ELSE 'True'
 END
 ) AS isValid, COUNT( * ) as Visits , AVG( Rating ) as 'Avg.Rating'
-FROM Property, Visit
+FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
 WHERE Owner != $owner
 GROUP BY ID
 ORDER BY $order
@@ -451,7 +450,7 @@ END
 FROM Property
 WHERE ApprovedBy IS NULL and $searchby = $search
 --admin viewing details of unconfirmed property
-SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
 SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS
@@ -639,12 +638,12 @@ DELETE FROM User WHERE Username = $visitorusername
 DELETE FROM Vist WHERE Username = $visitorusername
 --all owners list (initial population of table)
 SELECT User.Username, User.Email, COUNT(*) as NumProperties
-FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+FROM User JOIN Property ON Property.Owner = User.Username
 WHERE User.UserType = 'OWNER'
 GROUP BY Username;
 --search by search term
-SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-FROM User JOIN Visit ON Visit.Username = User.Username
+SELECT User.Username, User.Email, COUNT(*) as NumProperties
+FROM User JOIN Property ON Property.Owner = User.Username
 WHERE User.UserType = 'OWNER' AND $searchby = $search
 GROUP BY Username;
 --delete owner account
@@ -654,7 +653,7 @@ SELECT Name, Type
 FROM FarmItem
 WHERE IsApproved = True;
 --add to approved list
-INSERT INTO FarmItem VALUES ($itemname, True, $type);
+INSERT INTO FarmItem VALUES ($itemname, 1, $type);
 --search by search term
 SELECT Name, Type
 FROM FarmItem
