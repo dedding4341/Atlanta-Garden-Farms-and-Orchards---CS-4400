@@ -1,16 +1,16 @@
 /* Login */
 --verify valid credentials
-SELECT * 
-FROM User 
+SELECT *
+FROM User
 WHERE Username = $username AND Password = $password;
 
 /* New visitor registration */
 --verify registration is valid
-SELECT * 
-FROM User 
+SELECT *
+FROM User
 WHERE Username = $username OR Email = $email;
 --insert new visitor account
-INSERT INTO User 
+INSERT INTO User
 VALUES ($username, $email, $password, 'VISITOR');
 
 /* New owner registration */
@@ -27,11 +27,11 @@ SELECT *
 FROM FarmItem
 WHERE Type != 'ANIMAL';
 --add new owner
-INSERT INTO User 
+INSERT INTO User
 VALUES ($username, $email, $password, 'OWNER');
 --add new property
 SELECT MAX(ID) FROM Property --find largest property id
-INSERT INTO Property 
+INSERT INTO Property
 VALUES ($propertyid, $name, $size, $iscommercial, $ispublic, $street, $city, $zip, $propertytype, $owner, NULL);
 --add initial crop/animal
 INSERT INTO Has
@@ -39,7 +39,7 @@ VALUES ($propertyid, $itemName);
 
 /* Owner functionality */
 --default view of owners properties
-SELECT 
+SELECT
 	Name,
 	Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
@@ -65,7 +65,7 @@ FROM Property, Visit
 WHERE Owner = $owner
 GROUP BY ID;
 --search by term filter
-SELECT 
+SELECT
 	Name,
 	Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
@@ -92,9 +92,9 @@ GROUP BY ID;
 
 /* View other owner's properties */
 --get all other valid properties (not including current logged in owner)
-SELECT Name, 
-Street AS Address, 
-City, 
+SELECT Name,
+Street AS Address,
+City,
 Zip, Size, PropertyType AS
 TYPE , (
 
@@ -118,7 +118,7 @@ END
 FROM Property, Visit
 WHERE Owner != $owner
 GROUP BY ID
-ORDER BY $order 
+ORDER BY $order
 --search by term filter
 SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
 TYPE , (
@@ -143,7 +143,7 @@ END
 FROM Property, Visit
 WHERE Owner != $owner and $searchby = $search
 GROUP BY ID
-ORDER BY $order 
+ORDER BY $order
 --view property details
  SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
@@ -174,14 +174,14 @@ JOIN FarmItem ON FarmItem.Name = Has.ItemName
 /* Manage properties for owners */
 --initial data population of screen
 SELECT
-Name, 
+Name,
 Street as Address,
 City,
 Zip,
 Size,
 PropertyType as Type,
-(CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public, 
-(CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial, 
+(CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public,
+(CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial,
 ID
 FROM Property
 WHERE Property.Owner = $owner and Property.ID = $id
@@ -418,7 +418,7 @@ FROM Visit JOIN Property ON Property.ID = Visit.PropertyID
 WHERE Visit.Username = $username
 --see if visitor has already logged for a property
 SELECT *
-FROM Visit 
+FROM Visit
 WHERE PropertyID = $id AND Username = $username
 
 /* Administrator functionality */
@@ -451,7 +451,7 @@ END
 FROM Property
 WHERE ApprovedBy IS NULL and $searchby = $search
 --admin viewing details of unconfirmed property
-SELECT P . * , FarmItem.Name, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
+SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
 FROM (
 
 SELECT Property.Name, Property.Owner, Email AS 'Owner Email', Street AS Address, City, Zip, Size AS 'Size (acres)', AVG( Rating ) , PropertyType AS

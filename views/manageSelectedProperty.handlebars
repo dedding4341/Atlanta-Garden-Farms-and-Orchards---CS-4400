@@ -80,7 +80,77 @@
                 </div>
             </div>
         </div>
-        <div class="hor-container">
+        <div class="hor-container container-margin">
+            <div class=" vertical-container left">
+              <div class="space smaller-hor-container" >
+                <label class="left-label">Add new crop: </label>
+                <div class="smaller-hor-container">
+                  <div class="form-control-plaintext">
+                    <select name="newCrop" class="form-control "  id="newCrop" contenteditable="false">
+                      {{#each addCropList}}
+                        <option value="{{this.Name}}"> {{this.Name}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                </div>
+                <button name="addCropBtn" id="addCropBtn" type="submit" class="btn ">Add</button>
+              </div>
+            </div>
+            <div class=" vertical-container">
+                <!-- <div class="space left-container">
+                  <label class="left-label left-containe">Crops: </label>
+                </div> -->
+                <div class="space smaller-hor-container" >
+                  <label class="left-label">Crops: </label>
+                  <div class="smaller-hor-container">
+                    <div class="form-control-plaintext">
+                      <select class="form-control " name="removeCrop" id="removeCrop" contenteditable="false">
+                        {{#each cropList}}
+                          <option value="{{this.ItemName}}"> {{this.ItemName}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
+                  </div>
+                  <button name="removeCropBtn" id="removeCropBtn" type="submit" class="btn ">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <div class=" filterItem hidden ">
+          <div class="hor-container container-margin">
+            <div class=" vertical-container left">
+              <div class="space smaller-hor-container" >
+                <label class="left-label">Add new animal: </label>
+                <div class="smaller-hor-container">
+                  <div class="form-control-plaintext">
+                    <select name="newAnimal" class="form-control "  id="newAnimal" contenteditable="false">
+                      {{#each addAnimalList}}
+                        <option value="{{this.Name}}"> {{this.Name}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                </div>
+                <button name="addAnimalBtn" id="addAnimalBtn" type="submit" class="btn ">Add</button>
+              </div>
+            </div>
+            <div class=" vertical-container">
+              <div class="space smaller-hor-container" >
+                <label class="left-label">Animals: </label>
+                <div class="smaller-hor-container">
+                  <div class="form-control-plaintext">
+                    <select class="form-control " name="removeAnimal" id="removeAnimal" contenteditable="false">
+                      {{#each animalList}}
+                        <option value="{{this.ItemName}}"> {{this.ItemName}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                </div>
+                <button name="removeAnimalBtn" id="removeAnimalBtn" type="submit" class="btn ">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+<!--         <div class="hor-container">
             <div class=" vertical-container left">
               <div class="space smaller-hor-container" >
                 <label class="left-label">Add new Animal: </label>
@@ -94,11 +164,13 @@
                 </div>
               </div>
             </div>
-            <div class=" vertical-container">
+            <div class=" vertical-container"> -->
+              <!-- start comment -->
                 <!-- <div class="space left-container">
                   <label class="left-label left-containe">Crops: </label>
                 </div> -->
-                <div class="space smaller-hor-container" >
+                <!-- end comment -->
+<!--                 <div class="space smaller-hor-container" >
                   <label class="left-label">Add new Crop: </label>
                   <div class="smaller-hor-container">
                     <div class="form-control-plaintext">
@@ -110,16 +182,16 @@
                   </div>
                 </div>
             </div>
+        </div> -->
 
-        </div>
-        <div class="hor-container container-margin">
+<!--         <div class="hor-container container-margin">
             <div class="vertical-container left">
                 <button type="button" class="btn ">Add Selected Animal</button>
             </div>
             <div class="vertical-container">
                 <button type="button" class="btn ">Add Selected Crop</button>
             </div>
-        </div>
+        </div> -->
         <div class="smaller-hor-container">
             <div>
                 <button type="button" class="left btn bottom-btn ">Delete Property</button>
