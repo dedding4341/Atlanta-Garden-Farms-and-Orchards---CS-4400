@@ -130,9 +130,9 @@
                 </div>
             </div>
             <div class="colrev">
-                <form method="GET" action="/manageSelectedProperty">
+                <form method="POST" action="/manageSelectedProperty">
                     <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
-                    <input type="hidden" id="usernameval" name="usernameval" class="hiddenField" placeholder="Username">
+                    <input type="hidden" id="id" name="id" class="hiddenField" placeholder="Username">
                 </form>
 
             </div>
@@ -150,8 +150,8 @@
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
         var cells = this.cells;
-        var id = cells[0].innerHTML;
-        $('#usernameval').val(id);
+        var id = cells[8].innerHTML;
+        $('#id').val(id);
         console.log(id);
     });
 

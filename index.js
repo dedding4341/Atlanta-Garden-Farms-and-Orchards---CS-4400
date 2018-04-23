@@ -505,7 +505,6 @@ app.get('/allOwnersInSystem', function(request, response) {
         WHERE User.UserType = 'OWNER'
         GROUP BY Username;`;
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
             response.render('allOwnersInSystem', {
                 username: userInfo.Username,
                 rows: result
@@ -532,23 +531,45 @@ app.get('/allVisitorsInSystem', function(request, response) {
 })
 
 app.post('/allOwnersInSystem', function(request, response) {
+    console.log(request.body);
     if (signedIn) {
-        var user = request.body.usernameval;
-        console.log(user);
-        var sql = `DELETE FROM User WHERE Username = ?`;
-        connection.query(sql, [user], function(err, result, fields) {
-            console.log("deleteAcc");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
-            WHERE User.UserType = 'OWNER'
+        if (request.body.usernameval != undefined) {
+            var user = request.body.usernameval;
+            console.log(user);
+            var sql = `DELETE FROM User WHERE Username = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                console.log("deleteAcc");
+                var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+                FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+                WHERE User.UserType = 'OWNER'
+                GROUP BY Username`;
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('allOwnersInSystem', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        } else {
+            var col = request.body.column;
+            var search = request.body.search;
+            if (col == "Number of Properties") {
+                col == "NumProperties";
+            }
+            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'OWNER' AND User.`+ col + ` = ?
             GROUP BY Username`;
-            connection.query(sql2, function(err, result, fields) {
+            connection.query(sql, [search], function(err, result, fields) {
+                console.log(sql);
+                console.log(result);
+                console.log(err);
                 response.render('allOwnersInSystem', {
                     username: userInfo.Username,
                     rows: result
                 });
             });
-        });
+        }
     }
 })
 
@@ -637,6 +658,7 @@ app.get('/manageSelectedProperty', function(request, response) {
 app.post('/manageSelectedProperty', function(request, response) {
 
     if (signedIn) {
+        console.log(request.body);
         var id = request.body.id;
         var sql = `
             SELECT P . * , FarmItem.Name as item, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
@@ -661,14 +683,30 @@ app.post('/manageSelectedProperty', function(request, response) {
             JOIN Has ON Property.ID = Has.PropertyID
             JOIN FarmItem ON FarmItem.Name = Has.ItemName
             JOIN Visit ON Visit.PropertyID = Property.ID
-            WHERE Property.ID =$id
+            WHERE Property.ID = ?
             ) AS P
             JOIN Has ON Has.PropertyID = P.ID
             JOIN FarmItem ON FarmItem.Name = Has.ItemName`;
 
         connection.query(sql, [id], function(err, result, fields) {
-            
+            console.log(result);
             response.render('manageSelectedProperty', {
+                id: id,
+                name: result[0].Name,
+                owner: result[0].Owner,
+                email: result[0]['Owner Email'],
+                address: result[0].Address,
+                city: result[0].City,
+                zip: result[0].Zip,
+                acres: result[0]['Size (acres)'],
+                avgRating: result[0]['AVG( Rating )'],
+                type: result[0].TYPE,
+                public: result[0].Public,
+                commercial: result[0].Commercial,
+                itemType: result[0]
+                id: result[0].ID,
+                crops: crops,
+                animals: animals
             });
         });
     }
@@ -676,41 +714,55 @@ app.post('/manageSelectedProperty', function(request, response) {
 
 app.post('/approvedAnimalsCrops', function(request, response) {
     console.log(request.body);
-    // if (request.body.column != undefined) {
-    //     var col = request.body.column;
-    //     var search = request.body.search;
-    //     sqlsearch = `
-    //     SELECT Name, Type
-    //     FROM FarmItem
-    //     WHERE IsApproved = True AND ` + col + ` = ?`;
-    //     console.log(sqlsearch);
-    //     connection.query(sqlsearch, [search], function(err, result, fields) {
-    //         console.log(result);
-    //         response.render('approvedAnimalsCrops', {
-    //             username: userInfo.Username,
-    //             rows: result
-    //         });
-    //     });
-    // } else if () {
-    //
-    // } else {
-    //     if (signedIn) {
-    //         var user = request.body.usernameval;
-    //         var sql = `DELETE FROM FarmItem
-    //         WHERE Name = ?`;
-    //         connection.query(sql, [user], function(err, result, fields) {
-    //             var sql2 = `SELECT Name, Type
-    //             FROM FarmItem
-    //             WHERE IsApproved = True`
-    //             connection.query(sql2, function(err, result, fields) {
-    //                 response.render('approvedAnimalsCrops', {
-    //                     username: userInfo.Username,
-    //                     rows: result
-    //                 });
-    //             });
-    //         });
-    //     }
-    // }
+    if (request.body.column != undefined) {
+        var col = request.body.column;
+        var search = request.body.search;
+        sqlsearch = `
+        SELECT Name, Type
+        FROM FarmItem
+        WHERE IsApproved = True AND ` + col + ` = ?`;
+        console.log(sqlsearch);
+        connection.query(sqlsearch, [search], function(err, result, fields) {
+            console.log(result);
+            response.render('approvedAnimalsCrops', {
+                username: userInfo.Username,
+                rows: result
+            });
+        });
+    } else if (request.body.type != undefined) {
+        var type = request.body.type;
+        var item = request.body.name;
+        var sql = `INSERT INTO FarmItem VALUES (?, 1, ?)`;
+        connection.query(sql, [item, type], function(err, result, fields) {
+            var sql2 = `SELECT Name, Type
+            FROM FarmItem
+            WHERE IsApproved = True`
+            connection.query(sql2, function(err, result, fields) {
+                response.render('approvedAnimalsCrops', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        });
+
+    } else {
+        if (signedIn) {
+            var user = request.body.usernameval;
+            var sql = `DELETE FROM FarmItem
+            WHERE Name = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                var sql2 = `SELECT Name, Type
+                FROM FarmItem
+                WHERE IsApproved = True`
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('approvedAnimalsCrops', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        }
+    }
 })
 
 app.get('/approvedAnimalsCrops', function(request, response) {
