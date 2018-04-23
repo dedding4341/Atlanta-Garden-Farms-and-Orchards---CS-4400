@@ -723,6 +723,10 @@ app.post('/manageSelectedProperty', function(request, response) {
 
                         connection.query(finalSql, [id], function(err, result, fields) {
                             console.log(result);
+                            console.log(cropList);
+                            console.log(animalList);
+                            console.log(addCrops);
+                            console.log(addAnimals);
                             // var crops = [];
                             // var animals = [];
                             // for (var i = 0; i < result.length; i++) {

@@ -21,7 +21,7 @@
   <body>
     <form>
         <div >
-            <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> Manage East Lake Urban Farm</b></u></h1>
+            <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> {{name}}</b></u></h1>
         </div>
         <div class="hor-container container-margin">
             <div class=" vertical-container left">
@@ -88,8 +88,8 @@
                 <label class="left-label">Add new crop: </label>
                 <div class="smaller-hor-container">
                   <div class="form-control-plaintext">
-                    <select name="newCrop" class="form-control "  id="newCrop" contenteditable="false">
-                      {{#each addCropList}}
+                    <select name="newCrop" class="form-control " id="newCrop" contenteditable="false">
+                      {{#each addCrops}}
                         <option value="{{this.Name}}"> {{this.Name}}</option>
                       {{/each}}
                     </select>
@@ -126,7 +126,7 @@
                 <div class="smaller-hor-container">
                   <div class="form-control-plaintext">
                     <select name="newAnimal" class="form-control "  id="newAnimal" contenteditable="false">
-                      {{#each addAnimalList}}
+                      {{#each addAnimals}}
                         <option value="{{this.Name}}"> {{this.Name}}</option>
                       {{/each}}
                     </select>
