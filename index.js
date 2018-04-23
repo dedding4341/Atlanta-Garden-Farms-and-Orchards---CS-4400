@@ -505,7 +505,6 @@ app.get('/allOwnersInSystem', function(request, response) {
         WHERE User.UserType = 'OWNER'
         GROUP BY Username;`;
         connection.query(sql, function(err, result, fields) {
-            console.log(result);
             response.render('allOwnersInSystem', {
                 username: userInfo.Username,
                 rows: result
@@ -532,23 +531,45 @@ app.get('/allVisitorsInSystem', function(request, response) {
 })
 
 app.post('/allOwnersInSystem', function(request, response) {
+    console.log(request.body);
     if (signedIn) {
-        var user = request.body.usernameval;
-        console.log(user);
-        var sql = `DELETE FROM User WHERE Username = ?`;
-        connection.query(sql, [user], function(err, result, fields) {
-            console.log("deleteAcc");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
-            WHERE User.UserType = 'OWNER'
+        if (request.body.usernameval != undefined) {
+            var user = request.body.usernameval;
+            console.log(user);
+            var sql = `DELETE FROM User WHERE Username = ?`;
+            connection.query(sql, [user], function(err, result, fields) {
+                console.log("deleteAcc");
+                var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+                FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+                WHERE User.UserType = 'OWNER'
+                GROUP BY Username`;
+                connection.query(sql2, function(err, result, fields) {
+                    response.render('allOwnersInSystem', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                });
+            });
+        } else {
+            var col = request.body.column;
+            var search = request.body.search;
+            if (col == "Number of Properties") {
+                col == "NumProperties";
+            }
+            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
+            FROM User JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'OWNER' AND User.`+ col + ` = ?
             GROUP BY Username`;
-            connection.query(sql2, function(err, result, fields) {
+            connection.query(sql, [search], function(err, result, fields) {
+                console.log(sql);
+                console.log(result);
+                console.log(err);
                 response.render('allOwnersInSystem', {
                     username: userInfo.Username,
                     rows: result
                 });
             });
-        });
+        }
     }
 })
 

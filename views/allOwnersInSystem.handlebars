@@ -107,16 +107,18 @@
 
             </div>
             <div class="col">
-                <div class="form-control-plaintext">
-                    <select class="form-control " id="searchBy" name="column" style="height: 50px;">
-                        <option selected disabled hidden>Search by...</option>
-                        <option>Username</option>
-                        <option>Email</option>
-                        <option>Number of Properties</option>
-                    </select>
-                </div>
-                <input id="zip" class="form-control not-btn-input" placeholder="Search Term" required autofocus style="margin-bottom: 7px;">
-                <button type="button" class="btn" style="height: 50px;">Search Owner</button>
+                <form method="POST" action="/allOwnersInSystem">
+                    <div class="form-control-plaintext">
+                        <select class="form-control " id="searchBy" name="column" style="height: 50px;">
+                            <option selected disabled hidden>Search by...</option>
+                            <option>Username</option>
+                            <option>Email</option>
+                            <option>Number of Properties</option>
+                        </select>
+                    </div>
+                    <input id="search" name="search" class="form-control not-btn-input" placeholder="Search Term" required autofocus style="margin-bottom: 7px;">
+                    <button type="submit" class="btn" style="height: 50px;">Search Owner</button>
+                </form>
             </div>
         </div>
     </div>
@@ -125,6 +127,11 @@
 </html>
 
 <script type="text/javascript">
+    $('#searchBy').change(function() {
+        var searchBy = $(this).val();
+        console.log(searchBy);
+    });
+
     $("tbody tr").click(function() {
         $(this).addClass('highlight').siblings().removeClass('highlight');
         // var cells = this.cells; //cells collection
