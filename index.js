@@ -647,13 +647,6 @@ app.post('/viewConfirmedProperties', function(request, response) {
     }
 })
 
-app.get('/manageSelectedProperty', function(request, response) {
-    if (signedIn) {
-        response.render('manageSelectedProperty', {
-        });
-    }
-});
-
 app.post('/manageSelectedProperty', function(request, response) {
 
     if (signedIn) {
@@ -703,7 +696,6 @@ app.post('/manageSelectedProperty', function(request, response) {
                 public: result[0].Public,
                 commercial: result[0].Commercial,
                 itemType: result[0]
-                id: result[0].ID,
                 crops: crops,
                 animals: animals
             });
