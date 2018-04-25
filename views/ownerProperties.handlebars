@@ -19,7 +19,7 @@
 
 <html>
   <body>
-    <form method="POST" action="/ownerProperties" class="ownerProperties">
+    <form method="POST" action="/manageProperty" class="ownerProperties">
       <div class="center-h-container">
         <h1 class="font-weight-normal"> Welcome, {{username}}</h1>
       </div>
@@ -29,7 +29,7 @@
       <!-- INSERT TABLE -->
 
 
-      <table  id="infoTable" class="table table-bordered table-hover">
+      <table  id="infoTable" name="infoTable" class="table table-bordered table-hover">
           <thead class="thead-light">
               <tr class="text-center">
                 <th scope="col">Name <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></button></th>
@@ -37,7 +37,7 @@
                 <th scope="col">City<button id="sortCity" class="sort-btn btn dropdown-toggle float-right" type="button" ></button></th>
                 <th scope="col">Zip</th>
                 <th scope="col">Size</th>
-                <th scope="col">Type<button id="sortType" class="sort-btn btn dropdown-toggle float-right" type="button" ></button></th>
+                <th scope="col">PropertyType<button id="sortType" class="sort-btn btn dropdown-toggle float-right" type="button" ></button></th>
                 <th scope="col">Public</th>
                 <th scope="col">Commercial</th>
                 <th scope="col">ID</th>
@@ -59,12 +59,11 @@
               <td scope="col"> {{this.Commercial}} </td>
               <td scope="col"> {{this.ID}} </td>
               <td scope="col"> {{this.isValid}} </td>
-              <td scope="col"> {{this.Count}} </td>
+              <td scope="col"> {{this.Visits}} </td>
               <td scope="col"> {{this.Rating}} </td>
             </tr>
           {{/each}}
       </table>
-
       <div>
 
 
@@ -74,36 +73,65 @@
           <th>
             <div class="center-h-container">
               <div class="not-btn-input">
-                <select class="form-control "  id="searchBy">
+                <select class="form-control" id="searchBy" name="og" >
+                  <option selected disabled hidden value="">Search by...</option>
+                  <option>Name</option>
+                  <option>City</option>
+                  <option>Type</option>
+                  <option>Visits</option>
+                  <option>Avg. Rating</option>
+                </select>
+                <!-- <select class="form-control " required id="searchBy">
                   <option>Search by...</option>
                   <option selected disabled hidden>Name</option>
                   <option>City</option>
                   <option>Type</option>
                   <option>Visits</option>
                   <option>Avg. Rating</option>
-                </select>
+                </select> -->
               </div>
             </div>
           </th>
           <th>
-            <button type="submit" class="btn " href="/manageProperty">Manage Property</button>
+            <input id="idSelector" name="ID" class="form-control hiddenField not-btn-input" placeholder="Search Term"  autofocus>
+            <button id="manage" type="submit" class="btn " >Manage Property</button>
           </th>
+        </form>
+
+          <form action="/ownerProperties" method="POST">
+            <input class="hiddenField" name="column" id="column">
         </tr>
         <tr>
           <th>
-            <div class="center-h-container">
-              <label for="searchTerm" class="sr-only">Search Term</label>
-              <input id="searchTerm" class="form-control not-btn-input" placeholder="Search Term"  autofocus>
-              <input id="idSelector" name="ID" class="form-control hiddenField not-btn-input" placeholder="Search Term"  autofocus>
+            <div class="center-y-container">
+              <div class="d-flex flex-row" style="margin-top: 15px;">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input hiddenField" id="checkbox">
+                    <label id="rangeLabel" class="form-check-label hiddenField" for="checkbox">Specify Range</label>
+                  </div>
+              </div>
+              <div class="d-flex flex-row">
+                  <input type="text" class="form-control " id="searchText" placeholder="Search Term" name="search" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;" required>
+              </div>
+              <!-- <div class="d-flex flex-row-center">
+                  <input type="text" class="form-control hiddenField" id="searchTextMin" placeholder="Min" name="min" style="width: 147.5px; text-align: center; height: 35px; margin-top: 5px;" required>
+                  <input type="text" class="form-control hiddenField" id="searchTextMax" placeholder="Max" name="max" style="width: 147.5px; text-align: center; height: 35px; margin-top: 5px; margin-left: 5px;" required>
+              </div> -->
+              <!-- <label for="searchTerm" class="sr-only">Search Term</label>
+              <input id="searchText"  name="search" class="form-control not-btn-input" placeholder="Search Term"  required autofocus> -->
             </div>
           </th>
+
           <th>
             <a type="button" class="btn " href="/addProperty">Add Property</a>
           </th>
         </tr>
         <tr>
           <th>
-            <button id="searchProperties" class="btn" type="submit"">Search Properties</button>
+            <button id="searchProperties" class="btn btn-primary" name='search' type="submit" style="width: 200px; text-align: center; height: 35px; margin-top: 5px;">
+                Search Properties
+            </button>
+            <!-- <button id="searchProperties" class="btn" type="submit">Search Properties</button> -->
           </th>
           <th>
             <a type="button" class="btn" href = "/otherProperties">View Other Properties</a>
@@ -153,6 +181,7 @@
       padding-top: 40px;
       padding-bottom: 40px;
       background-color: #f5f5f5;
+      flex-direction: column;
     }
 
     .ownerProperties{
@@ -191,6 +220,18 @@
       -webkit-box-pack: center;
       justify-content: center;
     }
+    .center-y-container{
+      display: -ms-flexbox;
+      display: -webkit-box;
+      display: flex;
+      -ms-flex-align: center;
+      -ms-flex-pack: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      flex-direction: column;
+    }
 
     .table tbody tr.highlight td {
       background-color: #ddd;
@@ -212,6 +253,66 @@
 
   $('#searchBy').change(function() {
       var searchBy = $(this).val();
+  });
+
+
+
+
+
+
+
+  $('#searchBy').change(function() {
+      document.getElementById("column").value = $(this).val();
+      var searchBy = $(this).val();
+      if (searchBy == 'Visits' || searchBy == 'Avg. Rating') {
+          document.getElementById('searchTextMin').classList.add("hiddenField");
+          document.getElementById('searchTextMax').classList.add("hiddenField");
+          $('#searchTextMin').val('');
+          $('#searchTextMax').val('');
+          $('#checkbox').prop('checked', false);
+          $("#searchTextMin").prop('required',false);
+          $("#searchTextMax").prop('required',false);
+          document.getElementById('checkbox').classList.remove("hiddenField");
+          document.getElementById('rangeLabel').classList.remove("hiddenField");
+          document.getElementById('searchText').classList.remove("hiddenField");
+          $("#searchText").prop('required',true);
+      } else {
+          document.getElementById('checkbox').classList.add("hiddenField");
+          document.getElementById('rangeLabel').classList.add("hiddenField");
+          document.getElementById('searchTextMin').classList.add("hiddenField");
+          document.getElementById('searchTextMax').classList.add("hiddenField");
+          $('#searchTextMin').val('');
+          $('#searchTextMax').val('');
+          $("#searchTextMin").prop('required',false);
+          $("#searchTextMax").prop('required',false);
+          document.getElementById('searchText').classList.remove("hiddenField");
+          $("#searchText").prop('required',true);
+
+      }
+
+  });
+
+  $('#checkbox').change(function() {
+      var isChecked = $(this).is(":checked");
+      if (!isChecked) {
+          document.getElementById('searchTextMin').classList.add("hiddenField");
+          document.getElementById('searchTextMax').classList.add("hiddenField");
+          $('#searchTextMin').val('');
+          $('#searchTextMax').val('');
+          $("#searchTextMin").prop('required',false);
+          $("#searchTextMax").prop('required',false);
+          document.getElementById('searchText').classList.remove("hiddenField");
+          $("#searchText").prop('required',true);
+      } else {
+          document.getElementById('searchText').classList.add("hiddenField");
+          $("#searchText").prop('required',false);
+
+          $('#searchText').val('');
+          document.getElementById('searchTextMin').classList.remove("hiddenField");
+          document.getElementById('searchTextMax').classList.remove("hiddenField");
+          $("#searchTextMin").prop('required',true);
+          $("#searchTextMax").prop('required',true);
+      }
   });
 
   $('th>.dropdown-toggle').on('click', onClick);
@@ -270,6 +371,13 @@
         }
 
     })();
+
+    $("#manage").click(function(e) {
+        if ($('#idSelector').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
+    });
 
 
 </script>

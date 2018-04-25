@@ -111,29 +111,23 @@
         <div class="btn-container">
             <div class="colrev">
                 <form method="POST" action="/viewConfirmedProperties">
-                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;">Search Properties</button>
-                    <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
                     <div class="form-control-plaintext">
                         <select class="form-control " id="searchBy" name="column" style="height: 45px;">
                                 <option selected disabled hidden>Search by...</option>
                                 <option>Name</option>
-                                <option>Address</option>
-                                <option>City</option>
                                 <option>Zip</option>
-                                <option>Size</option>
                                 <option>Type</option>
-                                <option>Public</option>
-                                <option>Commercial</option>
-                                <option>ID</option>
                                 <option>Verified by</option>
                                 <option>Rating</option>
                             </select>
                     </div>
+                    <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 100%; height: 35px; text-align: center;">
+                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;width: 100%;">Search Properties</button>
                 </form>
             </div>
             <div class="colrev">
                 <form method="POST" action="/manageSelectedProperty">
-                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
+                    <button type="submit" class="btn" id="manage" style="height: 50px; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
                     <input type="hidden" id="id" name="id" class="hiddenField" placeholder="Username">
                 </form>
 
@@ -215,4 +209,11 @@
     function getCellValue(row, index) {
         return $(row).children('td').eq(index).text();
     }
+
+    $("#manage").click(function(e) {
+        if ($('#id').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
+    });
 </script>

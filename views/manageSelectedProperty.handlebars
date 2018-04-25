@@ -19,7 +19,7 @@
 
 <html>
   <body>
-    <form method="POST" action="/viewConfirmedProperties">
+    <form method="POST" action="/adminSuccess">
         <div >
             <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> {{name}}</b></u></h1>
         </div>
@@ -27,23 +27,23 @@
             <div class=" vertical-container left">
                 <div class="space smaller-hor-container" >
                   <label class="left-label">Property Name: </label>
-                  <input id="propertyName" class="form-control not-btn-input" placeholder="Property Name" value="{{name}}" required autofocus>
+                  <input name="name" id="propertyName" class="form-control not-btn-input" placeholder="Property Name" value="{{name}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Address: </label>
-                  <input id="address" class="form-control not-btn-input" placeholder="Address" value="{{address}}" required autofocus>
+                  <input name="address" id="address" class="form-control not-btn-input" placeholder="Address" value="{{address}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">City: </label>
-                  <input id="city" class="form-control not-btn-input" placeholder="City" value="{{city}}" required autofocus>
+                  <input name="city" id="city" class="form-control not-btn-input" placeholder="City" value="{{city}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Zip: </label>
-                  <input id="zip" class="form-control not-btn-input" placeholder="Zip" value="{{zip}}" required autofocus>
+                  <input name="zip" id="zip" class="form-control not-btn-input" placeholder="Zip" value="{{zip}}" required autofocus>
                 </div>
                 <div class="space smaller-hor-container">
                   <label class="left-label">Size(acres): </label>
-                  <input id="size" class="form-control not-btn-input" placeholder="Size" value="{{acres}}" required autofocus>
+                  <input name="size" id="size" class="form-control not-btn-input" placeholder="Size" value="{{acres}}" required autofocus>
                 </div>
             </div>
             <div class=" vertical-container">
@@ -78,7 +78,8 @@
 
                 <div class="space left-container hor-container">
                   <label class="left-label">ID: </label>
-                  <label id="id" > {{id}} </label>
+                  <label name="id" id="id" > {{id}} </label>
+                  <input class="hidden" name="id" value="{{id}}">
                 </div>
             </div>
         </div>
@@ -239,6 +240,10 @@
       align-items: center;
       -webkit-box-pack: center;
       justify-content: center;
+    }
+
+    .hidden{
+      display: none;
     }
     .hor-container{
       width: 100%;

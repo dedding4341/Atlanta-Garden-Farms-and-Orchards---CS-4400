@@ -170,6 +170,80 @@ WHERE Property.ID =$id
 ) AS P
 JOIN Has ON Has.PropertyID = P.ID
 JOIN FarmItem ON FarmItem.Name = Has.ItemName
+
+/* ***** idk what this is, query on site lol */
+SELECT Name, Address, City, Zip, Size,
+						TYPE , Public, Commercial, ID, isValid, Visits, (
+
+						CASE WHEN tempdata.avgrating >0
+						THEN tempdata.avgrating
+						ELSE 'N/A'
+						END
+						) AS Rating
+						FROM (
+
+						SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+						TYPE , (
+
+						CASE WHEN IsPublic =1
+						THEN 'True'
+						ELSE 'False'
+						END
+						) AS Public, (
+
+						CASE WHEN IsCommercial =1
+						THEN 'True'
+						ELSE 'False'
+						END
+						) AS Commercial, ID, (
+
+						CASE WHEN ApprovedBy IS NULL
+						THEN 'False'
+						ELSE 'True'
+						END
+						) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+						FROM Property
+						LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+						WHERE Owner = ?
+						GROUP BY ID
+						HAVING AVG(Rating) = ?
+						) AS tempdata
+SELECT Name, Address, City, Zip, Size,
+						TYPE , Public, Commercial, ID, isValid, Visits, (
+
+						CASE WHEN tempdata.avgrating >0
+						THEN tempdata.avgrating
+						ELSE 'N/A'
+						END
+						) AS Rating
+						FROM (
+
+						SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+						TYPE , (
+
+						CASE WHEN IsPublic =1
+						THEN 'True'
+						ELSE 'False'
+						END
+						) AS Public, (
+
+						CASE WHEN IsCommercial =1
+						THEN 'True'
+						ELSE 'False'
+						END
+						) AS Commercial, ID, (
+
+						CASE WHEN ApprovedBy IS NULL
+						THEN 'False'
+						ELSE 'True'
+						END
+						) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+						FROM Property
+						LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+						WHERE Owner = ?
+						GROUP BY ID
+						HAVING COUNT(*) = ?
+						) AS tempdata
 /* Manage properties for owners */
 --initial data population of screen
 SELECT
@@ -294,7 +368,7 @@ FROM Property
 JOIN Visit ON Visit.PropertyID = Property.ID
 WHERE Property.IsPublic = 1
 AND Property.ApprovedBy IS NOT NULL
-AND $searchby = $search
+AND $searchby LIKE $search
 GROUP BY Property.ID
 --search by term filter if user passes in a range for Visits
 SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS

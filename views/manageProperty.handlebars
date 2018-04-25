@@ -19,7 +19,7 @@
 
 <html>
   <body >
-    <form method="POST" action="/manageProperty">
+    <form method="POST" action="/success">
         <div >
             <h1 id="title" class="h3 mb-3 font-weight-normal text-center"><u><b> Manage {{name}}</b></u></h1>
         </div>
@@ -343,5 +343,34 @@ $(document).change(function () {
 
 
 });
+
+(function () {
+      if (window.addEventListener) {
+          window.addEventListener('load', run, false);
+      } else if (window.attachEvent) {
+          window.attachEvent('onload', run);
+      }
+
+      function run() {
+      var t = document.getElementById('infoTable');
+      var rows = t.rows;
+      for (var i=0; i<rows.length; i++) {
+        rows[i].onclick = function (event) {
+          //event = event || window.event; // for IE8 backward compatibility
+          //console.log(event, this, this.outerHTML);
+          if (this.parentNode.nodeName == 'THEAD') {
+            return;
+          }
+          var cells = this.cells; //cells collection
+          var id = cells[8].innerHTML;
+          $('#idSelector').val(id);
+          console.log(id);
+
+        };
+      }
+      }
+
+  })();
+
 
 </script>

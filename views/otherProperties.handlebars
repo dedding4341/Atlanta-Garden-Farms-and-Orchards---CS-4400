@@ -20,6 +20,7 @@
 <html>
   <body class = "otherProperties">
 
+
       <h1 class="h3 mb-3 font-weight-normal">All Other Valid Properties: </h1>
 
 
@@ -29,18 +30,18 @@
       <table id="infoTable" class="table table-bordered table-hover">
           <thead class="thead-light">
               <tr>
-                <th scope="col">Name</th>
+                <th scope="col">Name <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></th>
                 <th scope="col">Address</th>
-                <th scope="col">City</th>
+                <th scope="col">City <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></th>
                 <th scope="col">Zip</th>
                 <th scope="col">Size</th>
                 <th scope="col">Type</th>
-                <th scope="col">Public</th>
+                <th scope="col">Public <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></th>
                 <th scope="col">Commercial</th>
                 <th scope="col">ID</th>
                 <!-- <th scope="col">isValid</th> -->
-                <th scope="col">Visits</th>
-                <th scope="col">Avg. Rating</th>
+                <th scope="col">Visits <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></th>
+                <th scope="col">Avg. Rating <button id="sortName" class=" sort-btn btn dropdown-toggle float-right" type="button" ></th>
               </tr>
           </thead>
 
@@ -65,7 +66,6 @@
 
 
 
-
       <table class="selection-table">
         <tr>
           <td>
@@ -79,6 +79,7 @@
                   <option>Visits</option>
                   <option>Avg. Rating</option>
                 </select>
+
               </div>
             </div>
           </td>
@@ -86,20 +87,23 @@
         <tr>
           <td>
             <div class="center-h-container">
-              <label for="searchTerm" class="sr-only">Search Term</label>
-              <input type="email" id="searchTerm" class="form-control not-btn-input" placeholder="Search Term">
+              <label for="searchTerm"  required class="sr-only">Search Term</label>
+              <input  id="searchTerm" required name="searchTerm" class="form-control not-btn-input" placeholder="Search Term">
             </div>
           </td>
           <td>
             <form method = "POST" action = "/viewPropertyDetails">
-              <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" placeholder="Email address">
-              <button class="btn" type="submit"  >View Property Details</button>
+              <input type="text" id = "idSelector" name="idSelection" class = "hiddenField" >
+              <button class="btn" type="submit" id="viewDet" >View Property Details</button>
             </form>
           </td>
         </tr>
         <tr>
+          <form method="POST" action="/otherProperties">
+            <input class="hiddenField" name="SearchField" id="SearchField">
+            <input class="hiddenField" name="hiddenSearchTerm" id="hiddenSearchTerm">
           <td>
-            <button type="button" class="btn ">Search Properties</button>
+            <button type="submit" name="search" id="searchProperties" class="btn ">Search Properties</button>
           </td>
           <td>
             <a type="button" class="btn" href = "/ownerProperties">Back</a>
@@ -111,13 +115,33 @@
         </tr>
 
       </table>
+    </form>
 
   </body>
 
 
 
   <style>
+  .sort-btn {
+    color: black !important;
+    width: 30px !important;
+  }
 
+  th>.dropdown-toggle {
+      background-color: transparent;
+  }
+
+  th>.dropdown-toggle:focus,
+  th>.dropdown-toggle:active {
+      outline: none !important;
+      box-shadow: none;
+  }
+
+  .btn {
+    width: 300px;
+    background-color: #007bff;
+    color: #ffffff;
+  }
     body {
       display: -ms-flexbox;
       display: -webkit-box;
@@ -182,12 +206,77 @@
 </html>
 
 <script>
+
+$('th>.dropdown-toggle').on('click', onClick);
+
+
+    function onClick(e) {
+        var th = $(e.target).parent();
+        var col = th.text();
+        var table = $(th).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(compare($(th).index()));
+        this.asc = !this.asc;
+        if (!this.asc) {
+            rows = rows.reverse();
+        }
+        for (var i = 0; i < rows.length; i++) {
+            table.append(rows[i]);
+        }
+    }
+
+    function compare(index) {
+        return function(a, b) {
+            var valA = getCellValue(a, index);
+            var valB = getCellValue(b, index);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        }
+    }
+
+    function getCellValue(row, index){
+        return $(row).children('td').eq(index).text();
+    }
+
+(function () {
+      if (window.addEventListener) {
+          window.addEventListener('load', run, false);
+      } else if (window.attachEvent) {
+          window.attachEvent('onload', run);
+      }
+
+      function run() {
+      var t = document.getElementById('infoTable');
+      var rows = t.rows;
+      for (var i=0; i<rows.length; i++) {
+        rows[i].onclick = function (event) {
+          //event = event || window.event; // for IE8 backward compatibility
+          //console.log(event, this, this.outerHTML);
+          if (this.parentNode.nodeName == 'THEAD') {
+            return;
+          }
+          var cells = this.cells; //cells collection
+          var id = cells[8].innerHTML;
+          $('#idSelector').val(id);
+          console.log(id);
+
+        };
+      }
+      }
+
+  })();
+
+
+  $('.dropdown-item').click(function() {
+      $('#dropdownMenuButton').text('Search by: ' + $(this).text());
+  });
+
   $('#infoTable').on('click', 'tbody tr', function(event) {
     $(this).addClass('highlight').siblings().removeClass('highlight');
   });
 
-  $('#searchBy').change(function() {
-      var searchBy = $(this).val();
+
+
+  $('#searchTerm').change(function() {
+      document.getElementById("hiddenSearchTerm").value = $(this).val();
   });
 
   (function () {
@@ -217,4 +306,47 @@
         }
 
     })();
+
+    $("#viewDet").click(function(e) {
+        if ($('#idSelector').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
+    });
+
+    $('#searchBy').change(function() {
+        console.log('entered');
+        console.log($(this).val());
+        console.log(document.getElementById("SearchField").value);
+        document.getElementById("SearchField").value = $(this).val();
+        // $("#SearchField").val( $(this).val());
+
+        var searchBy = $(this).val();
+        if (searchBy == 'Visits' || searchBy == 'Avg. Rating') {
+            document.getElementById('searchTextMin').classList.add("hiddenField");
+            document.getElementById('searchTextMax').classList.add("hiddenField");
+            $('#searchTextMin').val('');
+            $('#searchTextMax').val('');
+            $('#checkbox').prop('checked', false);
+            $("#searchTextMin").prop('required',false);
+            $("#searchTextMax").prop('required',false);
+            document.getElementById('checkbox').classList.remove("hiddenField");
+            document.getElementById('rangeLabel').classList.remove("hiddenField");
+            document.getElementById('searchText').classList.remove("hiddenField");
+            $("#searchText").prop('required',true);
+        } else {
+            document.getElementById('checkbox').classList.add("hiddenField");
+            document.getElementById('rangeLabel').classList.add("hiddenField");
+            document.getElementById('searchTextMin').classList.add("hiddenField");
+            document.getElementById('searchTextMax').classList.add("hiddenField");
+            $('#searchTextMin').val('');
+            $('#searchTextMax').val('');
+            $("#searchTextMin").prop('required',false);
+            $("#searchTextMax").prop('required',false);
+            document.getElementById('searchText').classList.remove("hiddenField");
+            $("#searchText").prop('required',true);
+
+        }
+
+    });
 </script>

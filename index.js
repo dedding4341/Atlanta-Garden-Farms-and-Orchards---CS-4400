@@ -55,11 +55,12 @@ app.get('/newVisitorRegistration', function(request, response) {
 
 app.post('/newVisitorRegistration', function(request, response) {
     //response.render('newVisitorRegistration');
-    var username = request.body.inputUsername;
-    var email = request.body.inputEmail;
+    console.log(request.body);
+    var username = request.body.iU;
+    var email = request.body.iE;
 
-    var password = md5(request.body.inputPassword1);
-    var confpassword = md5(request.body.inputPassword2);
+    var password = md5(request.body.iP1);
+    var confpassword = md5(request.body.iP2);
 
 
     var sql = "SELECT * FROM User WHERE Username = ? OR Email = ?";
@@ -199,6 +200,155 @@ app.get('/otherProperties', function(request, response) {
     }
 });
 
+app.post('/otherProperties', function(request, response){
+  if (request.body.search == '') {
+    var col = request.body.SearchField;
+    var search = request.body.hiddenSearchTerm;
+
+    // var min = request.body.min;
+    // var max = request.body.max;
+
+    if (col == 'Visits') {
+      var sql = `SELECT Name, Address, City, Zip, Size,
+                  TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                  CASE WHEN tempdata.avgrating >0
+                  THEN tempdata.avgrating
+                  ELSE 'N/A'
+                  END
+                  ) AS Rating
+                  FROM (
+
+                  SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                  TYPE , (
+
+                  CASE WHEN IsPublic =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Public, (
+
+                  CASE WHEN IsCommercial =1
+                  THEN 'True'
+                  ELSE 'False'
+                  END
+                  ) AS Commercial, ID, (
+
+                  CASE WHEN ApprovedBy IS NULL
+                  THEN 'False'
+                  ELSE 'True'
+                  END
+                  ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                  FROM Property
+                  LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                  WHERE Owner != ?
+                  GROUP BY ID
+                  HAVING COUNT(*) = ?
+                ) AS tempdata`;
+                connection.query(sql, [userInfo.Username, search], function(err, result, fields) {
+                  response.render('otherProperties', {
+                    username: userInfo.Username,
+                    allProperty: result
+                  });
+                });
+    } else if (col == "Avg. Rating") {
+          var sql = `SELECT Name, Address, City, Zip, Size,
+                      TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                      CASE WHEN tempdata.avgrating >0
+                      THEN tempdata.avgrating
+                      ELSE 'N/A'
+                      END
+                      ) AS Rating
+                      FROM (
+
+                      SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                      TYPE , (
+
+                      CASE WHEN IsPublic =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Public, (
+
+                      CASE WHEN IsCommercial =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Commercial, ID, (
+
+                      CASE WHEN ApprovedBy IS NULL
+                      THEN 'False'
+                      ELSE 'True'
+                      END
+                      ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                      FROM Property
+                      LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                      WHERE Owner != ?
+                      GROUP BY ID
+                      HAVING AVG(Rating) = ?
+                    ) AS tempdata`;
+
+                    connection.query(sql, [userInfo.Username,search ], function(err, result, fields){
+                          console.log('avge ratingggggggggggg');
+                          console.log(result);
+                          response.render('otherProperties', {
+                            username: userInfo.Username,
+                            allProperty: result
+                          });
+                    });
+
+
+    } else {
+
+            var sql = `SELECT Name, Address, City, Zip, Size,
+                        TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                        CASE WHEN tempdata.avgrating >0
+                        THEN tempdata.avgrating
+                        ELSE 'N/A'
+                        END
+                        ) AS Rating
+                        FROM (
+
+                        SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                        TYPE , (
+
+                        CASE WHEN IsPublic =1
+                        THEN 'True'
+                        ELSE 'False'
+                        END
+                        ) AS Public, (
+
+                        CASE WHEN IsCommercial =1
+                        THEN 'True'
+                        ELSE 'False'
+                        END
+                        ) AS Commercial, ID, (
+
+                        CASE WHEN ApprovedBy IS NULL
+                        THEN 'False'
+                        ELSE 'True'
+                        END
+                        ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                        FROM Property
+                        LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                        WHERE Owner != ? AND ` + col + ` LIKE ?
+                        GROUP BY ID
+                        ) AS tempdata
+                `;
+
+          connection.query(sql, [userInfo.Username, "%"+ search + "%"], function(err, result, fields){
+                response.render('otherProperties', {
+                  username: userInfo.Username,
+                  allProperty: result
+                });
+          });
+
+      }
+  }
+});
+
 app.post('/viewPropertyDetails', function(request, response) {
     var id = request.body.idSelection;
     var sql = `SELECT P . * , FarmItem.Name as FarmItem, (CASE WHEN FarmItem.Type = 'ANIMAL' THEN 'Animals' ELSE 'Crops' END) as Type
@@ -274,116 +424,350 @@ app.get('/ownerProperties', function(request, response) {
 });
 
 //takes you to the mamage property screen from owner properties
-app.post('/ownerProperties', function(request, response){
+app.post('/ownerProperties', function(request, response) {
+  console.log("clicked on search");
+  console.log(request.body);
+  // console.log('cho');
+  // console.log(chosenID);
+    // console.log('submit');
+    // console.log('I called the post');
+    // console.log(request.body);
+    // if ( typeof request[0] !== 'undefined' && request.body.search[1] == '') {
 
-   var id = request.body.ID;
-   id = parseInt(id);
-   chosenID = id;
-   // console.log('Started');
-   // console.log('body');
-   // console.log(request.body);
-   var name;
-   var type = 'FARM';
-   var address;
-   var isPublic;
-   var address;
-   var isPublic;
-   var city;
-   var isCommercial;
-   var size;
-   var croplist;
-   var animallist;
-   var addCrops;
-   var addAnimals;
+    // }
+     if (request.body.successful == '') {
+      console.log('5');
+      var sql = `SELECT Name, Address, City, Zip, Size,
+                TYPE , Public, Commercial, ID, isValid, Visits, (
 
-   var sql = `SELECT ItemName
-             FROM Has
-             JOIN FarmItem ON FarmItem.Name = Has.ItemName
-             WHERE Has.PropertyID = ? AND FarmItem.Type != 'ANIMAL'`;
-  connection.query(sql, [id], function(err, result, fields) {
-        croplist = result;
-        // console.log('croplist');
-        // console.log(croplist);
-        var animalsql = `SELECT ItemName
-                        FROM Has
-                        JOIN FarmItem ON FarmItem.Name = Has.ItemName
-                        WHERE Has.PropertyID = ? AND FarmItem.Type = 'ANIMAL'`;
-        connection.query(animalsql, [id], function(err, result, fields){
-              animallist = result;
-              // console.log('animals');
-              // console.log(animallist);
-              var newCropsql = `SELECT Name
-                                FROM FarmItem
-                                WHERE FarmItem.Type != 'ANIMAL'
-                                AND FarmItem.IsApproved = True
-                                AND NOT
-                                EXISTS (
-                                SELECT *
-                                FROM Has
-                                WHERE Has.ItemName = FarmItem.Name
-                                AND Has.PropertyID =?)` ;
-              connection.query(newCropsql, [id], function(err, result, fields) {
-                  addCrops = result;
-                  // console.log('add crops');
-                  // console.log(result);
-                  var newAnimalsql = `SELECT Name
-                                      FROM FarmItem
-                                      WHERE FarmItem.Type = 'ANIMAL'
-                                      AND FarmItem.IsApproved = True
-                                      AND NOT
-                                      EXISTS (
-                                      SELECT *
-                                      FROM Has
-                                      WHERE Has.ItemName = FarmItem.Name
-                                      AND Has.PropertyID =?)`;
-                  connection.query(newAnimalsql, [id], function(err, result, fields) {
-                        addAnimals = result;
-                        // console.log('add animals');
-                        // console.log(result);
+                CASE WHEN tempdata.avgrating >0
+                THEN tempdata.avgrating
+                ELSE  'N/A'
+                END
+                ) AS Rating
+                FROM (
 
-                        var propDetSql = `SELECT
-                                          Name,
-                                          Street as Address,
-                                          City,
-                                          Zip,
-                                          Size,
-                                          PropertyType as Type,
-                                          (CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public,
-                                          (CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial,
-                                          ID
-                                          FROM Property
-                                          WHERE Property.Owner = ? and Property.ID = ?`;
-                        connection.query(propDetSql, [userInfo.Username, id], function(err, result, fields) {
-                              // console.log('this is property details');
-                              // console.log(result[0].Name);
-                              response.render('manageProperty', {
-                                propID: chosenID,
-                                address: result[0].Address,
-                                propType: result[0].Type,
-                                city: result[0].City,
-                                zip: result[0].Zip,
-                                size: result[0].Size,
-                                name: result[0].Name,
-                                isPublic: result[0].Public,
-                                isCommercial: result[0].Commercial,
-                                cropList: croplist,
-                                animalList: animallist,
-                                addAnimalList: addAnimals,
-                                addCropList: addCrops
-                                //pass in prop name
+                SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                TYPE , (
+
+                CASE WHEN IsPublic =1
+                THEN  'True'
+                ELSE  'False'
+                END
+                ) AS Public, (
+
+                CASE WHEN IsCommercial =1
+                THEN  'True'
+                ELSE  'False'
+                END
+                ) AS Commercial, ID, (
+
+                CASE WHEN ApprovedBy IS NULL
+                THEN  'False'
+                ELSE  'True'
+                END
+                ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                FROM Property
+                LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                WHERE Owner =  ?
+                GROUP BY ID
+                ) AS tempdata`;
+          connection.query(sql, [userInfo.Username], function(err, result, fields) {
+               response.render('ownerProperties', {
+                 username: userInfo.Username,
+                 personalProperty: result
+               });
+          });
+    } else {
+        console.log('1');
+        var col = request.body.column;
+        var search = request.body.search[0];
+
+        // var min = request.body.min;
+        // var max = request.body.max;
+
+        if (col == 'Visits') {
+          console.log('2');
+          var sql = `SELECT Name, Address, City, Zip, Size,
+                      TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                      CASE WHEN tempdata.avgrating >0
+                      THEN tempdata.avgrating
+                      ELSE 'N/A'
+                      END
+                      ) AS Rating
+                      FROM (
+
+                      SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                      TYPE , (
+
+                      CASE WHEN IsPublic =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Public, (
+
+                      CASE WHEN IsCommercial =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Commercial, ID, (
+
+                      CASE WHEN ApprovedBy IS NULL
+                      THEN 'False'
+                      ELSE 'True'
+                      END
+                      ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                      FROM Property
+                      LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                      WHERE Owner = ?
+                      GROUP BY ID
+                      HAVING COUNT(*) = ?
+                    ) AS tempdata`;
+                    connection.query(sql, [userInfo.Username, search], function(err, result, fields) {
+                      response.render('ownerProperties', {
+                        username: userInfo.Username,
+                        personalProperty: result
+                      });
+                    });
+        } else if (col == "Avg. Rating") {
+          console.log('3');
+              var sql = `SELECT Name, Address, City, Zip, Size,
+                          TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                          CASE WHEN tempdata.avgrating >0
+                          THEN tempdata.avgrating
+                          ELSE 'N/A'
+                          END
+                          ) AS Rating
+                          FROM (
+
+                          SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                          TYPE , (
+
+                          CASE WHEN IsPublic =1
+                          THEN 'True'
+                          ELSE 'False'
+                          END
+                          ) AS Public, (
+
+                          CASE WHEN IsCommercial =1
+                          THEN 'True'
+                          ELSE 'False'
+                          END
+                          ) AS Commercial, ID, (
+
+                          CASE WHEN ApprovedBy IS NULL
+                          THEN 'False'
+                          ELSE 'True'
+                          END
+                          ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                          FROM Property
+                          LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                          WHERE Owner = ?
+                          GROUP BY ID
+                          HAVING AVG(Rating) = ?
+                        ) AS tempdata`;
+
+                        connection.query(sql, [userInfo.Username,search ], function(err, result, fields){
+                              console.log('avge ratingggggggggggg');
+                              console.log(result);
+                              response.render('ownerProperties', {
+                                username: userInfo.Username,
+                                personalProperty: result
+                              });
                         });
 
-                  });
+
+        }else {
+              console.log("4");
+                var sql = `SELECT Name, Address, City, Zip, Size,
+                            TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                            CASE WHEN tempdata.avgrating >0
+                            THEN tempdata.avgrating
+                            ELSE 'N/A'
+                            END
+                            ) AS Rating
+                            FROM (
+
+                            SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
+                            TYPE , (
+
+                            CASE WHEN IsPublic =1
+                            THEN 'True'
+                            ELSE 'False'
+                            END
+                            ) AS Public, (
+
+                            CASE WHEN IsCommercial =1
+                            THEN 'True'
+                            ELSE 'False'
+                            END
+                            ) AS Commercial, ID, (
+
+                            CASE WHEN ApprovedBy IS NULL
+                            THEN 'False'
+                            ELSE 'True'
+                            END
+                            ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                            FROM Property
+                            LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                            WHERE Owner = ? AND ` + col + ` LIKE ?
+                            GROUP BY ID
+                            ) AS tempdata
+                    `;
+
+              connection.query(sql, [userInfo.Username, "%"+ search + "%"], function(err, result, fields){
+
+                    response.render('ownerProperties', {
+                      username: userInfo.Username,
+                      personalProperty: result
+                    });
               });
-    });
+
+          }
+    }
 
 
-  //
-        });
-  //
-  });
 
 });
+
+app.post('/success', function(request, response) {
+  console.log(request.body);
+  console.log('6');
+        if (request.body.deleteProperty == '') {
+          var sql = `DELETE FROM Property
+                    WHERE ID = ?`;
+          connection.query(sql, [chosenID], function(err, result, fields) {
+                response.render('ownerProperties', {
+                  username: userInfo.Username,
+                  personalProperty: myPropertyInfo,
+                  allProperty: allPropertyInfo
+                });
+          });
+        }
+        if (request.body.addCropBtn == '') {
+          var name = request.body.newCrop;
+          var sql = `INSERT INTO Has
+                    VALUES (?, ?)`;
+          connection.query(sql, [chosenID, name], function(err, result, fields) {
+            response.render('success');
+          });
+        }
+
+        if (request.body.addAnimalBtn == '') {
+          var name = request.body.newAnimal;
+          var sql = `INSERT INTO Has
+                    VALUES (?, ?)`;
+          connection.query(sql, [chosenID, name], function(err, result, fields) {
+            response.render('success');
+          });
+        }
+
+        if (request.body.removeCropBtn == ''){
+          var name = request.body.removeCrop;
+          var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
+          connection.query(sql, [name, chosenID], function(err, result, fields) {
+              response.render('sucess');
+          });
+
+        }
+        if (request.body.removeAnimalBtn =='') {
+          var name = request.body.removeAnimal;
+          var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
+          connection.query(sql, [name, chosenID], function(err, result, fields) {
+              response.render('success');
+          });
+        }
+        if (request.body.submitRequest == '') {
+          var newName = request.body.newItemName;
+          var newType = request.body.newItemType;
+          var sql = `INSERT INTO FarmItem VALUES (?, False, ?);`;
+          connection.query(sql, [newName, newType], function(err, result, fields) {
+              response.render('success');
+          });
+        }
+        if (request.body.deleteProperty == '') {
+          // console.log(chosenID);
+            var sql = `DELETE FROM Property
+                      WHERE ID = ?`;
+            connection.query(sql, [chosenID], function(err,result, fields){
+              response.render('success');
+            });
+
+        }
+        if (request.body.saveChanges == '') {
+          var name = request.body.name;
+          var address = request.body.address;
+          var city = request.body.city;
+          var zip = request.body.zip;
+          zip = parseInt(zip);
+          var size = request.body.size;
+          size = parseInt(size);
+          var isCommercial = request.body.isCommercial;
+          var isPublic= request.body.isPublic;
+          if (isPublic == 'True') {
+            isPublic = 1;
+            console.log('made it true');
+          } else {
+            isPublic = 0;
+            console.log('made it false');
+          }
+          if (isCommercial == 'True') {
+            isCommercial = 1;
+          } else {
+            isCommercial = 0;
+          }
+          isCommercial = parseInt(isCommercial);
+          isPublic - parseInt(isPublic);
+          var sql = `UPDATE Property
+                    SET Name = ?, Size = ?, IsCommercial = ?, IsPublic = ?, Street = ?,City = ?, Zip = ?
+                    WHERE ID = ?`;
+          connection.query(sql, [name, size, isCommercial, isPublic, address, city, zip, chosenID ], function(err, result, fields) {
+
+            var sql = `SELECT
+                        Name,
+                        Street AS Address, City, Zip, Size, PropertyType AS
+                      TYPE , (
+
+                      CASE WHEN IsPublic =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Public, (
+
+                      CASE WHEN IsCommercial =1
+                      THEN 'True'
+                      ELSE 'False'
+                      END
+                      ) AS Commercial, ID, (
+
+                      CASE WHEN ApprovedBy IS NULL
+                      THEN 'False'
+                      ELSE 'True'
+                      END
+                    ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
+                      FROM Property, Visit
+                      WHERE Owner = ?
+                      GROUP BY ID`;
+            connection.query(sql, [userInfo.Username], function(err, result, fields) {
+                myPropertyInfo = result;
+                console.log(result);
+
+                response.render('success', {
+
+
+                  username: userInfo.Username,
+                  personalProperty: myPropertyInfo,
+                  allProperty: allPropertyInfo
+                });
+              });
+
+
+    });
+  }
+})
 
 
 //add new property
@@ -463,14 +847,14 @@ app.post('/addProperty', function(request, response) {
                     if (type == 'FARM') {
                         var sql4 =  `INSERT INTO Has Values (?, ?);`;
                         connection.query(sql4, [Id, animal], function(err,result, fields) {
-                            response.render('ownerProperties', {
+                            response.render('success', {
                             username: userInfo.Username,
                             personalProperty: myPropertyInfo,
                             allProperty: allPropertyInfo
                           });
                         });
                     } else {
-                        response.render('ownerProperties', {
+                        response.render('success', {
                         username: userInfo.Username,
                         personalProperty: myPropertyInfo,
                         allProperty: allPropertyInfo
@@ -493,150 +877,137 @@ app.get('/manageProperty', function(request, response) {
 
 });
 
-app.post('/manageProperty', function(request, response) {
-  // console.log('cho');
-  // console.log(chosenID);
-    // console.log('submit');
-    // console.log(request.body);
-    if (request.body.deleteProperty == '') {
-      var sql = `DELETE FROM Property
-                WHERE ID = ?`;
-      connection.query(sql, [chosenID], function(err, result, fields) {
-            response.render('ownerProperties', {
-              username: userInfo.Username,
-              personalProperty: myPropertyInfo,
-              allProperty: allPropertyInfo
-            });
-      })
-    }
-    if (request.body.addCropBtn == '') {
-      var name = request.body.newCrop;
-      var sql = `INSERT INTO Has
-                VALUES (?, ?)`;
-      connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('success');
-      });
-    }
+app.post('/manageProperty', function(request, response)
+{
+ console.log('started manage');
+ console.log(request.body);
+ console.log(id);
+   var id = request.body.ID;
+   id = parseInt(id);
+   chosenID = id;
+   // console.log('Started');
+   // console.log('body');
+   // console.log(request.body);
+   var name;
+   var type = 'FARM';
+   var address;
+   var isPublic;
+   var address;
+   var isPublic;
+   var city;
+   var isCommercial;
+   var size;
+   var croplist;
+   var animallist;
+   var addCrops;
+   var addAnimals;
 
-    if (request.body.addAnimalBtn == '') {
-      var name = request.body.newAnimal;
-      var sql = `INSERT INTO Has
-                VALUES (?, ?)`;
-      connection.query(sql, [chosenID, name], function(err, result, fields) {
-        response.render('success');
-      });
-    }
+   var sql = `SELECT ItemName
+             FROM Has
+             JOIN FarmItem ON FarmItem.Name = Has.ItemName
+             WHERE Has.PropertyID = ? AND FarmItem.Type != 'ANIMAL'`;
+  connection.query(sql, [id], function(err, result, fields) {
+        croplist = result;
+        // console.log('croplist');
+        // console.log(croplist);
+        console.log('got crops');
+        console.log(result);
+        var animalsql = `SELECT ItemName
+                        FROM Has
+                        JOIN FarmItem ON FarmItem.Name = Has.ItemName
+                        WHERE Has.PropertyID = ? AND FarmItem.Type = 'ANIMAL'`;
+        connection.query(animalsql, [id], function(err, result, fields){
+              animallist = result;
+              console.log('got animals');
+              console.log(result);
+              // console.log('animals');
+              // console.log(animallist);
+              var newCropsql = `SELECT Name
+                                FROM FarmItem
+                                WHERE FarmItem.Type != 'ANIMAL'
+                                AND FarmItem.IsApproved = True
+                                AND NOT
+                                EXISTS (
+                                SELECT *
+                                FROM Has
+                                WHERE Has.ItemName = FarmItem.Name
+                                AND Has.PropertyID =?)` ;
+              connection.query(newCropsql, [id], function(err, result, fields) {
+                  addCrops = result;
 
-    if (request.body.removeCropBtn == ''){
-      var name = request.body.removeCrop;
-      var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
-      connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('sucess');
-      });
+                  console.log('got add crops');
+                  console.log(result);
+                  // console.log(result);
+                  var newAnimalsql = `SELECT Name
+                                      FROM FarmItem
+                                      WHERE FarmItem.Type = 'ANIMAL'
+                                      AND FarmItem.IsApproved = True
+                                      AND NOT
+                                      EXISTS (
+                                      SELECT *
+                                      FROM Has
+                                      WHERE Has.ItemName = FarmItem.Name
+                                      AND Has.PropertyID =?)`;
+                  connection.query(newAnimalsql, [id], function(err, result, fields) {
+                        addAnimals = result;
+                        console.log('got add animals');
+                        console.log(result);
+                        // console.log(result);
 
-    }
-    if (request.body.removeAnimalBtn =='') {
-      var name = request.body.removeAnimal;
-      var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
-      connection.query(sql, [name, chosenID], function(err, result, fields) {
-          response.render('success');
-      });
-    }
-    if (request.body.submitRequest == '') {
-      var newName = request.body.newItemName;
-      var newType = request.body.newItemType;
-      var sql = `INSERT INTO FarmItem VALUES (?, False, ?);`;
-      connection.query(sql, [newName, newType], function(err, result, fields) {
-          response.render('success');
-      });
-    }
-    if (request.body.deleteProperty == '') {
-      // console.log(chosenID);
-        var sql = `DELETE FROM Property
-                  WHERE ID = ?`;
-        connection.query(sql, [chosenID], function(err,result, fields){
-          response.render('success');
+                        var propDetSql = `SELECT
+                                          Name,
+                                          Street as Address,
+                                          City,
+                                          Zip,
+                                          Size,
+                                          PropertyType as Type,
+                                          (CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public,
+                                          (CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END) AS Commercial,
+                                          ID
+                                          FROM Property
+                                          WHERE Property.Owner = ? and Property.ID = ?`;
+                        connection.query(propDetSql, [userInfo.Username, id], function(err, result, fields) {
+                              console.log('this is property details');
+                              console.log(result);
+                              // console.log(result[0].Name);
+                              response.render('manageProperty', {
+                                propID: chosenID,
+                                address: result[0].Address,
+                                propType: result[0].Type,
+                                city: result[0].City,
+                                zip: result[0].Zip,
+                                size: result[0].Size,
+                                name: result[0].Name,
+                                isPublic: result[0].Public,
+                                isCommercial: result[0].Commercial,
+                                cropList: croplist,
+                                animalList: animallist,
+                                addAnimalList: addAnimals,
+                                addCropList: addCrops
+                                //pass in prop name
+                        });
+
+                  });
+              });
+    });
+
+
+  //
         });
-
-    }
-    if (request.body.saveChanges == '') {
-      var name = request.body.name;
-      var address = request.body.address;
-      var city = request.body.city;
-      var zip = request.body.zip;
-      zip = parseInt(zip);
-      var size = request.body.size;
-      size = parseInt(size);
-      var isCommercial = request.body.isCommercial;
-      var isPublic= request.body.isPublic;
-      if (isPublic == 'True') {
-        isPublic = 1;
-        console.log('made it true');
-      } else {
-        isPublic = 0;
-        console.log('made it false');
-      }
-      if (isCommercial == 'True') {
-        isCommercial = 1;
-      } else {
-        isCommercial = 0;
-      }
-      isCommercial = parseInt(isCommercial);
-      isPublic - parseInt(isPublic);
-      var sql = `UPDATE Property
-                SET Name = ?, Size = ?, IsCommercial = ?, IsPublic = ?, Street = ?,City = ?, Zip = ?
-                WHERE ID = ?`;
-      connection.query(sql, [name, size, isCommercial, isPublic, address, city, zip, chosenID ], function(err, result, fields) {
-
-        var sql = `SELECT
-                    Name,
-                    Street AS Address, City, Zip, Size, PropertyType AS
-                  TYPE , (
-
-                  CASE WHEN IsPublic =1
-                  THEN 'True'
-                  ELSE 'False'
-                  END
-                  ) AS Public, (
-
-                  CASE WHEN IsCommercial =1
-                  THEN 'True'
-                  ELSE 'False'
-                  END
-                  ) AS Commercial, ID, (
-
-                  CASE WHEN ApprovedBy IS NULL
-                  THEN 'False'
-                  ELSE 'True'
-                  END
-                ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
-                  FROM Property, Visit
-                  WHERE Owner = ?
-                  GROUP BY ID`;
-        connection.query(sql, [userInfo.Username], function(err, result, fields) {
-            myPropertyInfo = result;
-            console.log(result);
-
-            response.render('success', {
-
-
-              username: userInfo.Username,
-              personalProperty: myPropertyInfo,
-              allProperty: allPropertyInfo
-            });
-          });
-
+  //
+  });
 
 });
-}});
+
 
 app.get('/allOwnersInSystem', function(request, response) {
 
     if (signedIn) {
-        var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
-        WHERE User.UserType = 'OWNER'
-        GROUP BY Username;`;
+        var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Property.Owner IS NULL THEN 0 ELSE 1 END) AS NumProperties
+FROM User
+LEFT JOIN Property ON Property.Owner = User.Username
+WHERE User.UserType = 'OWNER'
+GROUP BY User.Username`;
         connection.query(sql, function(err, result, fields) {
             response.render('allOwnersInSystem', {
                 username: userInfo.Username,
@@ -645,13 +1016,13 @@ app.get('/allOwnersInSystem', function(request, response) {
         });
     }
 
-})
+});
 
 app.get('/allVisitorsInSystem', function(request, response) {
 
     if (signedIn) {
-        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-        FROM User JOIN Visit ON Visit.Username = User.Username
+        var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Visit.Username IS NULL THEN 0 ELSE 1 END) as LoggedVisits
+        FROM User LEFT JOIN Visit ON Visit.Username = User.Username
         WHERE User.UserType = 'VISITOR'
         GROUP BY Username`;
         connection.query(sql, function(err, result, fields) {
@@ -662,7 +1033,8 @@ app.get('/allVisitorsInSystem', function(request, response) {
             });
         });
     }
-})
+});
+
 
 app.post('/allOwnersInSystem', function(request, response) {
     console.log(request.body);
@@ -673,10 +1045,11 @@ app.post('/allOwnersInSystem', function(request, response) {
             var sql = `DELETE FROM User WHERE Username = ?`;
             connection.query(sql, [user], function(err, result, fields) {
                 console.log("deleteAcc");
-                var sql2 = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-                FROM User LEFT JOIN Visit ON Visit.Username = User.Username
-                WHERE User.UserType = 'OWNER'
-                GROUP BY Username`;
+                var sql2 = `SELECT User.Username, User.Email, SUM(CASE WHEN Property.Owner IS NULL THEN 0 ELSE 1 END) AS NumProperties
+                            FROM User
+                            LEFT JOIN Property ON Property.Owner = User.Username
+                            WHERE User.UserType = 'OWNER'
+                            GROUP BY User.Username`;
                 connection.query(sql2, function(err, result, fields) {
                     response.render('allOwnersInSystem', {
                         username: userInfo.Username,
@@ -688,40 +1061,67 @@ app.post('/allOwnersInSystem', function(request, response) {
             var col = request.body.column;
             var search = request.body.search;
             if (col == "Number of Properties") {
-                col == "NumProperties";
+                col = "NumProperties";
             }
-            var sql = `SELECT User.Username, User.Email, COUNT(*) as NumProperties
-FROM User JOIN Property ON Property.Owner = User.Username
-WHERE User.UserType = 'OWNER' AND `+col+` = ?`;
-            connection.query(sql, [search], function(err, result, fields) {
-                console.log(sql);
-                console.log(result);
-                console.log(err);
-                response.render('allOwnersInSystem', {
-                    username: userInfo.Username,
-                    rows: result
+            if (col == "NumProperties") {
+                var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Property.Owner IS NULL THEN 0 ELSE 1 END) as NumProperties
+                FROM User LEFT JOIN Property ON Property.Owner = User.Username
+                WHERE User.UserType = 'OWNER'
+                GROUP BY User.Username
+                HAVING SUM(CASE WHEN Property IS NULL THEN 0 ELSE 1 END) = ?`;
+                var search2 = parseInt(search);
+                connection.query(sql, [search], function(err, result, fields) {
+                    console.log(sql);
+                    console.log(result);
+                    console.log(err);
+                    response.render('allOwnersInSystem', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
                 });
-            });
+            } else {
+                var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Property.Owner IS NULL THEN 0 ELSE 1 END) as NumProperties
+    FROM User JOIN Property ON Property.Owner = User.Username
+    WHERE User.UserType = 'OWNER' AND `+col+` LIKE ?`;
+    connection.query(sql, ["%"+search+"%"], function(err, result, fields) {
+        console.log(sql);
+        console.log(result);
+        console.log(err);
+        response.render('allOwnersInSystem', {
+            username: userInfo.Username,
+            rows: result
+        });
+    });
+            }
+
         }
     }
-})
+});
 
 app.get('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
-        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
-        CASE WHEN IsPublic =1
-        THEN 'True'
-        ELSE 'False'
-        END
-        ) AS Public, (
-        CASE WHEN IsCommercial =1
-        THEN 'True'
-        ELSE 'False'
-        END
-    ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating) as Rating
-        FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
-        WHERE ApprovedBy IS NOT NULL
-        GROUP BY Name`;
+        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType AS
+TYPE , (
+
+CASE WHEN IsPublic =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Public, (
+
+CASE WHEN IsCommercial =1
+THEN 'True'
+ELSE 'False'
+END
+) AS Commercial, ID, ApprovedBy AS VerifiedBy, AVG(
+CASE WHEN RATING >0
+THEN RATING
+ELSE 0
+END ) AS Rating
+FROM Property
+LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+WHERE ApprovedBy IS NOT NULL
+GROUP BY Name`;
         connection.query(sql, function(err, result, fields) {
             response.render('viewConfirmedProperties', {
                 username: userInfo.Username,
@@ -729,13 +1129,79 @@ app.get('/viewConfirmedProperties', function(request, response) {
             });
         });
     }
-})
+});
+
+app.post('/adminSuccess', function(request, response) {
+    if (signedIn) {
+      if (request.body.saveChanges == '') {
+        var isPublic = request.body.isPublic;
+        var isCommercial = request.body.isCommercial;
+        if (isPublic == 'True') {
+          isPublic = 1;
+          console.log('made it true');
+        } else {
+          isPublic = 0;
+          console.log('made it false');
+        }
+        if (isCommercial == 'True') {
+          isCommercial = 1;
+        } else {
+          isCommercial = 0;
+        }
+        isCommercial = parseInt(isCommercial);
+        isPublic - parseInt(isPublic);
+        console.log('look here');
+        console.log(request.body);
+         var sql = `UPDATE Property
+                   SET Name = ?, Size = ?, IsCommercial = ?, IsPublic = ?, Street = ?,City = ?, Zip = ?, ApprovedBy = ?
+                   WHERE ID = ?`;
+
+         connection.query(sql, [request.body.name, request.body.size,isCommercial, isPublic, request.body.address, request.body.city, request.body.zip, userInfo.Username, request.body.id],function(err, result, fields) {
+             response.render('adminSuccess');
+         });
+      } else if (request.body.deleteProperty == ''){
+         var sql =`DELETE FROM Property
+                   WHERE ID = ?`;
+         connection.query(sql, [ request.body.id],function(err, result, fields) {
+             response.render('adminSuccess');
+         });
+      } else if (request.body.addCropBtn == '') {
+        var name = request.body.newCrop;
+        var sql = `INSERT INTO Has
+                  VALUES (?, ?)`;
+        connection.query(sql, [request.body.id, name], function(err, result, fields) {
+          response.render('adminSuccess');
+        });
+      } else if (request.body.addAnimalBtn == '') {
+        var name = request.body.newAnimal;
+        var sql = `INSERT INTO Has
+                  VALUES (?, ?)`;
+        connection.query(sql, [request.body.id, name], function(err, result, fields) {
+          response.render('adminSuccess');
+        });
+      }else if (request.body.removeCropBtn == ''){
+        var name = request.body.removeCrop;
+        var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
+
+        connection.query(sql, [name, request.body.id], function(err, result, fields) {
+            response.render('adminSuccess');
+        });
+
+      } else if (request.body.removeAnimalBtn =='') {
+        var name = request.body.removeAnimal;
+        var sql = `DELETE FROM Has WHERE ItemName = ? AND PropertyID = ?`;
+        connection.query(sql, [name, request.body.id], function(err, result, fields) {
+            response.render('adminSuccess');
+        });
+      }
+    }
+});
 
 app.get('/adminLandingPage', function(request, response) {
     if (signedIn) {
         response.render('adminLandingPage');
     }
-})
+});
 
 app.post('/adminLandingPage', function(request, response) {
     var user = request.body.column;
@@ -747,28 +1213,28 @@ app.get('/viewUnconfirmedProperties', function(request, response) {
 
     if (signedIn) {
         var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
-        CASE WHEN IsPublic =1
-        THEN 'True'
-        ELSE 'False'
-        END
-        ) AS Public, (
-        CASE WHEN IsCommercial =1
-        THEN 'True'
-        ELSE 'False'
-        END
-        ) AS Commercial, ID, Owner
-        FROM Property
-        WHERE ApprovedBy IS NULL`;
+                    CASE WHEN IsPublic =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Public, (
+                    CASE WHEN IsCommercial =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Commercial, ID, Owner
+                    FROM Property
+                    WHERE ApprovedBy IS NULL`;
         connection.query(sql, function(err, result, fields) {
-            // console.log(result);
+            console.log(result);
             response.render('viewUnconfirmedProperties', {
                 username: userInfo.Username,
                 rows: result
             });
         });
     }
+});
 
-})
 
 app.post('/viewConfirmedProperties', function(request, response) {
     if (signedIn) {
@@ -781,23 +1247,54 @@ app.post('/viewConfirmedProperties', function(request, response) {
         } else {
             var col = request.body.column;
             var search = request.body.search;
-            if (col == "Number of Properties") {
-                col == "NumProperties";
+            if (col == "Address") {
+                col = "Street";
             }
-            var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
-            CASE WHEN IsPublic =1
-            THEN 'True'
-            ELSE 'False'
-            END
-            ) AS Public, (
-            CASE WHEN IsCommercial =1
-            THEN 'True'
-            ELSE 'False'
-            END
-        ) AS Commercial, ID, ApprovedBy as VerifiedBy, AVG(Rating) as Rating
-            FROM Property JOIN Visit ON Visit.PropertyID = Property.ID
-            WHERE ApprovedBy IS NOT NULL and `+col+` = ?`;
-            connection.query(sql, [search], function(err, result, fields) {
+            if (col == "Commercial") {
+                col = "IsCommercial";
+                console.log("current col: " + col);
+                if (search == "True") {
+                    search = "1";
+                } else {
+                    search = "0";
+                }
+            }
+            if (col == "Public") {
+                col = "IsPublic";
+                if (search == "True") {
+                    search = "1";
+                } else {
+                    search = "0";
+                }
+            }
+            if (col == "Verified by") { // check this
+              console.log("ASDLFJASDJKFAJSDFLKAJSDFLJKASDFLASDJFASDFJKL");
+              col = "ApprovedBy";
+            }
+            if (col == "Type") {
+                col = "PropertyType";
+            }
+            if (col == "Rating") {
+              var sql = `SELECT Name, Street, City, Zip, Size, PropertyType AS
+                          Type , (
+
+                          CASE WHEN IsPublic =1
+                          THEN 'True'
+                          ELSE 'False'
+                          END
+                          ) AS Public, (
+
+                          CASE WHEN IsCommercial =1
+                          THEN 'True'
+                          ELSE 'False'
+                          END
+                          ) AS Commercial, ID, ApprovedBy AS VerifiedBy, AVG(Rating) AS Rating
+                          FROM Property
+                          LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                          WHERE ApprovedBy IS NOT NULL
+                          GROUP BY Name
+                          HAVING AVG(Rating) = ?`
+              connection.query(sql, [search], function(err, result, fields) {
                 console.log(sql);
                 console.log(result);
                 console.log(err);
@@ -805,57 +1302,142 @@ app.post('/viewConfirmedProperties', function(request, response) {
                     username: userInfo.Username,
                     rows: result
                 });
-            });
+              });
+            } else {
+                if (col == "Zip") {
+                  var sql = `SELECT Name, Street, City, Zip, Size, PropertyType AS
+                                Type , (
+
+                                CASE WHEN IsPublic =1
+                                THEN 'True'
+                                ELSE 'False'
+                                END
+                                ) AS Public, (
+
+                                CASE WHEN IsCommercial =1
+                                THEN 'True'
+                                ELSE 'False'
+                                END
+                                ) AS Commercial, ID, ApprovedBy AS VerifiedBy, AVG(Rating) AS Rating
+                                FROM Property
+                                LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                                WHERE ApprovedBy IS NOT NULL
+                                AND `+col+` = ?
+                                GROUP BY Name`;
+                  connection.query(sql, [search], function(err, result, fields) {
+                    console.log(sql);
+                    console.log(result);
+                    console.log(err);
+                    response.render('viewConfirmedProperties', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                  });
+                } else {
+                  console.log("asdlkjfalksdjfal;sdkfj;alskdjf " + col);
+                  var sql = `SELECT Name, Street, City, Zip, Size, PropertyType AS
+                              Type , (
+
+                              CASE WHEN IsPublic =1
+                              THEN 'True'
+                              ELSE 'False'
+                              END
+                              ) AS Public, (
+
+                              CASE WHEN IsCommercial =1
+                              THEN 'True'
+                              ELSE 'False'
+                              END
+                              ) AS Commercial, ID, ApprovedBy AS VerifiedBy, AVG(Rating) AS Rating
+                              FROM Property
+                              LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                              WHERE ApprovedBy IS NOT NULL
+                              AND `+col+` LIKE ?
+                              GROUP BY Name`;
+                  connection.query(sql, ["%" + search + "%"], function(err, result, fields) {
+                    console.log(sql);
+                    console.log(result);
+                    console.log(err);
+                    response.render('viewConfirmedProperties', {
+                        username: userInfo.Username,
+                        rows: result
+                    });
+                  });
+                }
+            }
         }
     }
-})
+});
 
 app.post('/viewUnconfirmedProperties', function(request, response) {
     if (request.body.column != undefined) {
         var col = request.body.column;
         var search = request.body.search;
-        if (col == "Number of Properties") {
-            col == "NumProperties";
+        if (col == "Address") {
+            col = "Street";
         }
-        var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
-CASE WHEN IsPublic =1
-THEN 'True'
-ELSE 'False'
-END
-) AS Public, (
-CASE WHEN IsCommercial =1
-THEN 'True'
-ELSE 'False'
-END
-) AS Commercial, ID, Owner
-FROM Property
-WHERE ApprovedBy IS NULL and `+col+` = ?`;
-        connection.query(sql, [search], function(err, result, fields) {
-            console.log(sql);
-            console.log(result);
-            console.log(err);
-            response.render('viewUnconfirmedProperties', {
-                username: userInfo.Username,
-                rows: result
-            });
-        });
+        if (col == "Commercial") {
+            col = "IsCommercial";
+            console.log("current col: " + col);
+            if (search == "True") {
+                search = "1";
+            } else {
+                search = "0";
+            }
+        }
+        if (col == "Public") {
+            col = "IsPublic";
+            if (search == "True") {
+                search = "1";
+            } else {
+                search = "0";
+            }
+        }
+        if (col == "Type") {
+            col = "PropertyType";
+        }
+        if (col != "Size") {
+          console.log(col + " = " + search);
+          var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public, (CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END ) AS Commercial, ID, Owner FROM Property WHERE ApprovedBy IS NULL and `+col+` LIKE ?`;
+          connection.query(sql, ["%"+search+"%"], function(err, result, fields) {
+              console.log(sql);
+              console.log(result);
+              console.log(err);
+              response.render('viewUnconfirmedProperties', {
+                  username: userInfo.Username,
+                  rows: result
+              });
+          });
+        } else {
+          console.log(col + " = " + search);
+          var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (CASE WHEN IsPublic =1 THEN 'True' ELSE 'False' END) AS Public, (CASE WHEN IsCommercial =1 THEN 'True' ELSE 'False' END ) AS Commercial, ID, Owner FROM Property WHERE ApprovedBy IS NULL and `+col+` = ?`;
+          connection.query(sql, [search], function(err, result, fields) {
+              console.log(sql);
+              console.log(result);
+              console.log(err);
+              response.render('viewUnconfirmedProperties', {
+                  username: userInfo.Username,
+                  rows: result
+              });
+          });
+        }
     } else {
         console.log("aaaaaaaaaaaaa");
         var col = request.body.column;
         var search = request.body.search;
         var sql = `SELECT Name, Street, City, Zip, Size, PropertyType as Type, (
-    CASE WHEN IsPublic =1
-    THEN 'True'
-    ELSE 'False'
-    END
-    ) AS Public, (
-    CASE WHEN IsCommercial =1
-    THEN 'True'
-    ELSE 'False'
-    END
-    ) AS Commercial, ID, Owner
-    FROM Property
-    WHERE ApprovedBy IS NULL and `+col+` = ?`;
+                    CASE WHEN IsPublic =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Public, (
+                    CASE WHEN IsCommercial =1
+                    THEN 'True'
+                    ELSE 'False'
+                    END
+                    ) AS Commercial, ID, Owner
+                    FROM Property
+                    WHERE ApprovedBy IS NULL and `+col+` = ?`;
         connection.query(sql, [search], function(err, result, fields) {
             console.log(sql);
             console.log(result);
@@ -866,7 +1448,7 @@ WHERE ApprovedBy IS NULL and `+col+` = ?`;
             });
         });
     }
-})
+});
 
 app.post('/manageSelectedProperty', function(request, response) {
     if (signedIn) {
@@ -1128,7 +1710,7 @@ app.get('/visitorHome', function(request, response) {
             END
             ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
             FROM Property
-            JOIN Visit ON Visit.PropertyID = Property.ID
+            LEFT JOIN Visit ON Visit.PropertyID = Property.ID
             WHERE Property.IsPublic = 1
             AND Property.ApprovedBy IS NOT NULL
             GROUP BY Property.ID`;
@@ -1195,7 +1777,7 @@ app.post('/visitorHome', function(request, response) {
                      END
                      ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
-                     JOIN Visit ON Visit.PropertyID = Property.ID
+                     LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
                      AND Property.ApprovedBy IS NOT NULL
                      GROUP BY Property.ID
@@ -1224,7 +1806,7 @@ app.post('/visitorHome', function(request, response) {
                      END
                      ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
-                     JOIN Visit ON Visit.PropertyID = Property.ID
+                     LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
                      AND Property.ApprovedBy IS NOT NULL
                      GROUP BY Property.ID
@@ -1257,7 +1839,7 @@ app.post('/visitorHome', function(request, response) {
                      END
                      ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
-                     JOIN Visit ON Visit.PropertyID = Property.ID
+                     LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
                      AND Property.ApprovedBy IS NOT NULL
                      GROUP BY Property.ID
@@ -1286,7 +1868,7 @@ app.post('/visitorHome', function(request, response) {
                      END
                      ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                      FROM Property
-                     JOIN Visit ON Visit.PropertyID = Property.ID
+                     LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                      WHERE Property.IsPublic = 1
                      AND Property.ApprovedBy IS NOT NULL
                      GROUP BY Property.ID
@@ -1316,13 +1898,13 @@ app.post('/visitorHome', function(request, response) {
                  END
                  ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                  FROM Property
-                 JOIN Visit ON Visit.PropertyID = Property.ID
+                 LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                  WHERE Property.IsPublic = 1
                  AND Property.ApprovedBy IS NOT NULL
-                 AND ` + col + ` = ?
+                 AND ` + col + ` LIKE  ?
                  GROUP BY Property.ID`;
 
-            connection.query(sql2params, [search], function(err, result, fields) {
+            connection.query(sql2params, ['%' + search + '%'], function(err, result, fields) {
                 console.log(err);
                 console.log(result);
                 response.render('visitorHome', {
@@ -1537,22 +2119,42 @@ app.post('/allVisitorsInSystem', function(request, response) {
     if (request.body.column != undefined) {
         var col = request.body.column;
         var search = request.body.search;
+        // if (col == "Logged Visits") {
+        //     col = "LoggedVisits";
+        // }
         if (col == "Logged Visits") {
-            col == "LoggedVisits";
-        }
-        var sql = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-        FROM User JOIN Visit ON Visit.Username = User.Username
-        WHERE User.UserType = 'VISITOR' AND User.`+ col +` = ?
-        GROUP BY Username;`;
-        connection.query(sql, [search], function(err, result, fields) {
-            console.log(sql);
-            console.log(result);
-            console.log(err);
-            response.render('allVisitorsInSystem', {
-                username: userInfo.Username,
-                rows: result
+            var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Visit.Username IS NULL THEN 0 ELSE 1 END) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR'
+            GROUP BY Username
+            HAVING COUNT(*) = ?`;
+            connection.query(sql, [search], function(err, result, fields) {
+                // console.log(sql);
+                // console.log(result);
+                // console.log(err);
+
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
             });
-        });
+        } else {
+            var sql = `SELECT User.Username, User.Email, SUM(CASE WHEN Visit.Username IS NULL THEN 0 ELSE 1 END) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
+            WHERE User.UserType = 'VISITOR' AND User.`+ col +` LIKE ?
+            GROUP BY Username;`;
+            connection.query(sql, ['%'+search+'%'], function(err, result, fields) {
+                // console.log(sql);
+                // console.log(result);
+                // console.log(err);
+
+                response.render('allVisitorsInSystem', {
+                    username: userInfo.Username,
+                    rows: result
+                });
+            });
+        }
+
     } else if (request.body.deleteLog == "") {
         //deleteLog
         var user = request.body.usernameval;
@@ -1560,17 +2162,17 @@ app.post('/allVisitorsInSystem', function(request, response) {
         console.log(String(user))
         connection.query(sql, [user], function(err, result, fields) {
             console.log("deleteLog");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            FROM User JOIN Visit ON Visit.Username = User.Username
+            var sql2 = `SELECT User.Username, User.Email, SUM(CASE WHEN Visit.Username IS NULL THEN 0 ELSE 1 END) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
             WHERE User.UserType = 'VISITOR'
             GROUP BY Username`;
             connection.query(sql2, function(err, result, fields) {
-                console.log(result);
-                response.render('allVisitorsInSystem', {
-                    username: userInfo.Username,
-                    rows: result
-                });
+              response.render('allVisitorsInSystem', {
+                  username: userInfo.Username,
+                  rows: result
+              });
             });
+
         });
     } else  {
         //deleteAcc
@@ -1578,8 +2180,8 @@ app.post('/allVisitorsInSystem', function(request, response) {
         var sql = `DELETE FROM User WHERE Username = ?`;
         connection.query(sql, [user],  function(err, result, fields) {
             console.log("deleteAcc");
-            var sql2 = `SELECT User.Username, User.Email, COUNT(*) as LoggedVisits
-            FROM User JOIN Visit ON Visit.Username = User.Username
+            var sql2 = `SELECT User.Username, User.Email, SUM(CASE WHEN Visit.Username IS NULL THEN 0 ELSE 1 END) as LoggedVisits
+            FROM User LEFT JOIN Visit ON Visit.Username = User.Username
             WHERE User.UserType = 'VISITOR'
             GROUP BY Username`;
             connection.query(sql2, function(err, result, fields) {
@@ -1590,21 +2192,20 @@ app.post('/allVisitorsInSystem', function(request, response) {
             });
         });
     }
-})
-
+});
 
 app.post('/login', function(request, response) {
     var email = request.body.inputEmail;
     var password = md5(request.body.inputPassword);
 
-    console.log(request.body);
+    // console.log(request.body);
 
     var sql = "SELECT * FROM User WHERE Email = ?";
     connection.query(sql, [email], function(err, result, fields) {
         if (err) {
             return;
         };
-        console.log(result[0]);
+        // console.log(result[0]);
 
         if (result[0] == undefined) {
             console.log("Invalid Login");
@@ -1616,65 +2217,85 @@ app.post('/login', function(request, response) {
                 signedIn = true;
 
                 if (userInfo.UserType === 'OWNER') {
-                    var sql = `SELECT
-                              	Name,
-                              	Street AS Address, City, Zip, Size, PropertyType AS
+                    var sql = `SELECT Name, Address, City, Zip, Size,
+                              TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                              CASE WHEN tempdata.avgrating >0
+                              THEN tempdata.avgrating
+                              ELSE  'N/A'
+                              END
+                              ) AS Rating
+                              FROM (
+
+                              SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                               TYPE , (
 
                               CASE WHEN IsPublic =1
-                              THEN 'True'
-                              ELSE 'False'
+                              THEN  'True'
+                              ELSE  'False'
                               END
                               ) AS Public, (
 
                               CASE WHEN IsCommercial =1
-                              THEN 'True'
-                              ELSE 'False'
+                              THEN  'True'
+                              ELSE  'False'
                               END
                               ) AS Commercial, ID, (
 
                               CASE WHEN ApprovedBy IS NULL
-                              THEN 'False'
-                              ELSE 'True'
+                              THEN  'False'
+                              ELSE  'True'
                               END
-                            ) AS isValid, COUNT( * ) AS Count , AVG( Rating ) AS Rating
-                              FROM Property, Visit
-                              WHERE Owner = ?
-                              GROUP BY ID`;
+                              ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                              FROM Property
+                              LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                              WHERE Owner =  ?
+                              GROUP BY ID
+                              ) AS tempdata`;
                     connection.query(sql, [userInfo.Username], function(err, result, fields) {
                         myPropertyInfo = result;
-                        console.log(result);
-                        var sql = `SELECT Name,
-                                    Street AS Address,
-                                    City,
-                                    Zip, Size, PropertyType AS
+                        // console.log('my properties');
+                        // console.log(result);
+                        var sql = `SELECT Name, Address, City, Zip, Size,
+                                    TYPE , Public, Commercial, ID, isValid, Visits, (
+
+                                    CASE WHEN tempdata.avgrating >0
+                                    THEN tempdata.avgrating
+                                    ELSE  'N/A'
+                                    END
+                                    ) AS Rating
+                                    FROM (
+
+                                    SELECT Name, Street AS Address, City, Zip, Size, PropertyType AS
                                     TYPE , (
 
                                     CASE WHEN IsPublic =1
-                                    THEN 'True'
-                                    ELSE 'False'
+                                    THEN  'True'
+                                    ELSE  'False'
                                     END
                                     ) AS Public, (
 
                                     CASE WHEN IsCommercial =1
-                                    THEN 'True'
-                                    ELSE 'False'
+                                    THEN  'True'
+                                    ELSE  'False'
                                     END
                                     ) AS Commercial, ID, (
 
                                     CASE WHEN ApprovedBy IS NULL
-                                    THEN 'False'
-                                    ELSE 'True'
+                                    THEN  'False'
+                                    ELSE  'True'
                                     END
-                                    ) AS isValid, COUNT( * ) as Visits , AVG( Rating ) as 'Rating'
-                                    FROM Property, Visit
-                                    WHERE Owner != ?
+                                    ) AS isValid, COUNT( * ) AS Visits, AVG( RATING ) AS avgrating
+                                    FROM Property
+                                    LEFT JOIN Visit ON Visit.PropertyID = Property.ID
+                                    WHERE Owner !=  ?
                                     GROUP BY ID
+                                    ) AS tempdata
                                     `;
                         connection.query(sql, [userInfo.Username],function(err, result, fields) {
                             allPropertyInfo = result;
-                            console.log('everything');
-                            console.log(result);
+                            // console.log('everything');
+                            // console.log(result);
                             response.render('ownerProperties', {
                                 username: userInfo.Username,
                                 personalProperty: myPropertyInfo,
@@ -1699,7 +2320,7 @@ app.post('/login', function(request, response) {
                         END
                         ) AS Commercial, ID, COUNT( * ) AS Visits, AVG( Rating ) AS 'Avg. Rating'
                         FROM Property
-                        JOIN Visit ON Visit.PropertyID = Property.ID
+                        LEFT JOIN Visit ON Visit.PropertyID = Property.ID
                         WHERE Property.IsPublic = 1
                         AND Property.ApprovedBy IS NOT NULL
                         GROUP BY Property.ID`;

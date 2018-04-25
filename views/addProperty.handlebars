@@ -46,7 +46,7 @@
       </div>
       <div class="horizontal-container space">
           <div class=" line-spacing left-">
-              <select name="type" class="form-control inline-input"  id="propertyType">
+              <select name="type" class="form-control inline-input" required id="propertyType">
                   <option>Property Type...</option>
                   <option>FARM</option>
                   <option>GARDEN</option>
@@ -54,7 +54,7 @@
               </select>
           </div>
           <div class=" filterItem line-spacing hidden">
-              <select class="form-control inline-input" name="animals" id="animal"  contenteditable="false">
+              <select class="form-control inline-input" required name="animals" id="animal"  contenteditable="false">
                 <option>Animal</option>
                 {{#each animals}}
                   <option value="{{this.Name}}"> {{this.Name}}</option>
@@ -62,7 +62,7 @@
               </select>
           </div>
           <div>
-              <select class="form-control inline-input" name="crops"  id="crop" contenteditable="false">
+              <select class="form-control inline-input"  required name="crops"  id="crop" contenteditable="false">
                   <option>Crop</option>
                   {{#each crops}}
                     <option value="{{this.Name}}"> {{this.Name}}</option>
@@ -72,14 +72,14 @@
       </div>
       <div class="horizontal-container space">
         <div class="line-spacing">
-            <select required class="form-control inline-input" name="isPublic" id="isPublic">
+            <select class="form-control inline-input" required name="isPublic" id="isPublic">
                 <option>Public?</option>
                 <option>Yes</option>
                 <option>No</option>
             </select>
         </div>
         <div>
-            <select class="form-control inline-input" name="isCommercial" id="commercial">
+            <select class="form-control inline-input" required name="isCommercial" id="commercial">
                 <option>Commercial?</option>
                 <option>Yes</option>
                 <option>No</option>

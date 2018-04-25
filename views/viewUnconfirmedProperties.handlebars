@@ -58,6 +58,10 @@
         display: flex;
         flex-direction: column-reverse;
     }
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
 </style>
 
 <body>
@@ -66,16 +70,22 @@
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col">Name</th>
+                    <th scope="col">Name
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                     <th scope="col">Address</th>
                     <th scope="col">City</th>
                     <th scope="col">Zip</th>
-                    <th scope="col">Size</th>
+                    <th scope="col">Size
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                     <th scope="col">Type</th>
                     <th scope="col">Public</th>
                     <th scope="col">Commercial</th>
                     <th scope="col">ID</th>
-                    <th scope="col">Owner</th>
+                    <th scope="col">Owner
+                        <button class="btn dropdown-toggle float-right" type="button"></button>
+                    </th>
                 </tr>
             </thead>
             <tbody id="rows">
@@ -99,35 +109,27 @@
         <div class="btn-container">
             <div class="colrev">
                 <form class="" action="/viewUnconfirmedProperties" method="post">
-                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 7px;">Search Properties</button>
-                    <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 150px; height: 35px; text-align: center;">
                     <div class="form-control-plaintext">
                         <select class="form-control " id="searchBy" name="column" style="height: 45px;">
                                 <option selected disabled hidden>Search by...</option>
                                 <option>Name</option>
-                                <option>Address</option>
-                                <option>City</option>
-                                <option>Zip</option>
                                 <option>Size</option>
-                                <option>Type</option>
-                                <option>Public</option>
-                                <option>Commercial</option>
-                                <option>ID</option>
                                 <option>Owner</option>
                         </select>
                     </div>
+                    <input type="text" id="searchText" name="search" placeholder="Search Term" style="width: 100%; margin-bottom: 7px;height: 35px; text-align: center;">
+                    <button type="submit" class="btn" id="search" style="width:100%;height: 50px; margin-bottom: 50px;">Search Properties</button>
                 </form>
             </div>
             <div class="colrev">
                 <form method="POST" action="/manageSelectedProperty">
-                    <button type="submit" class="btn" id="search" style="height: 50px; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
+                    <button type="submit" class="btn" id="manage" style="height: 50px;width: 100%; margin-bottom: 50px; margin-top: 5px;">Manage Selected Property</button>
                     <input type="hidden" id="id" name="id" class="hiddenField" placeholder="Username">
                 </form>
-
             </div>
             <div class="colrev">
                 <form method="GET" action="/adminLandingPage">
-                    <button type="submit" class="btn" id="search" style="width: 150px; height: 50px; margin-bottom: 50px; margin-top: 5px;">Back</button>
+                    <button type="submit" class="btn" id="search" style="width: 100%; height: 50px; margin-bottom: 50px; margin-top: 5px;">Back</button>
                 </form>
             </div>
         </div>
@@ -203,4 +205,11 @@
     function getCellValue(row, index) {
         return $(row).children('td').eq(index).text();
     }
+
+    $("#manage").click(function(e) {
+        if ($('#id').val() == '') {
+            e.preventDefault();
+            window.alert('Please select a property.');
+        }
+    });
 </script>
