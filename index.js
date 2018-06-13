@@ -15,10 +15,10 @@ var chosenID;
 
 // var creds = require('credentials.js');
 var connection = mysql.createConnection({
-  host: "academic-mysql.cc.gatech.edu",
-  user: "cs4400_team_27",
-  password: "FSuJjLjh",
-  database: "cs4400_team_27"
+  host: ***,
+  user: ***,
+  password: ***,
+  database: *** // <3
 });
 connection.connect(function(err) {
   if (err) throw err;
